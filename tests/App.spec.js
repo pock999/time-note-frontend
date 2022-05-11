@@ -6,7 +6,7 @@ import React from 'react';
 import { screen, render, cleanup, fireEvent } from '@testing-library/react';
 import App from '../src/App';
 
-describe('App.jsx', () => {
+describe('=== App.jsx ===', () => {
   beforeAll(() => {
     render(<App />)
   });

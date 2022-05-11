@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "yarn test -- --watch"
   },
   "author": "",
   "license": "ISC",
