@@ -9,16 +9,16 @@ export const authSlice = createSlice({
     currentRole: null,
   },
   reducers: {
-    setUser: (state, payload) => {
+    setUser: (state, { type, payload }) => {
       state.user = payload;
     },
-    setAuthorization: (state, payload) => {
+    setAuthorization: (state, { type, payload }) => {
       state.authorization = payload;
     },
-    setRoles: (state, payload) => {
+    setRoles: (state, { type, payload }) => {
       state.roles = payload;
     },
-    setCurrentRole: (state, payload) => {
+    setCurrentRole: (state, { type, payload }) => {
       state.currentRole = payload;
     },
     clearAuth: (state) => {
@@ -30,15 +30,15 @@ export const authSlice = createSlice({
   },
 });
 
-
 export const {
-  setUser, setAuthorization, setRoles, setCurrentRole, clearAuth,
+  setUser,
+  setAuthorization,
+  setRoles,
+  setCurrentRole,
+  clearAuth,
 } = authSlice.actions;
 
-
-export const login = (payload) => (dispatch) => {
-
-};
+export const login = (payload) => (dispatch) => {};
 
 export const logout = () => (dispatch) => {
   dispatch(clearAuthI());

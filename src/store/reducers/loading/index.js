@@ -6,20 +6,18 @@ export const loadingSlice = createSlice({
     isShow: false,
   },
   reducers: {
-    showLoading:(state) => {
+    showLoading: (state) => {
       state.isShow = true;
     },
-    hideLoading:(state) => {
+    hideLoading: (state) => {
       state.isShow = false;
     },
-    setLoading:(state, payload) => {
+    setLoading: (state, { type, payload }) => {
       state.isShow = payload;
     },
   },
 });
 
-export const {
-  showLoading, hideLoading, setLoading,
-} = loadingSlice.actions;
+export const { showLoading, hideLoading, setLoading } = loadingSlice.actions;
 
 export default loadingSlice.reducer;
