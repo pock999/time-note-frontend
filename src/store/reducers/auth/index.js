@@ -38,10 +38,10 @@ export const {
   clearAuth,
 } = authSlice.actions;
 
-export const login = (payload) => (dispatch) => {};
+export const loginAction = (payload) => (dispatch) => {};
 
-export const logout = () => (dispatch) => {
-  dispatch(clearAuthI());
+export const logoutAction = () => (dispatch) => {
+  dispatch(clearAuth());
 };
 
 export default authSlice.reducer;
