@@ -4,8 +4,6 @@ import reducer, {
   setRoles,
   setCurrentRole,
   clearAuth,
-  login,
-  logout,
 } from '../../src/store/reducers/auth';
 
 describe('=== store/auth ===', () => {

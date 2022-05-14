@@ -1,4 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+import ApiService from '../../../services/ApiService';
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -38,10 +40,15 @@ export const {
   clearAuth,
 } = authSlice.actions;
 
-export const loginAction = (payload) => (dispatch) => {};
+export const loginAction = createAsyncThunk('auth/login', async (payload) => {
+  const response = await ApiService.post({
+    url: `auth/login`,
+    data: payload,
+  });
 
-export const logoutAction = () => (dispatch) => {
-  dispatch(clearAuth());
-};
+  console.log('response => ', response);
+
+  return response.data;
+});
 
 export default authSlice.reducer;
