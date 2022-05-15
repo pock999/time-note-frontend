@@ -1,12 +1,13 @@
 import React from 'react';
-import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
+import { Switch, Route, Redirect, Router } from 'react-router-dom';
 
 import _ from 'lodash';
 
 import routes from './routes';
+import history from '../libs/history';
 
-export function ProtectedRoute(props) {
-  const { component: Component, roles: routeRoles, ...rest } = props;
+function ProtectedRoutes(props) {
+  const { routes } = props;
 
   // get localStorage
   const token = localStorage.getItem('token');
@@ -21,41 +22,38 @@ export function ProtectedRoute(props) {
   // 1. roles: null => 大家都可以
   // 2. roles.length === 0 => only guest
   // 3. roles.length > 0 => need login(isUser)
-  if (
-    routeRoles === null ||
-    (routeRoles.length === 0 && !token) ||
-    (routeRoles.length > 0 && !!token)
-  ) {
-    console.log('path => ', rest.path);
-    return <Route {...rest} render={(props) => <Component {...props} />} />;
-  }
-
-  if (routeRoles.length === 0 && token) {
-    return (
-      <Route {...rest} render={(props) => <Redirect {...props} to="/" />} />
-    );
-  }
-
-  if (routeRoles.length > 0 && !token) {
-    return (
-      <Route
-        {...rest}
-        render={(props) => <Redirect {...props} to="/login" />}
-      />
-    );
-  }
 
   return (
-    <Route {...rest} render={(props) => <Redirect {...props} to="/404" />} />
+    <Switch>
+      {routes &&
+        routes.map((route) => (
+          <Route
+            key={route.path}
+            path={route.path}
+            exact={route.exact || false}
+            render={(props) =>
+              route.roles === null ||
+              (route.roles.length === 0 && !token) ||
+              (route.roles.length > 0 && !!token) ? (
+                <route.component {...props} />
+              ) : route.roles.length === 0 && token ? (
+                <Redirect {...props} to="/" />
+              ) : route.roles.length > 0 && !token ? (
+                <Redirect {...props} to="/login" />
+              ) : (
+                <Redirect {...props} to="/404" />
+              )
+            }
+          />
+        ))}
+    </Switch>
   );
 }
 
-export default function Router() {
+export default function PathRouter() {
   return (
-    <Switch>
-      {routes.map((route) => (
-        <ProtectedRoute key={route.path} exact={route.exact} {...route} />
-      ))}
-    </Switch>
+    <Router history={history}>
+      <ProtectedRoutes routes={routes} />
+    </Router>
   );
 }

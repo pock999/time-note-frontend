@@ -8,20 +8,22 @@ import 'regenerator-runtime/runtime';
 import { Provider } from 'react-redux';
 import store from './src/store';
 
+// 用新版的，history會失效
+
 // ReactDOM.render is no longer supported in React 18.
 // Use createRoot instead.
 // Until you switch to the new API, your app will behave as if it's running React 17
 
-// ReactDOM.render(
-//   <Provider store={store}>
-//     <App />
-//   </Provider>,
-//   document.getElementById('app')
-// );
-
-const root = ReactDOMClient.createRoot(document.getElementById('app'));
-root.render(
-  <React.StrictMode>
+ReactDOM.render(
+  <Provider store={store}>
     <App />
-  </React.StrictMode>
+  </Provider>,
+  document.getElementById('app')
 );
+
+// const root = ReactDOMClient.createRoot(document.getElementById('app'));
+// root.render(
+//   <React.StrictMode>
+//     <App />
+//   </React.StrictMode>
+// );
