@@ -3,14 +3,16 @@ import { Link } from 'react-router-dom';
 
 import { styled } from '@mui/material/styles';
 
-import Container from '@mui/material/Container';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-
-import history from '../libs/history';
+import {
+  Container,
+  Card,
+  CardHeader,
+  CardActions,
+  CardContent,
+  Button,
+  Typography,
+  Divider,
+} from '@mui/material';
 
 const Parallax = styled('div')`
   background-image: url("../assets/home-calendar.jpeg");
@@ -50,14 +52,19 @@ export default function Home() {
               maxWidth: '600px',
             }}
           >
+            <CardHeader title="Time-Note" />
+            <Divider />
             <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Time-Note
+              <Typography gutterBottom variant="h6" component="div">
+                開通功能
+              </Typography>
+              <Typography gutterBottom variant="p" component="div">
+                登入
               </Typography>
             </CardContent>
+            <Divider />
             <CardActions>
               <Button component={Link} size="small" to="/login">前往登入</Button>
-              {/* <Button onClick={() => history.push('/login')} size="small" to="/login">前往登入</Button> */}
             </CardActions>
           </Card>
         </Container>
