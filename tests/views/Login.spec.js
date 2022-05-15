@@ -18,7 +18,7 @@ describe('=== Login.jsx ===', () => {
         <Login />
       </Router>
     );
-    expect(getByText('Login')).toBeInTheDocument();
+    expect(getByText('登入頁')).toBeInTheDocument();
     expect(history.location.pathname).toBe('/login');
   });
 });
