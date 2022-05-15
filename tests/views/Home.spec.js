@@ -18,7 +18,7 @@ describe('=== Home.jsx ===', () => {
         <Home />
       </Router>
     );
-    expect(getByText('Home')).toBeInTheDocument();
+    expect(getByText('Time-Note')).toBeInTheDocument();
     expect(history.location.pathname).toBe('/');
   });
 });

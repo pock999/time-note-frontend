@@ -14,10 +14,5 @@ describe('=== App.jsx ===', () => {
       const history = createMemoryHistory({ initialEntries: ['/'] });
       expect(history.location.pathname).toBe('/');
     });
-
-    it('- router notes', () => {
-      const history = createMemoryHistory({ initialEntries: ['/notes'] });
-      expect(history.location.pathname).toBe('/notes');
-    });
   });
 });
