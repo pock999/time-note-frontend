@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { styled } from '@mui/material/styles';
@@ -16,6 +17,8 @@ import {
   Divider,
 } from '@mui/material';
 
+import { loginAction } from '../store/reducers/auth';
+
 const Wrapper = styled('div')`
   width: 100vw;
   height: 100vh;
@@ -26,7 +29,7 @@ const Wrapper = styled('div')`
   }
 `;
 
-const Left = styled('div')`
+const Right = styled('div')`
   background-image: url("../assets/home-calendar.jpeg");
   background-repeat: no-repeat;
   background-size: cover;
@@ -40,7 +43,7 @@ const Left = styled('div')`
   }
 `;
 
-const RightFormWrapper = styled('div')`
+const LeftFormWrapper = styled('div')`
   width: 40%;
   height: 100%;
   display: flex;
@@ -54,10 +57,29 @@ const RightFormWrapper = styled('div')`
 
 export default function Login() {
 
+  const dispatch = useDispatch();
+
+  const [state, setState] = React.useState({
+    email: '',
+    password: '',
+  });
+
+  const handleChange = (target, evt) => {
+    setState(pre => ({
+      ...pre,
+      ...target === 'email' ? { email: evt.target.value } : {},
+      ...target === 'password' ? { password: evt.target.value } : {},
+    }));
+  };
+
+  const loginSubmit = async () => {
+    dispatch(loginAction(state));
+  };
+
   return (
     <Wrapper>
-      <Left />
-      <RightFormWrapper>
+      
+      <LeftFormWrapper>
         <Card
           sx={{
             margin: '10px',
@@ -67,10 +89,25 @@ export default function Login() {
           <Divider />
           <CardContent>
             <FormControl sx={{ m: 1 }} fullWidth>
-              <TextField id="email-input" label="Email" variant="outlined" size="small" />
+              <TextField
+                id="email-input"
+                label="Email"
+                variant="outlined"
+                size="small"
+                value={state.email}
+                onChange={(e) => handleChange('email', e)}
+              />
             </FormControl>
             <FormControl sx={{ m: 1 }} fullWidth>
-              <TextField id="password-input" label="密碼" variant="outlined" type="password" size="small" />
+              <TextField
+                id="password-input"
+                label="密碼"
+                variant="outlined"
+                type="password"
+                size="small"
+                value={state.password}
+                onChange={(e) => handleChange('password', e)}
+              />
             </FormControl>
           </CardContent>
           <Divider />
@@ -80,10 +117,16 @@ export default function Login() {
               justifyContent: 'flex-end',
             }}
           >
-            <Button size="small">登入</Button>
+            <Button
+              size="small"
+              onClick={() => loginSubmit()}
+            >
+              登入
+            </Button>
           </CardActions>
         </Card>
-      </RightFormWrapper>
+      </LeftFormWrapper>
+      <Right />
     </Wrapper>
   );
 }

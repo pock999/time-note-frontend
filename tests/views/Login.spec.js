@@ -9,14 +9,19 @@ import Login from '../../src/views/Login';
 
 import { createMemoryHistory } from 'history';
 
+import { Provider } from 'react-redux';
+import store from '../../src/store';
+
 describe('=== Login.jsx ===', () => {
   it('- router login', () => {
     const history = createMemoryHistory({ initialEntries: ['/login'] });
 
     const { getByText } = render(
-      <Router history={history}>
-        <Login />
-      </Router>
+      <Provider store={store}>
+        <Router history={history}>
+          <Login />
+        </Router>
+      </Provider>
     );
     expect(getByText('登入頁')).toBeInTheDocument();
     expect(history.location.pathname).toBe('/login');
