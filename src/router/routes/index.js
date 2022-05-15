@@ -2,7 +2,7 @@ import Home from '../../views/Home';
 import Login from '../../views/Login';
 import Page404 from '../../views/Page404';
 
-import NoteList from '../../views/Notes/List';
+import NoteList from '../../views/Note/List';
 
 export default [
   {

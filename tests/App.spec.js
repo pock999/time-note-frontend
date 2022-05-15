@@ -15,11 +15,6 @@ describe('=== App.jsx ===', () => {
       expect(history.location.pathname).toBe('/');
     });
 
-    it('- router login', () => {
-      const history = createMemoryHistory({ initialEntries: ['/login'] });
-      expect(history.location.pathname).toBe('/login');
-    });
-
     it('- router notes', () => {
       const history = createMemoryHistory({ initialEntries: ['/notes'] });
       expect(history.location.pathname).toBe('/notes');
