@@ -2,6 +2,8 @@
 import axios from 'axios';
 import JsonHelper from '../utils/JsonHelper';
 
+import 'regenerator-runtime/runtime';
+
 const axiosIns = axios;
 
 axiosIns.defaults.baseURL = process.env.REACT_API_URL;
