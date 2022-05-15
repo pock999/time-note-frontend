@@ -12,9 +12,9 @@ module.exports = {
   output: {
     // 輸出目錄
     path: path.resolve(__dirname, 'dist'),
- 
+
     // 請參考 dist/index.html裡的script src是引用什麼檔案
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   module: {
     rules: [
@@ -24,11 +24,11 @@ module.exports = {
         loader: 'babel-loader',
         options: {
           presets: ['@babel/preset-react', '@babel/preset-env'],
-        }
+        },
       },
       {
         test: /\.css$/,
-        use: [ 'style-loader', 'css-loader' ],
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/i,
@@ -47,9 +47,9 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       // 解決 onClick 失效
-      name: "index.html",
+      name: 'index.html',
       inject: false,
-      template: 'public/index.html'
+      template: 'public/index.html',
     }),
     // 複製靜態檔案
     new CopyWebpackPlugin({
@@ -57,19 +57,22 @@ module.exports = {
         {
           from: 'public/assets/',
           to: 'assets',
-        }
-      ]
+        },
+      ],
     }),
   ],
   mode: 'development',
   devServer: {
-    static : {
-      directory : path.join(__dirname, "dist/")
+    static: {
+      directory: path.join(__dirname, 'dist/'),
     },
     liveReload: true,
     port: 9000,
-    devMiddleware:{
-      publicPath: "https://localhost:9000/",
+    devMiddleware: {
+      publicPath: 'https://localhost:9000/',
     },
+
+    // for browserouter
+    historyApiFallback: true,
   },
 };
