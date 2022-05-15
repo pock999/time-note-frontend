@@ -6,16 +6,23 @@ import React from 'react';
 import { screen, render, cleanup, fireEvent } from '@testing-library/react';
 import App from '../src/App';
 
+import { createMemoryHistory } from 'history';
+
 describe('=== App.jsx ===', () => {
-  beforeAll(() => {
-    render(<App />)
+  describe('# 渲染 App.jsx', () => {
+    it('- router home', () => {
+      const history = createMemoryHistory({ initialEntries: ['/'] });
+      expect(history.location.pathname).toBe('/');
+    });
+
+    it('- router login', () => {
+      const history = createMemoryHistory({ initialEntries: ['/login'] });
+      expect(history.location.pathname).toBe('/login');
+    });
+
+    it('- router notes', () => {
+      const history = createMemoryHistory({ initialEntries: ['/notes'] });
+      expect(history.location.pathname).toBe('/notes');
+    });
   });
-
-  it('渲染 App.jsx', () => {
-    const message = 'App';
-
-    expect(screen.getByText(message)).toBeInTheDocument()
-  })
-
-  afterAll(cleanup);
 });
