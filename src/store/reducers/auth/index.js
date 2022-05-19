@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import ApiService from '../../../services/ApiService';
 
+import JsonHelper from '../../../utils/JsonHelper';
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -40,15 +42,31 @@ export const {
   clearAuth,
 } = authSlice.actions;
 
-export const loginAction = createAsyncThunk('auth/login', async (payload) => {
-  const response = await ApiService.post({
-    url: `auth/login`,
-    data: payload,
-  });
+export const loginAction = createAsyncThunk(
+  'auth/login',
+  async (payload, thunkApi) => {
+    const { data } = await ApiService.post({
+      url: `auth/login`,
+      data: payload,
+    });
 
-  console.log('response => ', response);
+    thunkApi.dispatch(setUser(data.data.user));
+    thunkApi.dispatch(setAuthorization(data.data.token));
+    thunkApi.dispatch(setRoles(JsonHelper.JsonSerialize(['IsUser'])));
+    thunkApi.dispatch(setCurrentRole('IsUser'));
+    localStorage.setItem('token', data.data.token);
+    localStorage.setItem('user', JsonHelper.JsonSerialize(data.data.user));
 
-  return response.data;
-});
+    return data;
+  }
+);
+
+export const logoutAction = createAsyncThunk(
+  'auth/login',
+  async (payload, thunkApi) => {
+    thunkApi.dispatch(clearAuth());
+    localStorage.clear();
+  }
+);
 
 export default authSlice.reducer;
