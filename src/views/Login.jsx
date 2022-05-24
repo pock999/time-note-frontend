@@ -1,6 +1,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { unwrapResult } from '@reduxjs/toolkit'
 
 import { styled } from '@mui/material/styles';
 
@@ -57,6 +59,7 @@ const RightFormWrapper = styled('div')`
 
 export default function Login() {
 
+  const history = useHistory();
   const dispatch = useDispatch();
 
   const [state, setState] = React.useState({
@@ -73,7 +76,13 @@ export default function Login() {
   };
 
   const loginSubmit = async () => {
-    dispatch(loginAction(state));
+    const resultAction = await dispatch(loginAction(state));
+    try {
+      const data = unwrapResult(resultAction);
+      history.push('/notes');
+    } catch(e) {
+      console.log('error => ', e);
+    }
   };
 
   return (

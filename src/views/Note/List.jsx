@@ -15,7 +15,7 @@ export default function NoteList() {
 
   React.useEffect(() => {
     // 取得Note List
-    dispatch(fetchNoteList({ pageMode }));
+    // dispatch(fetchNoteList({ pageMode }));
   }, []);
 
   return (
