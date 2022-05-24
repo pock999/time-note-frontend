@@ -29,8 +29,8 @@ const Wrapper = styled('div')`
   }
 `;
 
-const Right = styled('div')`
-  background-image: url("../assets/home-calendar.jpeg");
+const Left = styled('div')`
+  background-image: url("../assets/home-calendar-side.png");
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 0.6;
@@ -43,7 +43,7 @@ const Right = styled('div')`
   }
 `;
 
-const LeftFormWrapper = styled('div')`
+const RightFormWrapper = styled('div')`
   width: 40%;
   height: 100%;
   display: flex;
@@ -78,8 +78,8 @@ export default function Login() {
 
   return (
     <Wrapper>
-      
-      <LeftFormWrapper>
+      <Left />
+      <RightFormWrapper>
         <Card
           sx={{
             margin: '10px',
@@ -125,8 +125,7 @@ export default function Login() {
             </Button>
           </CardActions>
         </Card>
-      </LeftFormWrapper>
-      <Right />
+      </RightFormWrapper>
     </Wrapper>
   );
 }
