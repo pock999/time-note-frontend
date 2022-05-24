@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect, Router } from 'react-router-dom';
+import { Switch, Route, Redirect, Router, useLocation } from 'react-router-dom';
 
 import _ from 'lodash';
 
@@ -7,6 +7,7 @@ import routes from './routes';
 import history from '../libs/history';
 
 function ProtectedRoutes(props) {
+  const location = useLocation();
   const { routes } = props;
 
   // get localStorage
@@ -17,7 +18,7 @@ function ProtectedRoutes(props) {
   React.useEffect(() => {
     // 監聽 store裡的auth
     // 當 store裡的auth拿不到，且有localStorage又有token，才敲token-login
-  }, []);
+  }, [location.pathname]);
 
   // 1. roles: null => 大家都可以
   // 2. roles.length === 0 => only guest

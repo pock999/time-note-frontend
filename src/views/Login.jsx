@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { unwrapResult } from '@reduxjs/toolkit'
 
 import { styled } from '@mui/material/styles';
@@ -78,7 +77,7 @@ export default function Login() {
   const loginSubmit = async () => {
     const resultAction = await dispatch(loginAction(state));
     try {
-      const data = unwrapResult(resultAction);
+      unwrapResult(resultAction);
       history.push('/notes');
     } catch(e) {
       console.log('error => ', e);
