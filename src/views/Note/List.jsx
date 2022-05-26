@@ -13,8 +13,7 @@ import { fetchNoteList } from '../../store/reducers/note';
 export default function NoteList() {
 
   const dispatch = useDispatch();
-
-  // TODO: URL query
+  const location = useLocation();
   const query = useQuery();
 
   React.useEffect(() => {
@@ -22,7 +21,13 @@ export default function NoteList() {
 
     try {
       if(pageMode === 'list') {
-        
+        const page = query.get('page');
+        const pageSize = query.get('pageSize');
+
+        dispatch(fetchNoteList({
+          searchStr: location.search.replace('?', ''),
+        }));
+
       } else if(pageMode === 'calendar') {
         
       } else {

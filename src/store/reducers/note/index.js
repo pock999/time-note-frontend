@@ -25,12 +25,12 @@ export const { setList, setDetail } = noteSlice.actions;
 export const fetchNoteList = createAsyncThunk(
   'note/fetchList',
   async (payload, thunkApi) => {
-    const { pageMode } = payload;
+    const { searchStr = null } = payload;
 
     // TODO: url query string and uri encode
 
     const { data } = await ApiService.get({
-      url: `note/list`,
+      url: `note/list${searchStr ? `?${searchStr}` : ''}`,
     });
   }
 );
