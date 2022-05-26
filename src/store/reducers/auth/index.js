@@ -1,8 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import Swal from 'sweetalert2';
 
 import ApiService from '../../../services/ApiService';
 
 import JsonHelper from '../../../utils/JsonHelper';
+
+import history from '../../../libs/history';
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -69,6 +72,20 @@ export const logoutAction = createAsyncThunk(
   async (payload, thunkApi) => {
     thunkApi.dispatch(clearAuth());
     localStorage.clear();
+    ApiService.clearToken();
+    thunkApi.dispatch(clearAuth());
+
+    Swal.fire({
+      icon: 'success',
+      title: '已登出',
+      toast: true,
+      position: 'top',
+      showConfirmButton: false,
+      timer: 1000,
+      timerProgressBar: true,
+    });
+
+    history.push('/login');
   }
 );
 

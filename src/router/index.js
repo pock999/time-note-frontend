@@ -75,8 +75,9 @@ function ProtectedRoutes(props) {
         icon: 'error',
         title: e.response.message,
         toast: true,
-        position: 'center',
-        timer: 3000,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 2000,
         timerProgressBar: true,
       });
       return null;

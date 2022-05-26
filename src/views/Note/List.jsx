@@ -9,6 +9,7 @@ import Container from '@mui/material/Container';
 
 import { fetchNoteList } from '../../store/reducers/note';
 
+import { BaseLayout } from '../../layouts';
 
 export default function NoteList() {
 
@@ -47,8 +48,10 @@ export default function NoteList() {
   }, []);
 
   return (
-    <>
-      <Container>Note List</Container>
-    </>
+    <BaseLayout>
+      <Container>
+        Note List
+      </Container>
+    </BaseLayout>
   );
 }
