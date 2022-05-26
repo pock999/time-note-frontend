@@ -52,10 +52,13 @@ export const loginAction = createAsyncThunk(
 
     thunkApi.dispatch(setUser(data.data.user));
     thunkApi.dispatch(setAuthorization(data.data.token));
-    thunkApi.dispatch(setRoles(JsonHelper.JsonSerialize(['IsUser'])));
+    thunkApi.dispatch(setRoles(['IsUser']));
     thunkApi.dispatch(setCurrentRole('IsUser'));
     localStorage.setItem('token', data.data.token);
+    localStorage.setItem('roles', JsonHelper.JsonSerialize(['IsUser']));
+    localStorage.setItem('currentRole', 'IsUser');
     localStorage.setItem('user', JsonHelper.JsonSerialize(data.data.user));
+    ApiService.setToken(data.Authorization);
 
     return data;
   }
