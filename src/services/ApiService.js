@@ -1,4 +1,8 @@
 import axios from '../libs/axios';
+import Swal from 'sweetalert2';
+
+import JsonHelper from '../utils/JsonHelper';
+import { sleep } from '../utils/commons';
 
 const ApiService = {
   setToken(token) {
@@ -31,6 +35,9 @@ const ApiService = {
 
         let exit = false;
         while (!exit) {
+          // 每次請求間隔3秒
+          await sleep(3000);
+
           try {
             const result = await axios({
               url: queryString ? `${url}?${queryString}` : url,
@@ -45,9 +52,6 @@ const ApiService = {
           } catch (err) {
             console.log(err);
           }
-
-          // 每次請求間隔3秒
-          await sleep(3000);
         }
       }
 
