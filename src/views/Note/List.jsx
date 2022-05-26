@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router';
 import { useQuery } from '../../hooks';
 
 import Swal from 'sweetalert2';
@@ -25,7 +26,7 @@ export default function NoteList() {
       } else if(pageMode === 'calendar') {
         
       } else {
-        throw new Error('請選擇正確分頁模式');
+        // pageMode: list, page: 1, pageSize: 10
       }
     } catch(e) {
       Swal.fire(

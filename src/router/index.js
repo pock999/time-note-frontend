@@ -1,6 +1,15 @@
 import React from 'react';
-import { Switch, Route, Redirect, Router, useLocation } from 'react-router-dom';
+import {
+  Switch,
+  Route,
+  Redirect,
+  Router,
+  useLocation,
+  useHistory,
+} from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+
+import { useQuery } from '../hooks';
 
 import Swal from 'sweetalert2';
 import _ from 'lodash';
@@ -31,6 +40,8 @@ const getCurrentRole = () => localStorage.getItem('currentRole');
 function ProtectedRoutes(props) {
   const dispatch = useDispatch();
   const location = useLocation();
+  const history = useHistory();
+  const query = useQuery();
   const { routes } = props;
 
   const user = useSelector((state) => state.auth.user);
@@ -77,6 +88,7 @@ function ProtectedRoutes(props) {
 
   // TODO: token-login
   React.useEffect(() => {
+    window.scrollTo(0, 0);
     // 監聽 store裡的auth
     // 當 store裡的auth拿不到，且有localStorage又有token，才敲token-login
     (async () => {
@@ -99,10 +111,14 @@ function ProtectedRoutes(props) {
             key={route.path}
             path={route.path}
             exact={route.exact || false}
-            render={(props) =>
-              route.roles === null ||
-              (route.roles.length === 0 && !getToken()) ||
-              (route.roles.length > 0 && !!getToken()) ? (
+            render={(props) => {
+              if (_.has(route, 'defaultQuery') && location.search === '') {
+                history.push(`${route.path}${route.defaultQuery}`);
+              }
+
+              return route.roles === null ||
+                (route.roles.length === 0 && !getToken()) ||
+                (route.roles.length > 0 && !!getToken()) ? (
                 <route.component {...props} />
               ) : route.roles.length === 0 && getToken() ? (
                 <Redirect {...props} to="/" />
@@ -110,8 +126,8 @@ function ProtectedRoutes(props) {
                 <Redirect {...props} to="/login" />
               ) : (
                 <Redirect {...props} to="/404" />
-              )
-            }
+              );
+            }}
           />
         ))}
     </Switch>
