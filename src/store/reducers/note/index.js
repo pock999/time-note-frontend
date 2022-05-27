@@ -8,11 +8,15 @@ export const noteSlice = createSlice({
   name: 'note',
   initialState: {
     list: null,
+    pagination: null,
     detail: null,
   },
   reducers: {
     setList: (state, { type, payload }) => {
       state.list = payload;
+    },
+    setPagination: (state, { type, payload }) => {
+      state.pagination = payload;
     },
     setDetail: (state, { type, payload }) => {
       state.detail = payload;
@@ -20,7 +24,7 @@ export const noteSlice = createSlice({
   },
 });
 
-export const { setList, setDetail } = noteSlice.actions;
+export const { setList, setDetail, setPagination } = noteSlice.actions;
 
 export const fetchNoteList = createAsyncThunk(
   'note/fetchList',
@@ -32,6 +36,9 @@ export const fetchNoteList = createAsyncThunk(
     const { data } = await ApiService.get({
       url: `note/list${searchStr ? `?${searchStr}` : ''}`,
     });
+
+    thunkApi.dispatch(setList(data.data));
+    thunkApi.dispatch(setPagination(data.paging));
   }
 );
 

@@ -1,15 +1,18 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { useLocation } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { useQuery } from '../../hooks';
 
 import Swal from 'sweetalert2';
 
-import Container from '@mui/material/Container';
+import {
+  Container,
+} from '@mui/material';
 
 import { fetchNoteList } from '../../store/reducers/note';
 
 import { BaseLayout } from '../../layouts';
+import { DataTable } from '../../components';
 
 export default function NoteList() {
 
@@ -17,13 +20,17 @@ export default function NoteList() {
   const location = useLocation();
   const query = useQuery();
 
-  React.useEffect(() => {
-    const pageMode = query.get('pageMode');
+  const noteList = useSelector(state => state.note.list);
+  const notePagination = useSelector(state => state.note.pagination);
 
+  const pageMode = query.get('pageMode');
+  const page = Number.parseInt(query.get('page'));
+  const pageSize = Number.parseInt(query.get('pageSize'));
+
+  React.useEffect(() => {
     try {
       if(pageMode === 'list') {
-        const page = query.get('page');
-        const pageSize = query.get('pageSize');
+        
 
         dispatch(fetchNoteList({
           searchStr: location.search.replace('?', ''),
@@ -41,16 +48,30 @@ export default function NoteList() {
         'error'
       );
     }
-    
-
-    // 取得Note List
-    // dispatch(fetchNoteList({ pageMode }));
   }, []);
+
+  const columns = [
+    { field: 'id', headerName: 'ID', width: 70 },
+  ];
 
   return (
     <BaseLayout>
       <Container>
         Note List
+        {
+          noteList && notePagination
+            &&
+          <DataTable
+            columns={columns}
+            rows={noteList}
+            page={page - 1}
+            totalCount={notePagination.totalCount}
+            pageSize={pageSize}
+            handleChangePage={(evt) => { console.log('handleChangePage evt => ', evt); }}
+            handleChangePageSize={(evt) => { console.log('handleChangePageSize evt => ', evt); }}
+          />
+        }
+        
       </Container>
     </BaseLayout>
   );
