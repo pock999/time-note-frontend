@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 
 import {
   Container,
+  Button,
 } from '@mui/material';
 
 import { fetchNoteList } from '../../store/reducers/note';
@@ -85,7 +86,19 @@ export default function NoteList() {
     { id: 'content', label: '內容', align: 'center' },
     { id: 'startAt', label: '開始時間', align: 'center' },
     { id: 'endAt', label: '結束時間', align: 'center' },
+    { id: 'actions', label: '操作', align: 'center' },
   ];
+
+  const ActionsRender = (props) => {
+    const {
+      rowId,
+      editPath = '',
+      text,
+    } = props;
+    return (
+      <Button variant="contained">{text}{rowId}</Button>
+    )
+  };
 
   return (
     <BaseLayout>
@@ -102,6 +115,7 @@ export default function NoteList() {
             pageSize={pageState.pageSize}
             handleChangePage={handleChangePage}
             handleChangePageSize={handleChangePageSize}
+            actionsRender={ActionsRender}
           />
         }
         

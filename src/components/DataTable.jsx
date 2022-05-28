@@ -84,6 +84,7 @@ export default function DataTable(props) {
     totalCount,
     handleChangePage,
     handleChangePageSize,
+    actionsRender: ActionsRender,
   } = props;
 
   const emptyRows =
@@ -110,11 +111,16 @@ export default function DataTable(props) {
           {rows.map((row) => (
             <TableRow key={row.id}>
               {
-                columns.map(col => (
+                columns.map(col => col.id !== 'actions' ? (
                   <TableCell component="th" scope="row" align={col.align} key={`${row.id} - ${col.id}`}>
                     {row[col.id]}
                   </TableCell>
-                ))
+                ) : (
+                  <TableCell component="th" scope="row" align={col.align} key={`${row.id} - ${col.id}`}>
+                    <ActionsRender rowId={row.id} text="編輯"/>
+                  </TableCell>
+                )
+                )
               }
             </TableRow>
           ))}
