@@ -1,11 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import Swal from 'sweetalert2';
 
-import ApiService from '../../../services/ApiService';
+import ApiServiceClass from '../../../services/ApiService';
 
 import JsonHelper from '../../../utils/JsonHelper';
 
 import history from '../../../libs/history';
+
+const ApiService = new ApiServiceClass();
 
 export const authSlice = createSlice({
   name: 'auth',

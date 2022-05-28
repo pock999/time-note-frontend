@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-import ApiService from '../../../services/ApiService';
+import ApiServiceClass from '../../../services/ApiService';
 
 import JsonHelper from '../../../utils/JsonHelper';
+
+const ApiService = new ApiServiceClass();
 
 export const noteSlice = createSlice({
   name: 'note',

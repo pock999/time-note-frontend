@@ -13,12 +13,12 @@ axiosIns.defaults.headers.common.Authorization = `Bearer ${getAccessToken()}`;
 
 // Or you can use an interceptor if adding tokens etc.
 // ======================================
-axiosIns.interceptors.request.use(
-  async (request) =>
-    // const token = await updateToken();
-    // config.headers.common.Authorization = `Bearer ${token}`;
-    request
-);
+axiosIns.interceptors.request.use(async (request) => {
+  // const token = await updateToken();
+  // config.headers.common.Authorization = `Bearer ${token}`;
+  request.headers.Authorization = localStorage.getItem('token');
+  return request;
+});
 
 axiosIns.interceptors.response.use(
   async (response) => response,

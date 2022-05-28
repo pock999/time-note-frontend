@@ -4,16 +4,23 @@ import Swal from 'sweetalert2';
 import JsonHelper from '../utils/JsonHelper';
 import { sleep } from '../utils/commons';
 
-const ApiService = {
+class ApiServiceClass {
+  constructor() {
+    if (ApiServiceClass._instance) {
+      return ApiServiceClass._instance;
+    }
+    this.axios = axios;
+    ApiServiceClass._instance = this;
+  }
   setToken(token) {
-    axios.defaults.headers.common.Authorization = token;
-  },
+    this.axios.defaults.headers.common.Authorization = token;
+  }
   clearToken() {
-    axios.defaults.headers.common.Authorization = '';
-  },
+    this.axios.defaults.headers.common.Authorization = '';
+  }
   async get({ url, data = null, queryString = null, headers }) {
     try {
-      const res = await axios({
+      const res = await this.axios({
         url: queryString ? `${url}?${queryString}` : url,
         method: 'get',
         ...(data ? { data } : {}),
@@ -39,7 +46,7 @@ const ApiService = {
           await sleep(3000);
 
           try {
-            const result = await axios({
+            const result = await this.axios({
               url: queryString ? `${url}?${queryString}` : url,
               method: 'get',
               ...(data ? { data } : {}),
@@ -57,7 +64,7 @@ const ApiService = {
 
       throw e;
     }
-  },
+  }
 
   async post({ url, data = null }) {
     try {
@@ -69,7 +76,7 @@ const ApiService = {
     } catch (e) {
       throw e;
     }
-  },
+  }
 
   async put({ url, data = null, queryString = null }) {
     try {
@@ -81,7 +88,7 @@ const ApiService = {
     } catch (e) {
       throw e;
     }
-  },
+  }
 
   async patch({ url, data = null, queryString = null }) {
     try {
@@ -93,7 +100,7 @@ const ApiService = {
     } catch (e) {
       throw e;
     }
-  },
+  }
 
   async delete({ url, data = null, queryString = null }) {
     try {
@@ -105,7 +112,7 @@ const ApiService = {
     } catch (e) {
       throw e;
     }
-  },
+  }
 
   async download({ url, data = null, queryString = null }) {
     try {
@@ -118,7 +125,7 @@ const ApiService = {
     } catch (e) {
       throw e;
     }
-  },
+  }
 
   async upload({ url, formData = null }) {
     try {
@@ -131,7 +138,7 @@ const ApiService = {
     } catch (e) {
       throw e;
     }
-  },
-};
+  }
+}
 
-export default ApiService;
+export default ApiServiceClass;

@@ -5,6 +5,7 @@ import {
   Box,
   Container,
   Table,
+  TableHead,
   TableBody,
   TableCell,
   TableContainer,
@@ -45,28 +46,28 @@ const TablePaginationActions = (props) => {
       <IconButton
         onClick={handleFirstPageButtonClick}
         disabled={page === 0}
-        aria-label="first page"
+        aria-label="第一頁"
       >
         {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
       </IconButton>
       <IconButton
         onClick={handleBackButtonClick}
         disabled={page === 0}
-        aria-label="previous page"
+        aria-label="上一頁"
       >
         {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
       </IconButton>
       <IconButton
         onClick={handleNextButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
+        aria-label="下一頁"
       >
         {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
       </IconButton>
       <IconButton
         onClick={handleLastPageButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
+        aria-label="最後一頁"
       >
         {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
       </IconButton>
@@ -91,18 +92,30 @@ export default function DataTable(props) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
+        <TableHead>
+          <TableRow>
+            {
+              columns.map(column => (
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                >
+                  {column.label}
+                </TableCell>
+              ))
+            }
+          </TableRow>
+        </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
-                {row.calories}
-              </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
-                {row.fat}
-              </TableCell>
+              {
+                columns.map(col => (
+                  <TableCell component="th" scope="row" align={col.align} key={`${row.id} - ${col.id}`}>
+                    {row[col.id]}
+                  </TableCell>
+                ))
+              }
             </TableRow>
           ))}
 
@@ -115,19 +128,19 @@ export default function DataTable(props) {
         <TableFooter>
           <TableRow>
             <TablePagination
-              pageSizeOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-              colSpan={3}
+              colSpan={12}
+              rowsPerPageOptions={[5, 10, 20]}
               count={totalCount}
               rowsPerPage={pageSize}
               page={page}
               SelectProps={{
                 inputProps: {
-                  'aria-label': 'rows per page',
+                  'aria-label': '每頁筆數',
                 },
                 native: true,
               }}
               onPageChange={handleChangePage}
-              onpageSizeChange={handleChangePageSize}
+              onRowsPerPageChange={handleChangePageSize}
               ActionsComponent={TablePaginationActions}
             />
           </TableRow>

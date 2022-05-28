@@ -24,8 +24,10 @@ import {
   setCurrentRole,
 } from '../store/reducers/auth';
 
-import ApiService from '../services/ApiService';
+import ApiServiceClass from '../services/ApiService';
 import JsonHelper from '../utils/JsonHelper';
+
+const ApiService = new ApiServiceClass();
 
 const getToken = () => localStorage.getItem('token');
 const getRoles = () => {

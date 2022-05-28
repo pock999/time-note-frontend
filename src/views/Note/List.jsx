@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { useQuery } from '../../hooks';
 
 import Swal from 'sweetalert2';
@@ -16,6 +16,7 @@ import { DataTable } from '../../components';
 
 export default function NoteList() {
 
+  const history = useHistory();
   const dispatch = useDispatch();
   const location = useLocation();
   const query = useQuery();
@@ -63,16 +64,32 @@ export default function NoteList() {
     }
   }, [location.search]);
 
-  const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
-  ];
+  const handleChangePage = (evt, newPage) => {
+    history.push(`${location.pathname}${location.search.replace(/page=[0-9]*/, `page=${newPage + 1}`)}`);
+  };
 
-  console.log('noteList => ', noteList);
-  console.log('notePagination => ', notePagination);
+  const handleChangePageSize = (evt) => {
+    const fullPath = `${location.pathname}${location.search.replace(/pageSize=[0-9]*/, `pageSize=${evt.target.value}`)}`;
+    if (evt.target.value > pageState.pageSize) {
+      history.push(fullPath.replace(/page=[0-9]*/, 'page=1'));
+    } else {
+      history.push(fullPath);
+    }
+    
+  };
+
+  const columns = [
+    { id: 'id', label: 'ID', align: 'center' },
+    { id: 'type', label: '類型', align: 'center' },
+    { id: 'title', label: '標題', align: 'center' },
+    { id: 'content', label: '內容', align: 'center' },
+    { id: 'startAt', label: '開始時間', align: 'center' },
+    { id: 'endAt', label: '結束時間', align: 'center' },
+  ];
 
   return (
     <BaseLayout>
-      <Container>
+      <Container sx={{ paddingTop: '2em', paddingBottom: '2em', marginBottom: '2em',}}>
         Note List
         {
           noteList && notePagination
@@ -83,8 +100,8 @@ export default function NoteList() {
             page={pageState.page - 1}
             totalCount={notePagination.totalCount}
             pageSize={pageState.pageSize}
-            handleChangePage={(evt) => { console.log('handleChangePage evt => ', evt); }}
-            handleChangePageSize={(evt) => { console.log('handleChangePageSize evt => ', evt); }}
+            handleChangePage={handleChangePage}
+            handleChangePageSize={handleChangePageSize}
           />
         }
         
