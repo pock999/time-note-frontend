@@ -61,7 +61,7 @@ export const loginAction = createAsyncThunk(
     localStorage.setItem('roles', JsonHelper.JsonSerialize(['IsUser']));
     localStorage.setItem('currentRole', 'IsUser');
     localStorage.setItem('user', JsonHelper.JsonSerialize(data.data.user));
-    ApiService.setToken(data.Authorization);
+    ApiService.setToken(data.data.token);
 
     return data;
   }

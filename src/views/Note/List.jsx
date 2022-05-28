@@ -23,11 +23,24 @@ export default function NoteList() {
   const noteList = useSelector(state => state.note.list);
   const notePagination = useSelector(state => state.note.pagination);
 
-  const pageMode = query.get('pageMode');
-  const page = Number.parseInt(query.get('page'));
-  const pageSize = Number.parseInt(query.get('pageSize'));
+  const [pageState, setPageState] = React.useState({
+    pageMode: null,
+    page: null,
+    pageSize: null,
+  });
 
   React.useEffect(() => {
+    const pageMode = query.get('pageMode');
+    const page = Number.parseInt(query.get('page'));
+    const pageSize = Number.parseInt(query.get('pageSize'));
+
+    setPageState(pre => ({
+      ...pre,
+      pageMode,
+      page,
+      pageSize,
+    }));
+    
     try {
       if(pageMode === 'list') {
         
@@ -48,11 +61,14 @@ export default function NoteList() {
         'error'
       );
     }
-  }, []);
+  }, [location.search]);
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
   ];
+
+  console.log('noteList => ', noteList);
+  console.log('notePagination => ', notePagination);
 
   return (
     <BaseLayout>
@@ -64,9 +80,9 @@ export default function NoteList() {
           <DataTable
             columns={columns}
             rows={noteList}
-            page={page - 1}
+            page={pageState.page - 1}
             totalCount={notePagination.totalCount}
-            pageSize={pageSize}
+            pageSize={pageState.pageSize}
             handleChangePage={(evt) => { console.log('handleChangePage evt => ', evt); }}
             handleChangePageSize={(evt) => { console.log('handleChangePageSize evt => ', evt); }}
           />
