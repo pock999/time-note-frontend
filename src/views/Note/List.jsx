@@ -107,16 +107,25 @@ export default function NoteList() {
         {
           noteList && notePagination
             &&
-          <DataTable
-            columns={columns}
-            rows={noteList}
-            page={pageState.page - 1}
-            totalCount={notePagination.totalCount}
-            pageSize={pageState.pageSize}
-            handleChangePage={handleChangePage}
-            handleChangePageSize={handleChangePageSize}
-            actionsRender={ActionsRender}
-          />
+          (
+            pageState.pageMode === 'calendar'
+            ? (
+              <>calendar</>
+            )
+            : (
+              <DataTable
+                columns={columns}
+                rows={noteList}
+                page={pageState.page - 1}
+                totalCount={notePagination.totalCount}
+                pageSize={pageState.pageSize}
+                handleChangePage={handleChangePage}
+                handleChangePageSize={handleChangePageSize}
+                actionsRender={ActionsRender}
+              />
+            )
+          )
+          
         }
         
       </Container>

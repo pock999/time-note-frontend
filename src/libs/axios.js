@@ -28,7 +28,7 @@ axiosIns.interceptors.response.use(
     console.log('axios error => ', error);
 
     // 強制登出
-    if (_.get(JsonHelper.JsonReParse(error), 'status') === 403) {
+    if (_.get(JsonHelper.JsonReParse(error), 'status') === 401) {
       localStorage.clear();
       axiosIns.defaults.headers.common.Authorization = '';
     }
