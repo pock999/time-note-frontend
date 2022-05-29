@@ -128,6 +128,8 @@ export default function Login() {
             <Button
               size="small"
               onClick={() => loginSubmit()}
+              color="thirdColor"
+              variant="contained"
             >
               登入
             </Button>

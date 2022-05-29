@@ -61,10 +61,21 @@ export default function Home() {
               <Typography gutterBottom variant="p" component="div">
                 登入
               </Typography>
+              <Typography gutterBottom variant="p" component="div">
+                列表
+              </Typography>
             </CardContent>
             <Divider />
             <CardActions>
-              <Button component={Link} size="small" to="/login">前往登入</Button>
+              <Button
+                component={Link}
+                size="small"
+                to="/login"
+                variant="contained"
+                color="thirdColor"
+              >
+                前往登入
+              </Button>
             </CardActions>
           </Card>
         </Container>

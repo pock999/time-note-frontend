@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import {
   Container,
   Button,
+  Typography,
 } from '@mui/material';
 
 import { fetchNoteList } from '../../store/reducers/note';
@@ -142,7 +143,7 @@ export default function NoteList() {
   return (
     <BaseLayout>
       <Container sx={{ paddingTop: '2em', paddingBottom: '2em', marginBottom: '2em',}}>
-        Note List
+        <Typography variant="h5" sx={{ marginBottom: '1em' }}>行事曆</Typography>
         {
           noteList
             &&

@@ -100,7 +100,7 @@ export default function BaseLayout(props) {
             target="_blank"
             href="https://github.com/pock999"
             style={{
-              color: 'white',
+              color: '#000',
               fontWeight: 'bold',
             }}
           >
