@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 import { useQuery } from '../../hooks';
 
+import dayjs from 'dayjs';
+
 import Swal from 'sweetalert2';
 
 import {
@@ -14,6 +16,11 @@ import { fetchNoteList } from '../../store/reducers/note';
 
 import { BaseLayout } from '../../layouts';
 import { DataTable } from '../../components';
+
+// 參考 https://fullcalendar.io/
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import twLocale from '@fullcalendar/core/locales/zh-tw';
 
 export default function NoteList() {
 
@@ -29,32 +36,64 @@ export default function NoteList() {
     pageMode: null,
     page: null,
     pageSize: null,
+    startAt: null,
+    endAt: null,
   });
 
   React.useEffect(() => {
     const pageMode = query.get('pageMode');
     const page = Number.parseInt(query.get('page'));
     const pageSize = Number.parseInt(query.get('pageSize'));
+    const startAt = query.get('startAt');
+    const endAt = query.get('endAt');
 
     setPageState(pre => ({
       ...pre,
       pageMode,
       page,
       pageSize,
+      startAt,
+      endAt,
     }));
     
     try {
       if(pageMode === 'list') {
-        
-
-        dispatch(fetchNoteList({
-          searchStr: location.search.replace('?', ''),
-        }));
-
+        if(!page || !pageSize) {
+          history.push(`${location.pathname}?pageMode=list&page=1&pageSize=10`);
+        } else {
+          dispatch(fetchNoteList({
+            searchStr: location.search.replace('?', ''),
+          }));
+        }
       } else if(pageMode === 'calendar') {
-        
+        if(!startAt || !endAt) {
+          const now = dayjs();
+          const startAt = now
+          .month(now.month())
+          .date(1)
+          .hour(0)
+          .minute(0)
+          .second(0)
+          .format('YYYY-MM-DD HH:mm:ss');
+
+          const endAt = now
+          .month(now.month() + 1)
+          .date(1)
+          .hour(0)
+          .minute(0)
+          .second(0)
+          .subtract(1, 'second')
+          .format('YYYY-MM-DD HH:mm:ss');
+
+          history.push(`${location.pathname}?pageMode=calendar&startAt=${encodeURIComponent(startAt)}&endAt=${encodeURIComponent(endAt)}`);
+        } else {
+          dispatch(fetchNoteList({
+            searchStr: location.search.replace('?', ''),
+          }));
+        }
       } else {
         // pageMode: list, page: 1, pageSize: 10
+        history.push(`${location.pathname}?pageMode=list&page=1&pageSize=10`);
       }
     } catch(e) {
       Swal.fire(
@@ -105,14 +144,27 @@ export default function NoteList() {
       <Container sx={{ paddingTop: '2em', paddingBottom: '2em', marginBottom: '2em',}}>
         Note List
         {
-          noteList && notePagination
+          noteList
             &&
-          (
             pageState.pageMode === 'calendar'
             ? (
-              <>calendar</>
+              <>
+                <FullCalendar
+                  plugins={[ dayGridPlugin ]}
+                  initialView="dayGridMonth"
+                  headerToolbar={{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth'
+                  }}
+                  locale={twLocale}
+                />
+              </>
             )
-            : (
+            :
+            notePagination
+              &&
+            (
               <DataTable
                 columns={columns}
                 rows={noteList}
@@ -124,10 +176,7 @@ export default function NoteList() {
                 actionsRender={ActionsRender}
               />
             )
-          )
-          
         }
-        
       </Container>
     </BaseLayout>
   );

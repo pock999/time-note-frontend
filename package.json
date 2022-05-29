@@ -19,6 +19,9 @@
     "@fortawesome/free-brands-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
+    "@fullcalendar/core": "^5.11.0",
+    "@fullcalendar/daygrid": "^5.11.0",
+    "@fullcalendar/react": "^5.11.1",
     "@mui/icons-material": "^5.8.0",
     "@mui/material": "^5.7.0",
     "@mui/styles": "^5.7.0",
@@ -26,6 +29,7 @@
     "@reduxjs/toolkit": "^1.8.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
+    "add": "^2.0.6",
     "axios": "^0.27.2",
     "css-loader": "^6.7.1",
     "dayjs": "^1.11.2",
@@ -45,7 +49,8 @@
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.5",
     "sweetalert2": "^11.4.16",
-    "url-loader": "^4.1.1"
+    "url-loader": "^4.1.1",
+    "yarn": "^1.22.18"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",

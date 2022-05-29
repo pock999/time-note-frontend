@@ -33,7 +33,9 @@ export const fetchNoteList = createAsyncThunk(
   async (payload, thunkApi) => {
     const { searchStr = null } = payload;
 
-    // TODO: url query string and uri encode
+    // 先清掉
+    thunkApi.dispatch(setList(null));
+    thunkApi.dispatch(setPagination(null));
 
     const { data } = await ApiService.get({
       url: `note/list${searchStr ? `?${searchStr}` : ''}`,
