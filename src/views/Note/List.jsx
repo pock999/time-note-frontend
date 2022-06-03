@@ -1,5 +1,7 @@
+/* eslint-disable radix */
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { unwrapResult } from '@reduxjs/toolkit';
 import { useLocation, useHistory } from 'react-router-dom';
 
 import dayjs from 'dayjs';
@@ -20,7 +22,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import twLocale from '@fullcalendar/core/locales/zh-tw';
 import { DataTable, FormModal } from '../../components';
 import { BaseLayout } from '../../layouts';
-import { fetchNoteList } from '../../store/reducers/note';
+import { fetchNoteList, fetchNoteDetail } from '../../store/reducers/note';
 import { useQuery } from '../../hooks';
 
 import '@fullcalendar/daygrid/main.css';
@@ -45,19 +47,34 @@ export default function NoteList() {
 
   // FormModal is open
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [formData, setFormData] = React.useState({});
   const openForm = async (rowId = null) => {
     if (rowId) {
-      // TODO: dispatch get one note
-      console.log('rowId => ', rowId);
-      setModalOpen(true);
+      const resultAction = await dispatch(fetchNoteDetail({ id: rowId }));
+      const data = await unwrapResult(resultAction);
+      setModalOpen((pre) => {
+        setFormData(data);
+        return true;
+      });
     } else {
       setModalOpen(true);
     }
   };
 
+  const editForm = (value, target) => {
+    console.log('value => ', value);
+    console.log('target => ', target);
+    setFormData({
+      ...formData,
+      [target]: value,
+    });
+  };
+
   const closeForm = async () => {
-    // TODO: dispatch clear note
-    setModalOpen(false);
+    setModalOpen((pre) => {
+      setFormData({});
+      return false;
+    });
   };
 
   // for Datatable use
@@ -195,7 +212,9 @@ export default function NoteList() {
           </Button>
           <FormModal
             isOpen={modalOpen}
+            note={formData}
             handleClose={() => closeForm()}
+            editForm={editForm}
           />
         </Grid>
         {

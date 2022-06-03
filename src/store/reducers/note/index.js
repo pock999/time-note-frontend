@@ -46,4 +46,22 @@ export const fetchNoteList = createAsyncThunk(
   }
 );
 
+export const fetchNoteDetail = createAsyncThunk(
+  'note/fetchDetail',
+  async (payload, thunkApi) => {
+    const { id } = payload;
+
+    // 先清掉
+    thunkApi.dispatch(setDetail(null));
+
+    const { data } = await ApiService.get({
+      url: `note/${id}`,
+    });
+
+    thunkApi.dispatch(setDetail(data.data));
+
+    return data.data;
+  }
+);
+
 export default noteSlice.reducer;
