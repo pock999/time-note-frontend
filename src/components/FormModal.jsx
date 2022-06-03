@@ -2,12 +2,16 @@ import React from 'react';
 import _ from 'lodash';
 
 import {
+  FormControl,
+  InputLabel,
   TextField,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Button,
+  Select,
+  MenuItem,
 } from '@mui/material';
 
 export default function FormModal(props) {
@@ -32,7 +36,36 @@ export default function FormModal(props) {
           variant="standard"
           value={note.title}
           onChange={(evt) => editForm(evt.target.value, 'title')}
+          margin="dense"
         />
+        <TextField
+          id="content"
+          label="內容"
+          multiline
+          rows={4}
+          fullWidth
+          value={note.content}
+          variant="standard"
+          onChange={(evt) => editForm(evt.target.value, 'content')}
+          margin="dense"
+        />
+        <FormControl variant="standard" fullWidth>
+          <InputLabel id="type-label">類型</InputLabel>
+          <Select
+            labelId="type-label"
+            id="type"
+            value={note.type}
+            onChange={(evt) => editForm(evt.target.value, 'type')}
+            label="類型"
+            fullWidth
+            variant="standard"
+            margin="dense"
+          >
+            <MenuItem value={1}>筆記</MenuItem>
+            <MenuItem value={2}>行程(提醒)</MenuItem>
+            <MenuItem value={3}>文章</MenuItem>
+          </Select>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button>保存</Button>

@@ -27,6 +27,21 @@ import { useQuery } from '../../hooks';
 
 import '@fullcalendar/daygrid/main.css';
 
+const noteTypes = [
+  {
+    value: 1,
+    text: '筆記',
+  },
+  {
+    value: 2,
+    text: '行程(提醒)',
+  },
+  {
+    value: 3,
+    text: '文章',
+  },
+];
+
 export default function NoteList() {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -232,9 +247,10 @@ export default function NoteList() {
                 eventContent={renderEventContent}
                 locale={twLocale}
                 events={noteList.map((note) => ({
-                  ..._.omit(note, ['startAt', 'endAt']),
+                  ..._.omit(note, ['startAt', 'endAt', 'type']),
                   start: note.startAt,
                   end: note.endAt,
+                  type: noteTypes.find((type) => note.type === type.value).text,
                 }))}
                   // 更新, 刪除
                 eventClick={(event) => console.log('event => ', event)}
@@ -246,7 +262,10 @@ export default function NoteList() {
               && (
               <DataTable
                 columns={columns}
-                rows={noteList}
+                rows={noteList.map((note) => ({
+                  ..._.omit(note, ['type']),
+                  type: noteTypes.find((type) => note.type === type.value).text,
+                }))}
                 page={pageState.page - 1}
                 totalCount={notePagination.totalCount}
                 pageSize={pageState.pageSize}
