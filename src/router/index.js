@@ -22,6 +22,7 @@ import {
   setAuthorization,
   setRoles,
   setCurrentRole,
+  clearAuth,
 } from '../store/reducers/auth';
 
 import ApiServiceClass from '../services/ApiService';
@@ -73,16 +74,34 @@ function ProtectedRoutes(props) {
     } catch (e) {
       console.log('e.response => ', e.response);
 
-      await Swal.fire({
-        icon: 'error',
-        title: e.response.message,
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-      });
-      return null;
+      if (e.response.status === 401) {
+        dispatch(clearAuth());
+        ApiService.clearToken();
+        localStorage.clear();
+
+        Swal.fire({
+          icon: 'error',
+          title: 'token 過期',
+          toast: true,
+          position: 'top',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+
+        history.push('/login');
+      } else {
+        await Swal.fire({
+          icon: 'error',
+          title: e.response.message,
+          toast: true,
+          position: 'top',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+        return null;
+      }
     }
   };
 

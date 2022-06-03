@@ -75,7 +75,6 @@ export const logoutAction = createAsyncThunk(
     thunkApi.dispatch(clearAuth());
     localStorage.clear();
     ApiService.clearToken();
-    thunkApi.dispatch(clearAuth());
 
     Swal.fire({
       icon: 'success',
