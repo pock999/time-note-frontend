@@ -21,7 +21,10 @@ import { DataTable } from '../../components';
 // 參考 https://fullcalendar.io/
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from "@fullcalendar/interaction";
 import twLocale from '@fullcalendar/core/locales/zh-tw';
+
+import "@fullcalendar/daygrid/main.css";
 
 export default function NoteList() {
 
@@ -41,6 +44,56 @@ export default function NoteList() {
     endAt: null,
   });
 
+  // for Datatable use
+  const handleChangePage = (evt, newPage) => {
+    history.push(`${location.pathname}${location.search.replace(/page=[0-9]*/, `page=${newPage + 1}`)}`);
+  };
+
+  const handleChangePageSize = (evt) => {
+    const fullPath = `${location.pathname}${location.search.replace(/pageSize=[0-9]*/, `pageSize=${evt.target.value}`)}`;
+    if (evt.target.value > pageState.pageSize) {
+      history.push(fullPath.replace(/page=[0-9]*/, 'page=1'));
+    } else {
+      history.push(fullPath);
+    }
+    
+  };
+
+  const columns = [
+    { id: 'id', label: 'ID', align: 'center' },
+    { id: 'type', label: '類型', align: 'center' },
+    { id: 'title', label: '標題', align: 'center' },
+    { id: 'content', label: '內容', align: 'center' },
+    { id: 'startAt', label: '開始時間', align: 'center' },
+    { id: 'endAt', label: '結束時間', align: 'center' },
+    { id: 'actions', label: '操作', align: 'center' },
+  ];
+
+  const ActionsRender = (props) => {
+    const {
+      rowId,
+      editPath = '',
+      text,
+    } = props;
+    return (
+      <Button variant="contained">{text}{rowId}</Button>
+    )
+  };
+
+  // for calendar
+
+  // 顯示在行事曆上的資訊
+  const renderEventContent = (eventInfo) => {
+    // console.log('eventInfo => ', eventInfo);
+    return (
+      <>
+        <b>{eventInfo.event.title}</b>
+        {/* <i>{eventInfo.timeText}</i> */}
+      </>
+    )
+  }
+
+  // useEffect
   React.useEffect(() => {
     const pageMode = query.get('pageMode');
     const page = Number.parseInt(query.get('page'));
@@ -105,41 +158,6 @@ export default function NoteList() {
     }
   }, [location.search]);
 
-  const handleChangePage = (evt, newPage) => {
-    history.push(`${location.pathname}${location.search.replace(/page=[0-9]*/, `page=${newPage + 1}`)}`);
-  };
-
-  const handleChangePageSize = (evt) => {
-    const fullPath = `${location.pathname}${location.search.replace(/pageSize=[0-9]*/, `pageSize=${evt.target.value}`)}`;
-    if (evt.target.value > pageState.pageSize) {
-      history.push(fullPath.replace(/page=[0-9]*/, 'page=1'));
-    } else {
-      history.push(fullPath);
-    }
-    
-  };
-
-  const columns = [
-    { id: 'id', label: 'ID', align: 'center' },
-    { id: 'type', label: '類型', align: 'center' },
-    { id: 'title', label: '標題', align: 'center' },
-    { id: 'content', label: '內容', align: 'center' },
-    { id: 'startAt', label: '開始時間', align: 'center' },
-    { id: 'endAt', label: '結束時間', align: 'center' },
-    { id: 'actions', label: '操作', align: 'center' },
-  ];
-
-  const ActionsRender = (props) => {
-    const {
-      rowId,
-      editPath = '',
-      text,
-    } = props;
-    return (
-      <Button variant="contained">{text}{rowId}</Button>
-    )
-  };
-
   return (
     <BaseLayout>
       <Container sx={{ paddingTop: '2em', paddingBottom: '2em', marginBottom: '2em',}}>
@@ -151,14 +169,25 @@ export default function NoteList() {
             ? (
               <>
                 <FullCalendar
-                  plugins={[ dayGridPlugin ]}
+                  plugins={[ dayGridPlugin, interactionPlugin ]}
                   initialView="dayGridMonth"
                   headerToolbar={{
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth'
                   }}
+                  eventContent={renderEventContent}
                   locale={twLocale}
+                  events={noteList.map(note => ({
+                    ..._.omit(note, ['startAt', 'endAt']),
+                    start: note.startAt,
+                    end: note.endAt,
+                  }))}
+                  // 更新, 刪除
+                  eventClick={(event) => console.log('event => ', event)}
+                  // 新增
+                  dateClick={(arg) => console.log('dateClick arg => ', arg)}
+                  // eventsSet={(events) => console.log('events => ', events)}
                 />
               </>
             )
