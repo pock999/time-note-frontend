@@ -25,7 +25,6 @@ const Parallax = styled('div')`
 `;
 
 export default function Home() {
-
   return (
     <>
       <Parallax />
@@ -40,7 +39,7 @@ export default function Home() {
           sx={{
             display: 'flex',
             justifyContent: 'center',
-            alignItems:'center',
+            alignItems: 'center',
             paddingTop: '100px',
             paddingBottom: '100px',
           }}

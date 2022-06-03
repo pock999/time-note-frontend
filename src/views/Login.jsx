@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
-import { unwrapResult } from '@reduxjs/toolkit'
+import { unwrapResult } from '@reduxjs/toolkit';
 
 import { styled } from '@mui/material/styles';
 
@@ -57,7 +57,6 @@ const RightFormWrapper = styled('div')`
 `;
 
 export default function Login() {
-
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -67,7 +66,7 @@ export default function Login() {
   });
 
   const handleChange = (target, evt) => {
-    setState(pre => ({
+    setState((pre) => ({
       ...pre,
       ...target === 'email' ? { email: evt.target.value } : {},
       ...target === 'password' ? { password: evt.target.value } : {},
@@ -79,7 +78,7 @@ export default function Login() {
     try {
       unwrapResult(resultAction);
       history.push('/notes');
-    } catch(e) {
+    } catch (e) {
       console.log('error => ', e);
     }
   };
