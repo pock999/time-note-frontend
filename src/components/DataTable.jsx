@@ -20,10 +20,12 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 
-const TablePaginationActions = (props) => {
+function TablePaginationActions(props) {
   const theme = useTheme();
 
-  const { count, page, rowsPerPage, onPageChange } = props;
+  const {
+    count, page, rowsPerPage, onPageChange,
+  } = props;
 
   const handleFirstPageButtonClick = (event) => {
     onPageChange(event, 0);
@@ -39,7 +41,7 @@ const TablePaginationActions = (props) => {
 
   const handleLastPageButtonClick = (event) => {
     onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  }
+  };
 
   return (
     <Box sx={{ flexShrink: 0, ml: 2.5 }}>
@@ -73,7 +75,7 @@ const TablePaginationActions = (props) => {
       </IconButton>
     </Box>
   );
-};
+}
 
 export default function DataTable(props) {
   const {
@@ -87,8 +89,7 @@ export default function DataTable(props) {
     actionsRender: ActionsRender,
   } = props;
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * pageSize - totalCount) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * pageSize - totalCount) : 0;
 
   return (
     <TableContainer component={Paper}>
@@ -96,7 +97,7 @@ export default function DataTable(props) {
         <TableHead>
           <TableRow>
             {
-              columns.map(column => (
+              columns.map((column) => (
                 <TableCell
                   key={column.id}
                   align={column.align}
@@ -111,16 +112,15 @@ export default function DataTable(props) {
           {rows.map((row) => (
             <TableRow key={row.id}>
               {
-                columns.map(col => col.id !== 'actions' ? (
+                columns.map((col) => (col.id !== 'actions' ? (
                   <TableCell component="th" scope="row" align={col.align} key={`${row.id} - ${col.id}`}>
                     {row[col.id]}
                   </TableCell>
                 ) : (
                   <TableCell component="th" scope="row" align={col.align} key={`${row.id} - ${col.id}`}>
-                    <ActionsRender rowId={row.id} text="編輯"/>
+                    <ActionsRender rowId={row.id} text="編輯" />
                   </TableCell>
-                )
-                )
+                )))
               }
             </TableRow>
           ))}

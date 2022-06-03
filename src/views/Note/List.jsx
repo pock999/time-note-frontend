@@ -18,7 +18,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import twLocale from '@fullcalendar/core/locales/zh-tw';
-import { DataTable } from '../../components';
+import { DataTable, FormModal } from '../../components';
 import { BaseLayout } from '../../layouts';
 import { fetchNoteList } from '../../store/reducers/note';
 import { useQuery } from '../../hooks';
@@ -34,6 +34,7 @@ export default function NoteList() {
   const noteList = useSelector((state) => state.note.list);
   const notePagination = useSelector((state) => state.note.pagination);
 
+  // url query
   const [pageState, setPageState] = React.useState({
     pageMode: null,
     page: null,
@@ -41,6 +42,23 @@ export default function NoteList() {
     startAt: null,
     endAt: null,
   });
+
+  // FormModal is open
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const openForm = async (rowId = null) => {
+    if (rowId) {
+      // TODO: dispatch get one note
+      console.log('rowId => ', rowId);
+      setModalOpen(true);
+    } else {
+      setModalOpen(true);
+    }
+  };
+
+  const closeForm = async () => {
+    // TODO: dispatch clear note
+    setModalOpen(false);
+  };
 
   // for Datatable use
   const handleChangePage = (evt, newPage) => {
@@ -66,14 +84,14 @@ export default function NoteList() {
     { id: 'actions', label: '操作', align: 'center' },
   ];
 
+  // eslint-disable-next-line react/no-unstable-nested-components
   function ActionsRender(props) {
     const {
       rowId,
-      editPath = '',
       text,
     } = props;
     return (
-      <Button variant="contained">
+      <Button variant="contained" onClick={() => openForm(rowId)}>
         {text}
         {rowId}
       </Button>
@@ -171,9 +189,14 @@ export default function NoteList() {
           <Button
             variant="contained"
             color="thirdColor"
+            onClick={() => openForm()}
           >
             新增
           </Button>
+          <FormModal
+            isOpen={modalOpen}
+            handleClose={() => closeForm()}
+          />
         </Grid>
         {
           noteList
