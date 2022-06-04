@@ -58,7 +58,7 @@ export default function FormModal(props) {
           margin="dense"
         />
         <FormControl variant="standard" fullWidth margin="dense">
-          <InputLabel id="type-label">類型</InputLabel>
+          <InputLabel id="type-label">&emsp;類型</InputLabel>
           <Select
             labelId="type-label"
             id="type"
