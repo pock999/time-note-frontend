@@ -30,7 +30,7 @@ export default function FormModal(props) {
     handleSave,
   } = props;
 
-  console.log('note => ', note);
+  // console.log('note => ', note);
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>

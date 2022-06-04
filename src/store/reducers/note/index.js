@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import _ from 'lodash';
 
 import ApiServiceClass from '../../../services/ApiService';
 
@@ -67,12 +68,12 @@ export const fetchNoteDetail = createAsyncThunk(
 export const createNote = createAsyncThunk(
   'note/createNote',
   async (payload, thunkApi) => {
-    console.log('createNote payload => ', payload);
-    // TODO: call api
+    const { data } = await ApiService.post({
+      url: 'note/',
+      data: payload,
+    });
 
-    // TODO: setDetail
-
-    // TODO: update list
+    return data.data;
   }
 );
 
@@ -81,11 +82,23 @@ export const updateNote = createAsyncThunk(
   async (payload, thunkApi) => {
     console.log('updateNote payload => ', payload);
 
-    // TODO: call api
+    const { data } = await ApiService.put({
+      url: `note/${payload.id}`,
+      data: { ..._.omit(payload, ['id']) },
+    });
 
-    // TODO: setDetail
+    const store = thunkApi.getState();
+    const currentList = [...store.note.list];
+    const newList = currentList.map((note) => {
+      if (note.id === payload.id) {
+        return payload;
+      }
+      return note;
+    });
 
-    // TODO: update list
+    thunkApi.dispatch(setList(newList));
+
+    return data.data;
   }
 );
 

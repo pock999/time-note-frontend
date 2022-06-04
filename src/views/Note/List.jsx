@@ -104,12 +104,24 @@ export default function NoteList() {
 
   // 保存時
   const saveForm = async () => {
-    if (formData.id) {
+    try {
+      if (formData.id) {
       // 更新
-      dispatch(updateNote(formData));
-    } else {
+        const resultAction = await dispatch(updateNote(formData));
+        await unwrapResult(resultAction);
+        closeForm();
+      } else {
       // 新增
-      dispatch(createNote(formData));
+        const resultAction = await dispatch(createNote(formData));
+        await unwrapResult(resultAction);
+        dispatch(fetchNoteList({
+          searchStr: location.search.replace('?', ''),
+        }));
+        closeForm();
+      }
+    } catch (e) {
+      // TODO: catch
+      console.log('error => ', e);
     }
   };
 
@@ -254,32 +266,32 @@ export default function NoteList() {
           />
         </Grid>
         {
-          noteList
-            && pageState.pageMode === 'calendar'
-            ? (
-              <FullCalendar
-                plugins={[dayGridPlugin, interactionPlugin]}
-                initialView="dayGridMonth"
-                headerToolbar={{
-                  left: 'prev,next today',
-                  center: 'title',
-                  right: 'dayGridMonth',
-                }}
-                eventContent={renderEventContent}
-                locale={twLocale}
-                events={noteList.map((note) => ({
-                  ..._.omit(note, ['startAt', 'endAt', 'type']),
-                  start: note.startAt,
-                  end: note.endAt,
-                  type: noteTypes.find((type) => note.type === type.value).text,
-                }))}
+          _.isArray(noteList)
+            && (pageState.pageMode === 'calendar'
+              ? (
+                <FullCalendar
+                  plugins={[dayGridPlugin, interactionPlugin]}
+                  initialView="dayGridMonth"
+                  headerToolbar={{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth',
+                  }}
+                  eventContent={renderEventContent}
+                  locale={twLocale}
+                  events={noteList.map((note) => ({
+                    ..._.omit(note, ['startAt', 'endAt', 'type']),
+                    start: note.startAt,
+                    end: note.endAt,
+                    type: noteTypes.find((type) => note.type === type.value).text,
+                  }))}
                   // 更新, 刪除
-                eventClick={(event) => console.log('event => ', event)}
+                  eventClick={(event) => console.log('event => ', event)}
                   // 新增
-                dateClick={(arg) => console.log('dateClick arg => ', arg)}
-              />
-            )
-            : notePagination
+                  dateClick={(arg) => console.log('dateClick arg => ', arg)}
+                />
+              )
+              : notePagination
               && (
               <DataTable
                 columns={columns}
@@ -294,7 +306,7 @@ export default function NoteList() {
                 handleChangePageSize={handleChangePageSize}
                 actionsRender={ActionsRender}
               />
-              )
+              ))
         }
       </Container>
     </BaseLayout>

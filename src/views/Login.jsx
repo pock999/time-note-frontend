@@ -79,6 +79,7 @@ export default function Login() {
       unwrapResult(resultAction);
       history.push('/notes');
     } catch (e) {
+      // TODO: catch
       console.log('error => ', e);
     }
   };

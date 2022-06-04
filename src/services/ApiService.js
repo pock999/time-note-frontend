@@ -1,5 +1,5 @@
-import axios from '../libs/axios';
 import Swal from 'sweetalert2';
+import axios from '../libs/axios';
 
 import JsonHelper from '../utils/JsonHelper';
 import { sleep } from '../utils/commons';
@@ -12,12 +12,15 @@ class ApiServiceClass {
     this.axios = axios;
     ApiServiceClass._instance = this;
   }
+
   setToken(token) {
     this.axios.defaults.headers.common.Authorization = token;
   }
+
   clearToken() {
     this.axios.defaults.headers.common.Authorization = '';
   }
+
   async get({ url, data = null, queryString = null, headers }) {
     try {
       const res = await this.axios({
