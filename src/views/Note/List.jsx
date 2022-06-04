@@ -29,6 +29,8 @@ import { useQuery } from '../../hooks';
 
 import '@fullcalendar/daygrid/main.css';
 
+import { createSchema, updateSchema } from './formSchema';
+
 const noteTypes = [
   {
     value: 1,
@@ -105,23 +107,43 @@ export default function NoteList() {
   // 保存時
   const saveForm = async () => {
     try {
+      let resultAction;
+      console.log('formData => ', formData);
       if (formData.id) {
-      // 更新
-        const resultAction = await dispatch(updateNote(formData));
+        // 更新
+        const validData = await updateSchema.validate(formData);
+        resultAction = await dispatch(updateNote(validData));
         await unwrapResult(resultAction);
         closeForm();
       } else {
-      // 新增
-        const resultAction = await dispatch(createNote(formData));
+        // 新增
+        const validData = await createSchema.validate(formData);
+        resultAction = await dispatch(createNote(validData));
         await unwrapResult(resultAction);
         dispatch(fetchNoteList({
           searchStr: location.search.replace('?', ''),
         }));
         closeForm();
       }
+      Swal.fire({
+        icon: 'success',
+        title: `${formData.id ? '更新' : '新增'}成功`,
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: false,
+      });
     } catch (e) {
-      // TODO: catch
-      console.log('error => ', e);
+      Swal.fire({
+        icon: 'error',
+        title: e.message,
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: false,
+      });
     }
   };
 

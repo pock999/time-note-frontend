@@ -54,7 +54,8 @@
     "styled-components": "^5.3.5",
     "sweetalert2": "^11.4.16",
     "url-loader": "^4.1.1",
-    "yarn": "^1.22.18"
+    "yarn": "^1.22.18",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
