@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { zhTW } from '@mui/material/locale';
@@ -42,7 +42,7 @@ const theme = createTheme(
   zhTW,
 );
 
-const App = () => {
+function App() {
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
@@ -50,6 +50,6 @@ const App = () => {
       </Provider>
     </ThemeProvider>
   );
-};
+}
 
 export default App;

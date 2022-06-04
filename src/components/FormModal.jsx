@@ -14,6 +14,13 @@ import {
   MenuItem,
 } from '@mui/material';
 
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+import zhTW from 'dayjs/locale/zh-tw';
+import { dateFormat } from '../utils/commons';
+
 export default function FormModal(props) {
   const {
     isOpen,
@@ -33,7 +40,7 @@ export default function FormModal(props) {
           label="標題"
           type="text"
           fullWidth
-          variant="standard"
+          variant="outlined"
           value={note.title}
           onChange={(evt) => editForm(evt.target.value, 'title')}
           margin="dense"
@@ -45,11 +52,11 @@ export default function FormModal(props) {
           rows={4}
           fullWidth
           value={note.content}
-          variant="standard"
+          variant="outlined"
           onChange={(evt) => editForm(evt.target.value, 'content')}
           margin="dense"
         />
-        <FormControl variant="standard" fullWidth>
+        <FormControl variant="standard" fullWidth margin="dense">
           <InputLabel id="type-label">類型</InputLabel>
           <Select
             labelId="type-label"
@@ -58,7 +65,7 @@ export default function FormModal(props) {
             onChange={(evt) => editForm(evt.target.value, 'type')}
             label="類型"
             fullWidth
-            variant="standard"
+            variant="outlined"
             margin="dense"
           >
             <MenuItem value={1}>筆記</MenuItem>
@@ -66,6 +73,34 @@ export default function FormModal(props) {
             <MenuItem value={3}>文章</MenuItem>
           </Select>
         </FormControl>
+        <LocalizationProvider dateAdapter={AdapterDayjs} locale={zhTW}>
+          <DateTimePicker
+            label="開始時間"
+            value={note.startAt}
+            onChange={(val) => editForm(dateFormat(val), 'startAt')}
+            inputFormat="YYYY-MM-DD HH:mm:ss"
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                margin="dense"
+                fullWidth
+              />
+            )}
+          />
+          <DateTimePicker
+            label="結束時間"
+            value={note.endAt}
+            onChange={(val) => editForm(dateFormat(val), 'endAt')}
+            inputFormat="YYYY-MM-DD HH:mm:ss"
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                margin="dense"
+                fullWidth
+              />
+            )}
+          />
+        </LocalizationProvider>
       </DialogContent>
       <DialogActions>
         <Button>保存</Button>

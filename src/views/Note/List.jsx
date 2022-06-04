@@ -86,10 +86,8 @@ export default function NoteList() {
   };
 
   const closeForm = async () => {
-    setModalOpen((pre) => {
-      setFormData({});
-      return false;
-    });
+    setModalOpen(false);
+    setFormData({});
   };
 
   // for Datatable use
@@ -125,7 +123,6 @@ export default function NoteList() {
     return (
       <Button variant="contained" onClick={() => openForm(rowId)}>
         {text}
-        {rowId}
       </Button>
     );
   }
