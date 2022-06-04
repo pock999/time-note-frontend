@@ -75,7 +75,7 @@ export default function NoteList() {
   // FormModal is open
   const [modalOpen, setModalOpen] = React.useState(false);
   const [formData, setFormData] = React.useState({ ...emptyNote });
-  const openForm = async (rowId = null) => {
+  const openForm = async ({ rowId = null, dateTime = null }) => {
     if (rowId) {
       const resultAction = await dispatch(fetchNoteDetail({ id: rowId }));
       const data = await unwrapResult(resultAction);
@@ -84,7 +84,14 @@ export default function NoteList() {
         return true;
       });
     } else {
-      setModalOpen(true);
+      setModalOpen((pre) => {
+        setFormData({
+          ...emptyNote,
+          startAt: dateTime,
+          endAt: dateTime,
+        });
+        return true;
+      });
     }
   };
 
@@ -178,7 +185,7 @@ export default function NoteList() {
       text,
     } = props;
     return (
-      <Button variant="contained" onClick={() => openForm(rowId)}>
+      <Button variant="contained" onClick={() => openForm({ rowId })}>
         {text}
       </Button>
     );
@@ -308,9 +315,9 @@ export default function NoteList() {
                     type: noteTypes.find((type) => note.type === type.value).text,
                   }))}
                   // 更新, 刪除
-                  eventClick={(event) => console.log('event => ', event)}
+                  eventClick={(eventInfo) => openForm({ rowId: eventInfo.event.id })}
                   // 新增
-                  dateClick={(arg) => console.log('dateClick arg => ', arg)}
+                  dateClick={(arg) => openForm({ dateTime: arg.date })}
                 />
               )
               : notePagination
