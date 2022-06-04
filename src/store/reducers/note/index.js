@@ -64,4 +64,29 @@ export const fetchNoteDetail = createAsyncThunk(
   }
 );
 
+export const createNote = createAsyncThunk(
+  'note/createNote',
+  async (payload, thunkApi) => {
+    console.log('createNote payload => ', payload);
+    // TODO: call api
+
+    // TODO: setDetail
+
+    // TODO: update list
+  }
+);
+
+export const updateNote = createAsyncThunk(
+  'note/updateNote',
+  async (payload, thunkApi) => {
+    console.log('updateNote payload => ', payload);
+
+    // TODO: call api
+
+    // TODO: setDetail
+
+    // TODO: update list
+  }
+);
+
 export default noteSlice.reducer;

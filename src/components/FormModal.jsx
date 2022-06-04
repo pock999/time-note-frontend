@@ -24,9 +24,10 @@ import { dateFormat } from '../utils/commons';
 export default function FormModal(props) {
   const {
     isOpen,
-    note = null,
+    note,
     handleClose,
     editForm,
+    handleSave,
   } = props;
 
   console.log('note => ', note);
@@ -103,7 +104,13 @@ export default function FormModal(props) {
         </LocalizationProvider>
       </DialogContent>
       <DialogActions>
-        <Button>保存</Button>
+        <Button
+          variant="contained"
+          color="thirdColor"
+          onClick={handleSave}
+        >
+          保存
+        </Button>
       </DialogActions>
     </Dialog>
   );

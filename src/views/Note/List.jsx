@@ -22,7 +22,9 @@ import interactionPlugin from '@fullcalendar/interaction';
 import twLocale from '@fullcalendar/core/locales/zh-tw';
 import { DataTable, FormModal } from '../../components';
 import { BaseLayout } from '../../layouts';
-import { fetchNoteList, fetchNoteDetail } from '../../store/reducers/note';
+import {
+  fetchNoteList, fetchNoteDetail, createNote, updateNote,
+} from '../../store/reducers/note';
 import { useQuery } from '../../hooks';
 
 import '@fullcalendar/daygrid/main.css';
@@ -41,6 +43,14 @@ const noteTypes = [
     text: '文章',
   },
 ];
+
+const emptyNote = {
+  title: '',
+  content: '',
+  type: null,
+  startAt: null,
+  endAt: null,
+};
 
 export default function NoteList() {
   const history = useHistory();
@@ -62,7 +72,7 @@ export default function NoteList() {
 
   // FormModal is open
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [formData, setFormData] = React.useState({});
+  const [formData, setFormData] = React.useState({ ...emptyNote });
   const openForm = async (rowId = null) => {
     if (rowId) {
       const resultAction = await dispatch(fetchNoteDetail({ id: rowId }));
@@ -76,18 +86,31 @@ export default function NoteList() {
     }
   };
 
+  // 對note編輯(onChange)
   const editForm = (value, target) => {
-    console.log('value => ', value);
-    console.log('target => ', target);
+    // console.log('value => ', value);
+    // console.log('target => ', target);
     setFormData({
       ...formData,
       [target]: value,
     });
   };
 
+  // 關閉note編輯
   const closeForm = async () => {
     setModalOpen(false);
-    setFormData({});
+    setFormData({ ...emptyNote });
+  };
+
+  // 保存時
+  const saveForm = async () => {
+    if (formData.id) {
+      // 更新
+      dispatch(updateNote(formData));
+    } else {
+      // 新增
+      dispatch(createNote(formData));
+    }
   };
 
   // for Datatable use
@@ -227,6 +250,7 @@ export default function NoteList() {
             note={formData}
             handleClose={() => closeForm()}
             editForm={editForm}
+            handleSave={saveForm}
           />
         </Grid>
         {
