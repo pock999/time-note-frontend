@@ -86,7 +86,7 @@ function ProtectedRoutes(props) {
           position: 'top',
           showConfirmButton: false,
           timer: 2000,
-          timerProgressBar: true,
+          timerProgressBar: false,
         });
 
         history.push('/login');
@@ -98,7 +98,7 @@ function ProtectedRoutes(props) {
           position: 'top',
           showConfirmButton: false,
           timer: 2000,
-          timerProgressBar: true,
+          timerProgressBar: false,
         });
         return null;
       }

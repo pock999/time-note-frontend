@@ -51,7 +51,7 @@ export const loginAction = createAsyncThunk(
   'auth/login',
   async (payload, thunkApi) => {
     const { data } = await ApiService.post({
-      url: `auth/login`,
+      url: 'auth/login',
       data: payload,
     });
 
@@ -83,7 +83,7 @@ export const logoutAction = createAsyncThunk(
       position: 'top',
       showConfirmButton: false,
       timer: 1000,
-      timerProgressBar: true,
+      timerProgressBar: false,
     });
 
     history.push('/login');
