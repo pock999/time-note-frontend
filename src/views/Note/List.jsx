@@ -30,6 +30,7 @@ import { useQuery } from '../../hooks';
 import '@fullcalendar/daygrid/main.css';
 
 import { createSchema, updateSchema } from './formSchema';
+import { dateFormat } from '../../utils/commons';
 
 const noteTypes = [
   {
@@ -111,7 +112,7 @@ export default function NoteList() {
     setFormData({ ...emptyNote });
   };
 
-  // 保存時
+  // 保存
   const saveForm = async () => {
     try {
       let resultAction;
@@ -121,15 +122,63 @@ export default function NoteList() {
         const validData = await updateSchema.validate(formData);
         resultAction = await dispatch(updateNote(validData));
         await unwrapResult(resultAction);
+        if (pageState.pageMode === 'calendar') {
+          const current = dayjs(formData.startAt);
+          const startAt = current
+            .month(current.month())
+            .date(1)
+            .hour(0)
+            .minute(0)
+            .second(0)
+            .format('YYYY-MM-DD HH:mm:ss');
+
+          const endAt = current
+            .month(current.month() + 1)
+            .date(1)
+            .hour(0)
+            .minute(0)
+            .second(0)
+            .subtract(1, 'second')
+            .format('YYYY-MM-DD HH:mm:ss');
+
+          history.push(`${location.pathname}?pageMode=calendar&startAt=${encodeURIComponent(startAt)}&endAt=${encodeURIComponent(endAt)}`);
+        }
         closeForm();
       } else {
         // 新增
         const validData = await createSchema.validate(formData);
         resultAction = await dispatch(createNote(validData));
         await unwrapResult(resultAction);
-        dispatch(fetchNoteList({
-          searchStr: location.search.replace('?', ''),
-        }));
+        if (pageState.pageMode === 'calendar') {
+          const current = dayjs(formData.startAt);
+          const startAt = current
+            .month(current.month())
+            .date(1)
+            .hour(0)
+            .minute(0)
+            .second(0)
+            .format('YYYY-MM-DD HH:mm:ss');
+
+          const endAt = current
+            .month(current.month() + 1)
+            .date(1)
+            .hour(0)
+            .minute(0)
+            .second(0)
+            .subtract(1, 'second')
+            .format('YYYY-MM-DD HH:mm:ss');
+
+          history.push(`${location.pathname}?pageMode=calendar&startAt=${encodeURIComponent(startAt)}&endAt=${encodeURIComponent(endAt)}`);
+
+          dispatch(fetchNoteList({
+            searchStr: `pageMode=calendar&startAt=${encodeURIComponent(startAt)}&endAt=${encodeURIComponent(endAt)}`,
+          }));
+        } else {
+          dispatch(fetchNoteList({
+            searchStr: location.search.replace('?', ''),
+          }));
+        }
+
         closeForm();
       }
       Swal.fire({
@@ -193,6 +242,9 @@ export default function NoteList() {
 
   // for calendar
 
+  // calendar ref
+  const calendarRef = React.useRef();
+
   // 顯示在行事曆上的資訊
   const renderEventContent = (eventInfo) =>
     // console.log('eventInfo => ', eventInfo);
@@ -201,8 +253,20 @@ export default function NoteList() {
         <b>{eventInfo.event.title}</b>
         {/* <i>{eventInfo.timeText}</i> */}
       </>
-    )
-  ;
+    );
+
+  // 日曆換頁(月)
+  const calendarPageChange = (event) => {
+    const calendarCurrStart = dateFormat(event.view.currentStart);
+    const calendarCurrEnd = dateFormat(dayjs(event.view.currentEnd).subtract(1, 'second'));
+    const startAt = dateFormat(pageState.startAt);
+    const endAt = dateFormat(pageState.endAt);
+
+    // url query日期區間不等於日曆的區間則將url query的日期區間調整成與日曆一樣
+    if (startAt !== calendarCurrStart || endAt !== calendarCurrEnd) {
+      history.push(`${location.pathname}?pageMode=calendar&startAt=${encodeURIComponent(calendarCurrStart)}&endAt=${encodeURIComponent(calendarCurrEnd)}`);
+    }
+  };
 
   // useEffect
   React.useEffect(() => {
@@ -282,7 +346,7 @@ export default function NoteList() {
           <Button
             variant="contained"
             color="thirdColor"
-            onClick={() => openForm()}
+            onClick={() => openForm({ dateTime: null, rowId: null })}
           >
             新增
           </Button>
@@ -306,8 +370,11 @@ export default function NoteList() {
                     center: 'title',
                     right: 'dayGridMonth',
                   }}
+                  ref={calendarRef}
+                  initialDate={pageState.startAt}
                   eventContent={renderEventContent}
                   locale={twLocale}
+                  datesSet={(event) => calendarPageChange(event)}
                   events={noteList.map((note) => ({
                     ..._.omit(note, ['startAt', 'endAt', 'type']),
                     start: note.startAt,
@@ -317,7 +384,7 @@ export default function NoteList() {
                   // 更新, 刪除
                   eventClick={(eventInfo) => openForm({ rowId: eventInfo.event.id })}
                   // 新增
-                  dateClick={(arg) => openForm({ dateTime: arg.date })}
+                  dateClick={(arg) => openForm({ dateTime: arg.date, rowId: null })}
                 />
               )
               : notePagination
