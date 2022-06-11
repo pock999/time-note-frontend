@@ -4,7 +4,7 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/jsx-filename-extension */
-import React from 'react';
+import React, { Suspense } from 'react';
 import {
   Switch,
   Route,
@@ -131,33 +131,35 @@ function ProtectedRoutes(props) {
   // 3. roles.length > 0 => need login(isUser)
 
   return (
-    <Switch>
-      {routes &&
-        routes.map((route) => (
-          <Route
-            key={route.path}
-            path={route.path}
-            exact={route.exact || false}
-            render={(props) => {
-              if (_.has(route, 'defaultQuery') && location.search === '') {
-                history.push(`${route.path}${route.defaultQuery}`);
-              }
+    <Suspense fallback={() => <>loading</>}>
+      <Switch>
+        {routes &&
+          routes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              exact={route.exact || false}
+              render={(props) => {
+                if (_.has(route, 'defaultQuery') && location.search === '') {
+                  history.push(`${route.path}${route.defaultQuery}`);
+                }
 
-              return route.roles === null ||
-                (route.roles.length === 0 && !getToken()) ||
-                (route.roles.length > 0 && !!getToken()) ? (
-                <route.component {...props} />
-              ) : route.roles.length === 0 && getToken() ? (
-                <Redirect {...props} to="/" />
-              ) : route.roles.length > 0 && !getToken() ? (
-                <Redirect {...props} to="/login" />
-              ) : (
-                <Redirect {...props} to="/404" />
-              );
-            }}
-          />
-        ))}
-    </Switch>
+                return route.roles === null ||
+                  (route.roles.length === 0 && !getToken()) ||
+                  (route.roles.length > 0 && !!getToken()) ? (
+                  <route.component {...props} />
+                ) : route.roles.length === 0 && getToken() ? (
+                  <Redirect {...props} to="/" />
+                ) : route.roles.length > 0 && !getToken() ? (
+                  <Redirect {...props} to="/login" />
+                ) : (
+                  <Redirect {...props} to="/404" />
+                );
+              }}
+            />
+          ))}
+      </Switch>
+    </Suspense>
   );
 }
 

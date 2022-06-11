@@ -24,6 +24,8 @@ module.exports = {
         loader: 'babel-loader',
         options: {
           presets: ['@babel/preset-react', '@babel/preset-env'],
+          // lazy-loading
+          plugins: ['@babel/plugin-syntax-dynamic-import'],
         },
       },
       {
