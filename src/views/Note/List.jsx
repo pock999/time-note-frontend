@@ -2,7 +2,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory, Link } from 'react-router-dom';
 
 import dayjs from 'dayjs';
 
@@ -13,6 +13,7 @@ import {
   Button,
   Typography,
   Grid,
+  ButtonGroup,
 } from '@mui/material';
 
 // 參考 https://fullcalendar.io/
@@ -343,6 +344,22 @@ export default function NoteList() {
           alignItems="center"
         >
           <Typography variant="h5" sx={{ marginBottom: '1em' }}>行事曆</Typography>
+          <ButtonGroup variant="text" color="secondary">
+            <Button
+              variant={pageState.pageMode !== 'list' && 'contained'}
+              component={Link}
+              to="/notes?pageMode=list"
+            >
+              列表模式
+            </Button>
+            <Button
+              variant={pageState.pageMode !== 'calendar' && 'contained'}
+              component={Link}
+              to="/notes?pageMode=calendar"
+            >
+              日曆模式
+            </Button>
+          </ButtonGroup>
           <Button
             variant="contained"
             color="thirdColor"
