@@ -349,6 +349,7 @@ export default function NoteList() {
               variant={pageState.pageMode !== 'list' && 'contained'}
               component={Link}
               to="/notes?pageMode=list"
+              disabled={pageState.pageMode === 'list'}
             >
               列表模式
             </Button>
@@ -356,6 +357,7 @@ export default function NoteList() {
               variant={pageState.pageMode !== 'calendar' && 'contained'}
               component={Link}
               to="/notes?pageMode=calendar"
+              disabled={pageState.pageMode === 'calendar'}
             >
               日曆模式
             </Button>
