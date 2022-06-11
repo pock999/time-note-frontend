@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import dayjs from 'dayjs';
 
@@ -24,6 +24,7 @@ import { logoutAction } from '../store/reducers/auth';
 
 export default function BaseLayout(props) {
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -40,7 +41,33 @@ export default function BaseLayout(props) {
       <AppBar position="sticky">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Time-Notes
+            {
+              location.pathname === '/notes'
+                ? (
+                  <span
+                    style={{
+                      color: '#000',
+                      fontWeight: 'bold',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    Time-Notes
+                  </span>
+                )
+                : (
+                  <Link
+                    to="/notes"
+                    style={{
+                      color: '#000',
+                      fontWeight: 'bold',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    Time-Notes
+                  </Link>
+                )
+            }
+
           </Typography>
           <IconButton
             size="large"
