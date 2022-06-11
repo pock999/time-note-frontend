@@ -1,6 +1,9 @@
+import React from 'react';
+
 import Home from '../../views/Home';
 import Login from '../../views/Login';
 import Page404 from '../../views/Page404';
+import Profile from '../../views/Profile';
 
 import NoteList from '../../views/Note/List';
 
@@ -17,6 +20,14 @@ export default [
     name: 'Login',
     component: Login,
     roles: [],
+    exact: true,
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    // component: React.lazy(() => import('../../views/Profile')),
+    component: Profile,
+    roles: ['isUser'],
     exact: true,
   },
   {

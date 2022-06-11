@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import dayjs from 'dayjs';
 
@@ -66,7 +67,7 @@ export default function BaseLayout(props) {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem>個人資料</MenuItem>
+            <MenuItem component={Link} to="/profile">個人資料</MenuItem>
             <MenuItem onClick={() => { dispatch(logoutAction()); }}>登出</MenuItem>
           </Menu>
         </Toolbar>
@@ -83,7 +84,7 @@ export default function BaseLayout(props) {
         <div
           style={{
             display: 'flex',
-            justifyContent: 'center'
+            justifyContent: 'center',
           }}
         >
           Made By&ensp;

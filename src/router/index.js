@@ -1,3 +1,9 @@
+/* eslint-disable indent */
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/jsx-indent */
+/* eslint-disable operator-linebreak */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import {
   Switch,
@@ -9,10 +15,9 @@ import {
 } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { useQuery } from '../hooks';
-
 import Swal from 'sweetalert2';
 import _ from 'lodash';
+import { useQuery } from '../hooks';
 
 import routes from './routes';
 import history from '../libs/history';

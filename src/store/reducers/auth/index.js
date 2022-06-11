@@ -90,4 +90,63 @@ export const logoutAction = createAsyncThunk(
   }
 );
 
+export const getProfileAction = createAsyncThunk(
+  'auth/profile',
+  async (payload, thunkApi) => {
+    try {
+      const { data } = await ApiService.get({
+        url: 'auth/profile',
+      });
+
+      localStorage.setItem('token', data.data.token);
+      localStorage.setItem('roles', JsonHelper.JsonSerialize(['IsUser']));
+      localStorage.setItem('currentRole', 'IsUser');
+      localStorage.setItem('user', JsonHelper.JsonSerialize(data.data.user));
+
+      ApiService.setToken(data.Authorization);
+
+      thunkApi.dispatch(setAuthorization(data.data.token));
+      thunkApi.dispatch(setUser(data.data.user));
+      thunkApi.dispatch(setRoles(['IsUser']));
+      thunkApi.dispatch(setCurrentRole('IsUser'));
+
+      return {
+        token: data.data.token,
+        roles: ['IsUser'],
+      };
+    } catch (e) {
+      console.log('e.response => ', e.response);
+
+      if (e.response.status === 401) {
+        thunkApi.dispatch(clearAuth());
+        ApiService.clearToken();
+        localStorage.clear();
+
+        Swal.fire({
+          icon: 'error',
+          title: 'token 過期',
+          toast: true,
+          position: 'top',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: false,
+        });
+
+        history.push('/login');
+      } else {
+        await Swal.fire({
+          icon: 'error',
+          title: e.response.message,
+          toast: true,
+          position: 'top',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: false,
+        });
+        return null;
+      }
+    }
+  }
+);
+
 export default authSlice.reducer;
