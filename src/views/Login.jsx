@@ -1,4 +1,5 @@
 import React from 'react';
+import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import { unwrapResult } from '@reduxjs/toolkit';
@@ -79,8 +80,15 @@ export default function Login() {
       unwrapResult(resultAction);
       history.push('/notes');
     } catch (e) {
-      // TODO: catch
-      console.log('error => ', e);
+      Swal.fire({
+        icon: 'error',
+        title: e.message,
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: false,
+      });
     }
   };
 

@@ -149,4 +149,17 @@ export const getProfileAction = createAsyncThunk(
   }
 );
 
+export const updateProfileAction = createAsyncThunk(
+  'auth/update-profile',
+  async (payload, thunkApi) => {
+    const { data } = await ApiService.put({
+      url: 'auth/profile',
+      data: payload,
+    });
+    thunkApi.dispatch(setUser(data.data));
+
+    return data.data;
+  }
+);
+
 export default authSlice.reducer;
