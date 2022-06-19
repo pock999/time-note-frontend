@@ -1,13 +1,17 @@
 /* eslint-disable radix */
+
+// react
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useLocation, useHistory, Link } from 'react-router-dom';
 
+// common tools(npm)
 import dayjs from 'dayjs';
-
 import Swal from 'sweetalert2';
+import _ from 'lodash';
 
+// mui(npm)
 import {
   Container,
   Button,
@@ -16,22 +20,33 @@ import {
   ButtonGroup,
 } from '@mui/material';
 
-// 參考 https://fullcalendar.io/
+// fullcalendar(npm) 參考 https://fullcalendar.io/
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import twLocale from '@fullcalendar/core/locales/zh-tw';
+import '@fullcalendar/daygrid/main.css';
+
+// custom hooks
+import { useQuery, useWindowSize } from '../../hooks';
+
+// custom components
 import { DataTable, FormModal } from '../../components';
+
+// custom layout
 import { BaseLayout } from '../../layouts';
+
+// custom utils
+import { delayFunction, dateFormat } from '../../utils/commons';
+
+// store
 import {
   fetchNoteList, fetchNoteDetail, createNote, updateNote,
 } from '../../store/reducers/note';
-import { useQuery } from '../../hooks';
+import { showLoading, hideLoading } from '../../store/reducers/loading';
 
-import '@fullcalendar/daygrid/main.css';
-
+// yup schema
 import { createSchema, updateSchema } from './formSchema';
-import { dateFormat } from '../../utils/commons';
 
 const noteTypes = [
   {
@@ -61,6 +76,7 @@ export default function NoteList() {
   const dispatch = useDispatch();
   const location = useLocation();
   const query = useQuery();
+  const [windowWidth, windowHeight] = useWindowSize();
 
   const noteList = useSelector((state) => state.note.list);
   const notePagination = useSelector((state) => state.note.pagination);
@@ -269,7 +285,11 @@ export default function NoteList() {
     }
   };
 
+  //
   // useEffect
+  //
+
+  // 偵測 url query string
   React.useEffect(() => {
     const pageMode = query.get('pageMode');
     const page = Number.parseInt(query.get('page'));
@@ -334,6 +354,15 @@ export default function NoteList() {
     }
   }, [location.search]);
 
+  // 偵測螢幕尺寸
+  React.useEffect(() => {
+    if (windowWidth < 700 && pageState.pageMode !== 'calendar') {
+      dispatch(showLoading());
+      history.push('/notes?pageMode=calendar');
+      delayFunction(() => dispatch(hideLoading()), 1500);
+    }
+  }, [windowWidth]);
+
   return (
     <BaseLayout>
       <Container sx={{ paddingTop: '2em', paddingBottom: '2em', marginBottom: '2em' }}>
@@ -343,25 +372,32 @@ export default function NoteList() {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Typography variant="h5" sx={{ marginBottom: '1em' }}>行事曆</Typography>
-          <ButtonGroup variant="text" color="secondary">
-            <Button
-              variant={pageState.pageMode !== 'list' && 'contained'}
-              component={Link}
-              to="/notes?pageMode=list"
-              disabled={pageState.pageMode === 'list'}
-            >
-              列表模式
-            </Button>
-            <Button
-              variant={pageState.pageMode !== 'calendar' && 'contained'}
-              component={Link}
-              to="/notes?pageMode=calendar"
-              disabled={pageState.pageMode === 'calendar'}
-            >
-              日曆模式
-            </Button>
-          </ButtonGroup>
+          <Typography variant="h5" sx={{ marginBottom: '1em' }}>
+            行事曆
+          </Typography>
+          {
+            windowWidth >= 700 && (
+            <ButtonGroup variant="text" color="secondary">
+              <Button
+                variant={pageState.pageMode !== 'list' && 'contained'}
+                component={Link}
+                to="/notes?pageMode=list"
+                disabled={pageState.pageMode === 'list'}
+              >
+                列表模式
+              </Button>
+              <Button
+                variant={pageState.pageMode !== 'calendar' && 'contained'}
+                component={Link}
+                to="/notes?pageMode=calendar"
+                disabled={pageState.pageMode === 'calendar'}
+              >
+                日曆模式
+              </Button>
+            </ButtonGroup>
+            )
+          }
+
           <Button
             variant="contained"
             color="thirdColor"
