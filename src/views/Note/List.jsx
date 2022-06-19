@@ -8,7 +8,6 @@ import { useLocation, useHistory, Link } from 'react-router-dom';
 
 // common tools(npm)
 import dayjs from 'dayjs';
-import Swal from 'sweetalert2';
 import _ from 'lodash';
 
 // mui(npm)
@@ -38,6 +37,7 @@ import { BaseLayout } from '../../layouts';
 
 // custom utils
 import { delayFunction, dateFormat } from '../../utils/commons';
+import SwalHelper from '../../utils/SwalHelper';
 
 // store
 import {
@@ -198,25 +198,9 @@ export default function NoteList() {
 
         closeForm();
       }
-      Swal.fire({
-        icon: 'success',
-        title: `${formData.id ? '更新' : '新增'}成功`,
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 1500,
-        timerProgressBar: false,
-      });
+      SwalHelper.success(`${formData.id ? '更新' : '新增'}成功`);
     } catch (e) {
-      Swal.fire({
-        icon: 'error',
-        title: e.message,
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 1500,
-        timerProgressBar: false,
-      });
+      SwalHelper.fail(e.message);
     }
   };
 
@@ -346,11 +330,7 @@ export default function NoteList() {
         history.push(`${location.pathname}?pageMode=list&page=1&pageSize=10`);
       }
     } catch (e) {
-      Swal.fire(
-        '錯誤',
-        e.message,
-        'error',
-      );
+      SwalHelper.error('錯誤', e.message);
     }
   }, [location.search]);
 

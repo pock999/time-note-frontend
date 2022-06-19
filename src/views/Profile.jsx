@@ -1,6 +1,5 @@
 import React from 'react';
 import _ from 'lodash';
-import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useLocation, useHistory, Link } from 'react-router-dom';
@@ -31,6 +30,8 @@ import {
   FormControlLabel,
   Grid,
 } from '@mui/material';
+
+import SwalHelper from '../utils/SwalHelper';
 
 import { BaseLayout } from '../layouts';
 
@@ -83,25 +84,9 @@ export default function Profile() {
 
       unwrapResult(resultAction);
 
-      Swal.fire({
-        icon: 'success',
-        title: '更新成功',
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: false,
-      });
+      SwalHelper.success('更新成功');
     } catch (e) {
-      Swal.fire({
-        icon: 'error',
-        title: e.message,
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: false,
-      });
+      SwalHelper.fail(e.message);
     }
   };
 

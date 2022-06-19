@@ -15,7 +15,6 @@ import {
 } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import Swal from 'sweetalert2';
 import _ from 'lodash';
 import { useQuery } from '../hooks';
 
@@ -32,6 +31,7 @@ import {
 
 import ApiServiceClass from '../services/ApiService';
 import JsonHelper from '../utils/JsonHelper';
+import SwalHelper from '../utils/SwalHelper';
 
 const ApiService = new ApiServiceClass();
 
@@ -84,27 +84,11 @@ function ProtectedRoutes(props) {
         ApiService.clearToken();
         localStorage.clear();
 
-        Swal.fire({
-          icon: 'error',
-          title: 'token 過期',
-          toast: true,
-          position: 'top',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: false,
-        });
+        SwalHelper.fail('token 過期');
 
         history.push('/login');
       } else {
-        await Swal.fire({
-          icon: 'error',
-          title: e.response.message,
-          toast: true,
-          position: 'top',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: false,
-        });
+        await SwalHelper.fail(e.response.message);
         return null;
       }
     }

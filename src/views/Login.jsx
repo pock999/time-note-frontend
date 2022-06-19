@@ -7,7 +7,6 @@ import { Link, useHistory } from 'react-router-dom';
 import { unwrapResult } from '@reduxjs/toolkit';
 
 // common tools(npm)
-import Swal from 'sweetalert2';
 import _ from 'lodash';
 
 // mui(npm)
@@ -27,6 +26,9 @@ import {
   Tabs,
   Tab,
 } from '@mui/material';
+
+// custom utils
+import SwalHelper from '../utils/SwalHelper';
 
 // store
 import { loginAction, registerAction } from '../store/reducers/auth';
@@ -100,15 +102,7 @@ export default function Login() {
       unwrapResult(resultAction);
       history.push('/notes');
     } catch (e) {
-      Swal.fire({
-        icon: 'error',
-        title: e.message,
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: false,
-      });
+      SwalHelper.fail(e.message);
     }
   };
 
@@ -126,30 +120,14 @@ export default function Login() {
       const resultAction = await dispatch(registerAction({ ..._.pick(state, ['email', 'password', 'name']) }));
       unwrapResult(resultAction);
 
-      Swal.fire({
-        icon: 'success',
-        title: '註冊成功',
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: false,
-      });
+      SwalHelper.success('註冊成功');
 
       setFocusTab((pre) => {
         setState(initFormState);
         return 0;
       });
     } catch (e) {
-      Swal.fire({
-        icon: 'error',
-        title: e.message,
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: false,
-      });
+      SwalHelper.fail(e.message);
     }
   };
 

@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import Swal from 'sweetalert2';
 
 import ApiServiceClass from '../../../services/ApiService';
 
 import JsonHelper from '../../../utils/JsonHelper';
+import SwalHelper from '../../../utils/SwalHelper';
 
 import history from '../../../libs/history';
 
@@ -88,15 +88,7 @@ export const logoutAction = createAsyncThunk(
     localStorage.clear();
     ApiService.clearToken();
 
-    Swal.fire({
-      icon: 'success',
-      title: '已登出',
-      toast: true,
-      position: 'top',
-      showConfirmButton: false,
-      timer: 1000,
-      timerProgressBar: false,
-    });
+    SwalHelper.success('已登出');
 
     history.push('/login');
   }
@@ -134,27 +126,11 @@ export const getProfileAction = createAsyncThunk(
         ApiService.clearToken();
         localStorage.clear();
 
-        Swal.fire({
-          icon: 'error',
-          title: 'token 過期',
-          toast: true,
-          position: 'top',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: false,
-        });
+        SwalHelper.fail('token 過期');
 
         history.push('/login');
       } else {
-        await Swal.fire({
-          icon: 'error',
-          title: e.response.message,
-          toast: true,
-          position: 'top',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: false,
-        });
+        await SwalHelper.fail(e.response.message);
         return null;
       }
     }
