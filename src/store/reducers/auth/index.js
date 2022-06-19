@@ -47,6 +47,18 @@ export const {
   clearAuth,
 } = authSlice.actions;
 
+export const registerAction = createAsyncThunk(
+  'auth/login',
+  async (payload, thunkApi) => {
+    const { data } = await ApiService.post({
+      url: 'auth/register',
+      data: payload,
+    });
+
+    return data;
+  }
+);
+
 export const loginAction = createAsyncThunk(
   'auth/login',
   async (payload, thunkApi) => {

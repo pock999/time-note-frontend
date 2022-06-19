@@ -29,7 +29,7 @@ import {
 } from '@mui/material';
 
 // store
-import { loginAction } from '../store/reducers/auth';
+import { loginAction, registerAction } from '../store/reducers/auth';
 
 // styled-component
 const Wrapper = styled('div')`
@@ -68,16 +68,20 @@ const RightFormWrapper = styled('div')`
   }
 `;
 
+const initFormState = {
+  name: '',
+  email: '',
+  password: '',
+  repeatPassword: '',
+};
+
 export default function Login() {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [state, setState] = React.useState({
-    name: '',
-    email: '',
-    password: '',
-    repeatPassword: '',
-  });
+  const [state, setState] = React.useState(initFormState);
+  // Tabs
+  const [focusTab, setFocusTab] = React.useState(0);
 
   const handleChange = (target, evt) => {
     setState((pre) => ({
@@ -90,6 +94,7 @@ export default function Login() {
   };
 
   const loginSubmit = async () => {
+    // TODO: yup
     const resultAction = await dispatch(loginAction({ ..._.pick(state, ['email', 'password']) }));
     try {
       unwrapResult(resultAction);
@@ -107,10 +112,46 @@ export default function Login() {
     }
   };
 
-  const registerSubmit = async () => {};
+  const registerSubmit = async () => {
+    try {
+      if (state.password !== state.repeatPassword) {
+        throw new Error('密碼需與密碼確認一致');
+      }
 
-  // Tabs
-  const [focusTab, setFocusTab] = React.useState(0);
+      if (state.password.length < 8) {
+        throw new Error('密碼長度需大於8個字元');
+      }
+
+      // TODO: yup
+      const resultAction = await dispatch(registerAction({ ..._.pick(state, ['email', 'password', 'name']) }));
+      unwrapResult(resultAction);
+
+      Swal.fire({
+        icon: 'success',
+        title: '註冊成功',
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: false,
+      });
+
+      setFocusTab((pre) => {
+        setState(initFormState);
+        return 0;
+      });
+    } catch (e) {
+      Swal.fire({
+        icon: 'error',
+        title: e.message,
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: false,
+      });
+    }
+  };
 
   return (
     <Wrapper>
