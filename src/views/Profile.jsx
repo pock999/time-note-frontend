@@ -1,11 +1,14 @@
+// react
 import React from 'react';
-import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useLocation, useHistory, Link } from 'react-router-dom';
 
-import { styled } from '@mui/material/styles';
+// common tools(npm)
+import _ from 'lodash';
 
+// mui(npm)
+import { styled } from '@mui/material/styles';
 import {
   FormControl,
   TextField,
@@ -31,10 +34,13 @@ import {
   Grid,
 } from '@mui/material';
 
+// custom utils
 import SwalHelper from '../utils/SwalHelper';
 
+// custom layout
 import { BaseLayout } from '../layouts';
 
+// store
 import { getProfileAction, updateProfileAction } from '../store/reducers/auth';
 
 export default function Profile() {

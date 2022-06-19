@@ -1,8 +1,9 @@
+// react
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+// mui(npm)
 import { styled } from '@mui/material/styles';
-
 import {
   Container,
   Card,
@@ -14,6 +15,7 @@ import {
   Divider,
 } from '@mui/material';
 
+// styled component
 const Parallax = styled('div')`
   background-image: url("../assets/home-calendar.jpeg");
   min-height: 300px;
