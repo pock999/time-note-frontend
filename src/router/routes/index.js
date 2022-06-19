@@ -12,7 +12,7 @@ export default [
     name: 'Home',
     component: React.lazy(() => import('../../views/Home')),
     // component: Home,
-    roles: null,
+    roles: [],
     exact: true,
   },
   {
