@@ -138,6 +138,7 @@ export default function Login() {
         <Card
           sx={{
             margin: '10px',
+            width: '90%',
           }}
         >
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -210,7 +211,6 @@ export default function Login() {
           >
             <Button
               size="small"
-              color="thirdColor"
               variant="contained"
               component={Link}
               to="/"
@@ -225,7 +225,6 @@ export default function Login() {
               <Button
                 size="small"
                 onClick={() => loginSubmit()}
-                color="thirdColor"
                 variant="contained"
               >
                 登入
@@ -237,7 +236,6 @@ export default function Login() {
               <Button
                 size="small"
                 onClick={() => registerSubmit()}
-                color="thirdColor"
                 variant="contained"
               >
                 註冊

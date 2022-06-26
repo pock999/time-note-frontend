@@ -380,7 +380,6 @@ export default function NoteList() {
 
           <Button
             variant="contained"
-            color="thirdColor"
             onClick={() => openForm({ dateTime: null, rowId: null })}
           >
             新增

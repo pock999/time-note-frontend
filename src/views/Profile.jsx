@@ -166,7 +166,6 @@ export default function Profile() {
               <Grid container justifyContent="flex-end">
                 <Button
                   variant="contained"
-                  color="thirdColor"
                   type="submit"
                 >
                   送出

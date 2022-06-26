@@ -73,7 +73,6 @@ export default function Home() {
                 size="small"
                 to="/login"
                 variant="contained"
-                color="thirdColor"
               >
                 前往登入
               </Button>

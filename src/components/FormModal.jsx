@@ -106,7 +106,6 @@ export default function FormModal(props) {
       <DialogActions>
         <Button
           variant="contained"
-          color="thirdColor"
           onClick={handleSave}
         >
           保存
