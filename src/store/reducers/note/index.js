@@ -5,6 +5,9 @@ import ApiServiceClass from '../../../services/ApiService';
 
 import JsonHelper from '../../../utils/JsonHelper';
 
+// other store
+import { setDrawerTypes } from '../layout';
+
 const ApiService = new ApiServiceClass();
 
 export const noteSlice = createSlice({
@@ -13,6 +16,7 @@ export const noteSlice = createSlice({
     list: null,
     pagination: null,
     detail: null,
+    noteTypes: null,
   },
   reducers: {
     setList: (state, { type, payload }) => {
@@ -24,10 +28,29 @@ export const noteSlice = createSlice({
     setDetail: (state, { type, payload }) => {
       state.detail = payload;
     },
+    setNoteTypes: (state, { type, payload }) => {
+      state.noteTypes = payload;
+    },
   },
 });
 
-export const { setList, setDetail, setPagination } = noteSlice.actions;
+export const { setList, setDetail, setPagination, setNoteTypes } =
+  noteSlice.actions;
+
+export const fetchNoteTypes = createAsyncThunk(
+  'note/fetchTypes',
+  async (payload, thunkApi) => {
+    thunkApi.dispatch(setNoteTypes(null));
+
+    const { data } = await ApiService.get({
+      url: 'note/type',
+    });
+
+    thunkApi.dispatch(setDrawerTypes(data.data));
+    thunkApi.dispatch(setNoteTypes(data.data));
+    return data.data;
+  }
+);
 
 export const fetchNoteList = createAsyncThunk(
   'note/fetchList',
@@ -44,6 +67,8 @@ export const fetchNoteList = createAsyncThunk(
 
     thunkApi.dispatch(setList(data.data));
     thunkApi.dispatch(setPagination(data.paging));
+
+    return data;
   }
 );
 

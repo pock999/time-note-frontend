@@ -34,7 +34,7 @@ import SwalHelper from '../../utils/SwalHelper';
 
 // store
 import {
-  fetchNoteList, fetchNoteDetail, createNote, updateNote,
+  fetchNoteList, fetchNoteDetail, createNote, updateNote, fetchNoteTypes,
 } from '../../store/reducers/note';
 import { showLoading, hideLoading } from '../../store/reducers/loading';
 
@@ -118,7 +118,7 @@ export default function NoteList() {
   // 偵測 url query string
   React.useEffect(() => {
     try {
-      //
+      dispatch(fetchNoteTypes());
     } catch (e) {
       SwalHelper.error('錯誤', e.message);
     }

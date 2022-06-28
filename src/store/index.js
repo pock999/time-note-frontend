@@ -4,12 +4,14 @@ import thunk from 'redux-thunk';
 import authReducer from './reducers/auth';
 import noteReducer from './reducers/note';
 import loadingSlice from './reducers/loading';
+import layoutSlice from './reducers/layout';
 
 export default configureStore({
   reducer: {
     auth: authReducer,
     note: noteReducer,
     loading: loadingSlice,
+    layout: layoutSlice,
   },
   applyMiddleware: applyMiddleware(thunk),
 });

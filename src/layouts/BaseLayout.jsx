@@ -1,8 +1,9 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 
 import dayjs from 'dayjs';
+import _ from 'lodash';
 
 import {
   Box,
@@ -21,53 +22,80 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  Skeleton,
 } from '@mui/material';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import MenuIcon from '@mui/icons-material/Menu';
 import {
+  BookmarksSharp,
   AccountCircle,
 } from '@mui/icons-material';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import MenuIcon from '@mui/icons-material/Menu';
 
 import { logoutAction } from '../store/reducers/auth';
 
 const drawerWidth = 320;
 
-const drawer = (
-  <div>
-    <Toolbar />
-    <Divider />
-    <List>
-      {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-        <ListItem key={text} disablePadding>
+function DrawerContent(props) {
+  const {
+    drawerTypes,
+  } = props;
+
+  return (
+    <div>
+      <Toolbar />
+      <Divider />
+      <List>
+        <ListItem disablePadding>
           <ListItemButton>
             <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              <BookmarksSharp />
             </ListItemIcon>
-            <ListItemText primary={text} />
+            <ListItemText primary="全部" />
           </ListItemButton>
         </ListItem>
-      ))}
-    </List>
-    <Divider />
-    <List>
-      {['All mail', 'Trash', 'Spam'].map((text, index) => (
-        <ListItem key={text} disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
-  </div>
-);
+        {
+          _.isArray(drawerTypes)
+            ? drawerTypes.map((typeItem, index) => (
+              <ListItem key={typeItem.value} disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <BookmarksSharp />
+                  </ListItemIcon>
+                  <ListItemText primary={typeItem.name} />
+                </ListItemButton>
+              </ListItem>
+            ))
+            : (
+              <>
+                <Skeleton animation="wave" variant="ListItem" />
+                <Skeleton animation="wave" variant="ListItem" />
+                <Skeleton animation="wave" variant="ListItem" />
+              </>
+            )
+        }
+      </List>
+      <Divider />
+      <List>
+        {['重要', '待辦', '數學', '國文'].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <FiberManualRecordIcon />
+              </ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </div>
+  );
+}
 
 export default function BaseLayout(props) {
   const dispatch = useDispatch();
   const location = useLocation();
+  const drawerTypes = useSelector((state) => state.layout.drawerTypes);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -185,7 +213,7 @@ export default function BaseLayout(props) {
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
-          {drawer}
+          <DrawerContent drawerTypes={drawerTypes} />
         </Drawer>
         <Drawer
           variant="permanent"
@@ -195,14 +223,14 @@ export default function BaseLayout(props) {
           }}
           open
         >
-          {drawer}
+          <DrawerContent drawerTypes={drawerTypes} />
         </Drawer>
       </Box>
 
       <Box
         component="main"
         sx={{
-          flexGrow: 1, p: 3, pt: 5, width: { md: `calc(100% - ${drawerWidth}px)` },
+          flexGrow: 1, p: 1, pt: 5, width: { md: `calc(100% - ${drawerWidth}px)` },
         }}
       >
         {props.children}

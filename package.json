@@ -45,6 +45,7 @@
     "lodash": "^4.17.21",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-placards": "^1.0.2",
     "react-redux": "^8.0.1",
     "react-router-dom": "5.3.1",
     "react-vertical-timeline-component": "^3.5.2",
