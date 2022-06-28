@@ -41,6 +41,9 @@ import { showLoading, hideLoading } from '../../store/reducers/loading';
 // yup schema
 import { createSchema, updateSchema } from './formSchema';
 
+// TODO: fake
+import FakeView from './FakeView';
+
 const emptyNote = {
   title: '',
   content: '',
@@ -131,7 +134,7 @@ export default function NoteList() {
   return (
     <BaseLayout>
       <Container sx={{ paddingTop: '2em', paddingBottom: '2em', marginBottom: '2em' }}>
-        gfdgfd
+        <FakeView />
       </Container>
     </BaseLayout>
   );
