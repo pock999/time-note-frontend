@@ -38,7 +38,6 @@ export default [
     // component: NoteList,
     roles: ['isUser'],
     exact: true,
-    defaultQuery: '?pageMode=list&page=1&pageSize=10',
   },
   {
     path: '/404',

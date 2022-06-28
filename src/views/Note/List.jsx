@@ -19,18 +19,11 @@ import {
   ButtonGroup,
 } from '@mui/material';
 
-// fullcalendar(npm) 參考 https://fullcalendar.io/
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import twLocale from '@fullcalendar/core/locales/zh-tw';
-import '@fullcalendar/daygrid/main.css';
-
 // custom hooks
 import { useQuery, useWindowSize } from '../../hooks';
 
 // custom components
-import { DataTable, FormModal } from '../../components';
+import { FormModal } from '../../components';
 
 // custom layout
 import { BaseLayout } from '../../layouts';
@@ -48,21 +41,6 @@ import { showLoading, hideLoading } from '../../store/reducers/loading';
 // yup schema
 import { createSchema, updateSchema } from './formSchema';
 
-const noteTypes = [
-  {
-    value: 1,
-    text: '筆記',
-  },
-  {
-    value: 2,
-    text: '行程(提醒)',
-  },
-  {
-    value: 3,
-    text: '文章',
-  },
-];
-
 const emptyNote = {
   title: '',
   content: '',
@@ -75,20 +53,10 @@ export default function NoteList() {
   const history = useHistory();
   const dispatch = useDispatch();
   const location = useLocation();
-  const query = useQuery();
   const [windowWidth, windowHeight] = useWindowSize();
 
   const noteList = useSelector((state) => state.note.list);
   const notePagination = useSelector((state) => state.note.pagination);
-
-  // url query
-  const [pageState, setPageState] = React.useState({
-    pageMode: null,
-    page: null,
-    pageSize: null,
-    startAt: null,
-    endAt: null,
-  });
 
   // FormModal is open
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -134,138 +102,12 @@ export default function NoteList() {
     try {
       let resultAction;
       console.log('formData => ', formData);
-      if (formData.id) {
-        // 更新
-        const validData = await updateSchema.validate(formData);
-        resultAction = await dispatch(updateNote(validData));
-        await unwrapResult(resultAction);
-        if (pageState.pageMode === 'calendar') {
-          const current = dayjs(formData.startAt);
-          const startAt = current
-            .month(current.month())
-            .date(1)
-            .hour(0)
-            .minute(0)
-            .second(0)
-            .format('YYYY-MM-DD HH:mm:ss');
 
-          const endAt = current
-            .month(current.month() + 1)
-            .date(1)
-            .hour(0)
-            .minute(0)
-            .second(0)
-            .subtract(1, 'second')
-            .format('YYYY-MM-DD HH:mm:ss');
+      // TODO:
 
-          history.push(`${location.pathname}?pageMode=calendar&startAt=${encodeURIComponent(startAt)}&endAt=${encodeURIComponent(endAt)}`);
-        }
-        closeForm();
-      } else {
-        // 新增
-        const validData = await createSchema.validate(formData);
-        resultAction = await dispatch(createNote(validData));
-        await unwrapResult(resultAction);
-        if (pageState.pageMode === 'calendar') {
-          const current = dayjs(formData.startAt);
-          const startAt = current
-            .month(current.month())
-            .date(1)
-            .hour(0)
-            .minute(0)
-            .second(0)
-            .format('YYYY-MM-DD HH:mm:ss');
-
-          const endAt = current
-            .month(current.month() + 1)
-            .date(1)
-            .hour(0)
-            .minute(0)
-            .second(0)
-            .subtract(1, 'second')
-            .format('YYYY-MM-DD HH:mm:ss');
-
-          history.push(`${location.pathname}?pageMode=calendar&startAt=${encodeURIComponent(startAt)}&endAt=${encodeURIComponent(endAt)}`);
-
-          dispatch(fetchNoteList({
-            searchStr: `pageMode=calendar&startAt=${encodeURIComponent(startAt)}&endAt=${encodeURIComponent(endAt)}`,
-          }));
-        } else {
-          dispatch(fetchNoteList({
-            searchStr: location.search.replace('?', ''),
-          }));
-        }
-
-        closeForm();
-      }
       SwalHelper.success(`${formData.id ? '更新' : '新增'}成功`);
     } catch (e) {
       SwalHelper.fail(e.message);
-    }
-  };
-
-  // for Datatable use
-  const handleChangePage = (evt, newPage) => {
-    history.push(`${location.pathname}${location.search.replace(/page=[0-9]*/, `page=${newPage + 1}`)}`);
-  };
-
-  const handleChangePageSize = (evt) => {
-    const fullPath = `${location.pathname}${location.search.replace(/pageSize=[0-9]*/, `pageSize=${evt.target.value}`)}`;
-    if (evt.target.value > pageState.pageSize) {
-      history.push(fullPath.replace(/page=[0-9]*/, 'page=1'));
-    } else {
-      history.push(fullPath);
-    }
-  };
-
-  const columns = [
-    { id: 'id', label: 'ID', align: 'center' },
-    { id: 'type', label: '類型', align: 'center' },
-    { id: 'title', label: '標題', align: 'center' },
-    { id: 'content', label: '內容', align: 'center' },
-    { id: 'startAt', label: '開始時間', align: 'center' },
-    { id: 'endAt', label: '結束時間', align: 'center' },
-    { id: 'actions', label: '操作', align: 'center' },
-  ];
-
-  // eslint-disable-next-line react/no-unstable-nested-components
-  function ActionsRender(props) {
-    const {
-      rowId,
-      text,
-    } = props;
-    return (
-      <Button variant="contained" onClick={() => openForm({ rowId })}>
-        {text}
-      </Button>
-    );
-  }
-
-  // for calendar
-
-  // calendar ref
-  const calendarRef = React.useRef();
-
-  // 顯示在行事曆上的資訊
-  const renderEventContent = (eventInfo) =>
-    // console.log('eventInfo => ', eventInfo);
-    (
-      <>
-        <b>{eventInfo.event.title}</b>
-        {/* <i>{eventInfo.timeText}</i> */}
-      </>
-    );
-
-  // 日曆換頁(月)
-  const calendarPageChange = (event) => {
-    const calendarCurrStart = dateFormat(event.view.currentStart);
-    const calendarCurrEnd = dateFormat(dayjs(event.view.currentEnd).subtract(1, 'second'));
-    const startAt = dateFormat(pageState.startAt);
-    const endAt = dateFormat(pageState.endAt);
-
-    // url query日期區間不等於日曆的區間則將url query的日期區間調整成與日曆一樣
-    if (startAt !== calendarCurrStart || endAt !== calendarCurrEnd) {
-      history.push(`${location.pathname}?pageMode=calendar&startAt=${encodeURIComponent(calendarCurrStart)}&endAt=${encodeURIComponent(calendarCurrEnd)}`);
     }
   };
 
@@ -275,60 +117,8 @@ export default function NoteList() {
 
   // 偵測 url query string
   React.useEffect(() => {
-    const pageMode = query.get('pageMode');
-    const page = Number.parseInt(query.get('page'));
-    const pageSize = Number.parseInt(query.get('pageSize'));
-    const startAt = query.get('startAt');
-    const endAt = query.get('endAt');
-
-    setPageState((pre) => ({
-      ...pre,
-      pageMode,
-      page,
-      pageSize,
-      startAt,
-      endAt,
-    }));
-
     try {
-      if (pageMode === 'list') {
-        if (!page || !pageSize) {
-          history.push(`${location.pathname}?pageMode=list&page=1&pageSize=10`);
-        } else {
-          dispatch(fetchNoteList({
-            searchStr: location.search.replace('?', ''),
-          }));
-        }
-      } else if (pageMode === 'calendar') {
-        if (!startAt || !endAt) {
-          const now = dayjs();
-          const startAt = now
-            .month(now.month())
-            .date(1)
-            .hour(0)
-            .minute(0)
-            .second(0)
-            .format('YYYY-MM-DD HH:mm:ss');
-
-          const endAt = now
-            .month(now.month() + 1)
-            .date(1)
-            .hour(0)
-            .minute(0)
-            .second(0)
-            .subtract(1, 'second')
-            .format('YYYY-MM-DD HH:mm:ss');
-
-          history.push(`${location.pathname}?pageMode=calendar&startAt=${encodeURIComponent(startAt)}&endAt=${encodeURIComponent(endAt)}`);
-        } else {
-          dispatch(fetchNoteList({
-            searchStr: location.search.replace('?', ''),
-          }));
-        }
-      } else {
-        // pageMode: list, page: 1, pageSize: 10
-        history.push(`${location.pathname}?pageMode=list&page=1&pageSize=10`);
-      }
+      //
     } catch (e) {
       SwalHelper.error('錯誤', e.message);
     }
@@ -336,108 +126,12 @@ export default function NoteList() {
 
   // 偵測螢幕尺寸
   React.useEffect(() => {
-    if (windowWidth < 700 && pageState.pageMode !== 'calendar') {
-      dispatch(showLoading());
-      history.push('/notes?pageMode=calendar');
-      delayFunction(() => dispatch(hideLoading()), 1500);
-    }
   }, [windowWidth]);
 
   return (
     <BaseLayout>
       <Container sx={{ paddingTop: '2em', paddingBottom: '2em', marginBottom: '2em' }}>
-        <Grid
-          container
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography variant="h5" sx={{ marginBottom: '1em' }}>
-            行事曆
-          </Typography>
-          {
-            windowWidth >= 700 && (
-            <ButtonGroup variant="text" color="secondary">
-              <Button
-                variant={pageState.pageMode !== 'list' && 'contained'}
-                component={Link}
-                to="/notes?pageMode=list"
-                disabled={pageState.pageMode === 'list'}
-              >
-                列表模式
-              </Button>
-              <Button
-                variant={pageState.pageMode !== 'calendar' && 'contained'}
-                component={Link}
-                to="/notes?pageMode=calendar"
-                disabled={pageState.pageMode === 'calendar'}
-              >
-                日曆模式
-              </Button>
-            </ButtonGroup>
-            )
-          }
-
-          <Button
-            variant="contained"
-            onClick={() => openForm({ dateTime: null, rowId: null })}
-          >
-            新增
-          </Button>
-          <FormModal
-            isOpen={modalOpen}
-            note={formData}
-            handleClose={() => closeForm()}
-            editForm={editForm}
-            handleSave={saveForm}
-          />
-        </Grid>
-        {
-          _.isArray(noteList)
-            && (pageState.pageMode === 'calendar'
-              ? (
-                <FullCalendar
-                  plugins={[dayGridPlugin, interactionPlugin]}
-                  initialView="dayGridMonth"
-                  headerToolbar={{
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth',
-                  }}
-                  ref={calendarRef}
-                  initialDate={pageState.startAt}
-                  eventContent={renderEventContent}
-                  locale={twLocale}
-                  datesSet={(event) => calendarPageChange(event)}
-                  events={noteList.map((note) => ({
-                    ..._.omit(note, ['startAt', 'endAt', 'type']),
-                    start: note.startAt,
-                    end: note.endAt,
-                    type: noteTypes.find((type) => note.type === type.value).text,
-                  }))}
-                  // 更新, 刪除
-                  eventClick={(eventInfo) => openForm({ rowId: eventInfo.event.id })}
-                  // 新增
-                  dateClick={(arg) => openForm({ dateTime: arg.date, rowId: null })}
-                />
-              )
-              : notePagination
-              && (
-              <DataTable
-                columns={columns}
-                rows={noteList.map((note) => ({
-                  ..._.omit(note, ['type']),
-                  type: noteTypes.find((type) => note.type === type.value).text,
-                }))}
-                page={pageState.page - 1}
-                totalCount={notePagination.totalCount}
-                pageSize={pageState.pageSize}
-                handleChangePage={handleChangePage}
-                handleChangePageSize={handleChangePageSize}
-                actionsRender={ActionsRender}
-              />
-              ))
-        }
+        gfdgfd
       </Container>
     </BaseLayout>
   );
