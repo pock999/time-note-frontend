@@ -13,7 +13,7 @@ const computeRotate = (index, len, base = 0.5) => {
     return 0;
   }
 
-  return 0 + ((len - index) * base);
+  return 0 + ((len - index - 1) * base);
 };
 
 export default function CardStack(props) {
