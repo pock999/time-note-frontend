@@ -15,6 +15,8 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 
+import { CardStack } from '../../components';
+
 export default function FakeView() {
   const fakeData = [
     {
@@ -60,7 +62,7 @@ export default function FakeView() {
 
               {groupDataByDate[group].map((data) => (
                 <Grid item xs={12} md={4} key={data.id}>
-                  <Card sx={{ boxShadow: '5px 10px 5px #DCDCDC' }}>
+                  <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
                     <CardContent>
                       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                         { data.startAt }
@@ -86,6 +88,12 @@ export default function FakeView() {
           </Grid>
         ))
       }
+      <Grid item xs={12}>
+        <CardStack
+          col={6}
+          cards={fakeData}
+        />
+      </Grid>
     </Grid>
   );
 }
