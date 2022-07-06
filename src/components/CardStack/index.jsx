@@ -21,6 +21,7 @@ export default function CardStack(props) {
     cards,
     col,
     onClick,
+    cardContent,
   } = props;
 
   const [base, setBase] = React.useState(0.5);
@@ -46,6 +47,7 @@ export default function CardStack(props) {
             key={card.id}
             card={card}
             deg={computeRotate(index, ary.length, base)}
+            cardContent={cardContent}
           />
         ))
       }

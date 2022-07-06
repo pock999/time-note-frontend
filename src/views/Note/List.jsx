@@ -23,8 +23,11 @@ import {
   CardActions,
 } from '@mui/material';
 
+// mui icons
+import TouchAppIcon from '@mui/icons-material/TouchApp';
+
 // use query params
-import { useQueryParam, NumberParam } from 'use-query-params';
+import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
 
 // custom hooks
 import { useQuery, useWindowSize } from '../../hooks';
@@ -69,8 +72,14 @@ export default function NoteList() {
   const noteList = useSelector((state) => state.note.list);
   const notePagination = useSelector((state) => state.note.pagination);
 
-  // 是否要分組
-  const [isGroup, setIsGroup] = useQueryParam('isGroup', NumberParam);
+  //
+  // url params
+  //
+  const [query, setQuery] = useQueryParams({
+    isGroup: NumberParam,
+    startAt: StringParam,
+    endAt: StringParam,
+  });
 
   // FormModal is open
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -151,7 +160,7 @@ export default function NoteList() {
   }, [windowWidth]);
 
   // 沒有資料 || 分組狀態但資料不為分組資料形式 || 不為分組狀態但資料為分組資料形式
-  if (!noteList || (isGroup && !_.isObject(noteList)) || (!isGroup && !_.isArray(noteList))) {
+  if (!noteList || ((query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null) && !_.isObject(noteList)) || (query.isGroup === 0 && !_.isArray(noteList))) {
     return (
       <BaseLayout>
         <Container sx={{
@@ -188,23 +197,59 @@ export default function NoteList() {
 
   return (
     <BaseLayout>
-      <Container sx={{ paddingTop: '3.5em', paddingBottom: '2em', marginBottom: '2em' }}>
+      <Container sx={{ paddingTop: '4.5em', paddingBottom: '2em', marginBottom: '2em' }}>
         <Grid container spacing={2}>
           {
-            isGroup
+            (query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null)
               ? (
                 Object.keys(noteList).map((group, index) => (
                   <CardStack
                     key={group}
                     col={6}
-                    cards={noteList[group]}
-                    onClick={() => setIsGroup(0)}
+                    cards={noteList[group].notes}
+                    onClick={() => {
+                      setQuery({
+                        isGroup: 0,
+                        startAt: noteList[group].startAt,
+                        endAt: noteList[group].endAt,
+                      });
+                    }}
+                    cardContent={(
+                      <>
+                        <CardContent>
+                          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                            { noteList[group].startAt }
+                            {' '}
+                            ~
+                            {' '}
+                            { noteList[group].endAt }
+                          </Typography>
+                          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                            共
+                            {' '}
+                            {noteList[group].count}
+                            筆
+                          </Typography>
+                        </CardContent>
+                        <CardActions
+                          sx={{
+                            display: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
+                            點擊查看
+                          </Typography>
+                          <TouchAppIcon />
+                        </CardActions>
+                      </>
+                    )}
                   />
                 ))
               )
               : noteList.map((data) => (
                 <Grid item xs={12} md={4} key={data.id}>
-                  <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
+                  <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%' }}>
                     <CardContent>
                       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                         { data.startAt }

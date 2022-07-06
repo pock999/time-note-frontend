@@ -28,6 +28,7 @@ export default function InnerCard(props) {
   const {
     card,
     deg,
+    cardContent,
   } = props;
 
   const classes = useStyles({
@@ -38,14 +39,7 @@ export default function InnerCard(props) {
     <Card
       className={classes.card}
     >
-      <CardContent>
-        <Typography variant="h5" component="div">
-          { card.title || '' }
-        </Typography>
-        <Typography variant="body2">
-          { card.content || ''}
-        </Typography>
-      </CardContent>
+      {cardContent}
     </Card>
   );
 }
