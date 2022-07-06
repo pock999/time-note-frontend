@@ -17,7 +17,7 @@ import { makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles((theme) => ({
   card: (props) => ({
     width: '100%',
-    boxShadow: '5px 5px 5px #ABABAB',
+    boxShadow: '2px 2px 3px #ABABAB',
     border: '1px solid #ABABAB',
     position: 'absolute',
     transform: `rotate(${props.deg}deg)`,

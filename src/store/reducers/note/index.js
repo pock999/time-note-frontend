@@ -4,6 +4,7 @@ import _ from 'lodash';
 import ApiServiceClass from '../../../services/ApiService';
 
 import JsonHelper from '../../../utils/JsonHelper';
+import SwalHelper from '../../../utils/SwalHelper';
 
 // other store
 import { setDrawerTypes } from '../layout';
@@ -55,20 +56,25 @@ export const fetchNoteTypes = createAsyncThunk(
 export const fetchNoteList = createAsyncThunk(
   'note/fetchList',
   async (payload, thunkApi) => {
-    const { searchStr = null } = payload;
+    try {
+      const { searchStr = null } = payload;
 
-    // 先清掉
-    thunkApi.dispatch(setList(null));
-    thunkApi.dispatch(setPagination(null));
+      // 先清掉
+      thunkApi.dispatch(setList(null));
+      thunkApi.dispatch(setPagination(null));
 
-    const { data } = await ApiService.get({
-      url: `note/list${searchStr ? `?${searchStr}` : ''}`,
-    });
+      const { data } = await ApiService.get({
+        url: `note/list${searchStr ? `?${searchStr}` : ''}`,
+      });
 
-    thunkApi.dispatch(setList(data.data));
-    thunkApi.dispatch(setPagination(data.paging));
+      thunkApi.dispatch(setList(data.data.notes));
+      thunkApi.dispatch(setPagination(data.paging));
 
-    return data;
+      return data;
+    } catch (e) {
+      SwalHelper.fail(e.message);
+      throw e;
+    }
   }
 );
 

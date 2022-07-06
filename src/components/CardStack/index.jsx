@@ -8,7 +8,7 @@ import _ from 'lodash';
 import Card from './Card';
 import Wrapper from './Wrapper';
 
-const computeRotate = (index, len, base = 0.5) => {
+const computeRotate = (index, len, base = 1) => {
   if (index + 1 === len) {
     return 0;
   }
@@ -20,6 +20,7 @@ export default function CardStack(props) {
   const {
     cards,
     col,
+    onClick,
   } = props;
 
   const [base, setBase] = React.useState(0.5);
@@ -28,15 +29,19 @@ export default function CardStack(props) {
     return (<></>);
   }
 
-  return (
+  if (!_.isArray(cards)) {
+    return (<></>);
+  }
 
+  return (
     <Wrapper
       col={col}
-      onMouseEnter={() => setBase(1)}
-      onMouseLeave={() => setBase(0.5)}
+      onMouseEnter={() => setBase(1.5)}
+      onMouseLeave={() => setBase(1)}
+      onClick={onClick}
     >
       {
-        cards.map((card, index, ary) => (
+        _.takeRight(cards, 3).map((card, index, ary) => (
           <Card
             key={card.id}
             card={card}

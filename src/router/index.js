@@ -15,8 +15,9 @@ import {
 } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { QueryParamProvider } from 'use-query-params';
+
 import _ from 'lodash';
-import { useQuery } from '../hooks';
 
 import routes from './routes';
 import history from '../libs/history';
@@ -49,7 +50,6 @@ function ProtectedRoutes(props) {
   const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
-  const query = useQuery();
   const { routes } = props;
 
   const user = useSelector((state) => state.auth.user);
@@ -150,7 +150,9 @@ function ProtectedRoutes(props) {
 export default function PathRouter() {
   return (
     <Router history={history}>
-      <ProtectedRoutes routes={routes} />
+      <QueryParamProvider ReactRouterRoute={Route}>
+        <ProtectedRoutes routes={routes} />
+      </QueryParamProvider>
     </Router>
   );
 }
