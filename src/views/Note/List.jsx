@@ -21,6 +21,7 @@ import {
   Card,
   CardContent,
   CardActions,
+  Divider,
 } from '@mui/material';
 
 // mui icons
@@ -169,7 +170,7 @@ export default function NoteList() {
   }, [windowWidth]);
 
   // 沒有資料 || 分組狀態但資料不為分組資料形式 || 不為分組狀態但資料為分組資料形式
-  if (!noteList || ((query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null) && !_.isObject(noteList)) || (query.isGroup === 0 && !_.isArray(noteList))) {
+  if (!noteList || ((query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null) && !_.isObject(noteList)) || (query.isGroup === 0 && !_.isArray(noteList[Object.keys(noteList)[0]]))) {
     return (
       <BaseLayout>
         <Container sx={{
@@ -214,86 +215,116 @@ export default function NoteList() {
           editForm={editForm}
           handleSave={() => saveForm()}
         />
-        <Grid container spacing={2}>
+        <Grid container spacing={5}>
           {
             (query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null)
               ? (
                 Object.keys(noteList).map((group, index) => (
-                  <CardStack
-                    key={group}
-                    col={6}
-                    cards={noteList[group].notes}
-                    onClick={() => {
-                      setQuery({
-                        isGroup: 0,
-                        startAt: noteList[group].startAt,
-                        endAt: noteList[group].endAt,
-                      });
-                    }}
-                    cardContent={(
-                      <>
-                        <CardContent>
-                          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                            { noteList[group].startAt }
-                            {' '}
-                            ~
-                            {' '}
-                            { noteList[group].endAt }
-                          </Typography>
-                          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                            共
-                            {' '}
-                            {noteList[group].count}
-                            筆
-                          </Typography>
-                        </CardContent>
-                        <CardActions
-                          sx={{
-                            display: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
-                            點擊查看
-                          </Typography>
-                          <TouchAppIcon />
-                        </CardActions>
-                      </>
-                    )}
-                  />
+                  <Grid item key={group} xs={12}>
+                    <Divider
+                      sx={{ marginBottom: '4em' }}
+                    >
+                      {group}
+                      年
+                    </Divider>
+                    <Grid container spacing={2}>
+                      {
+                        Object.keys(noteList[group]).map((subGroup, ind) => (
+                          <CardStack
+                            key={subGroup}
+                            col={6}
+                            cards={noteList[group][subGroup].notes}
+                            onClick={() => {
+                              setQuery({
+                                isGroup: 0,
+                                startAt: noteList[group][subGroup].startAt,
+                                endAt: noteList[group][subGroup].endAt,
+                              });
+                            }}
+                            cardContent={(
+                              <>
+                                <CardContent>
+                                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                    { noteList[group][subGroup].startAt }
+                                    {' '}
+                                    ~
+                                    {' '}
+                                    { noteList[group][subGroup].endAt }
+                                  </Typography>
+                                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                    共
+                                    {' '}
+                                    {noteList[group][subGroup].count}
+                                    筆
+                                  </Typography>
+                                </CardContent>
+                                <CardActions
+                                  sx={{
+                                    display: 'center',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
+                                    點擊查看
+                                  </Typography>
+                                  <TouchAppIcon />
+                                </CardActions>
+                              </>
+                            )}
+                          />
+                        ))
+                      }
+                    </Grid>
+                  </Grid>
+
                 ))
               )
-              : noteList.map((data) => (
-                <Grid item xs={12} md={4} key={data.id}>
-                  <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%' }}>
-                    <CardContent>
-                      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                        { data.startAt }
-                        {' '}
-                        ~
-                        {' '}
-                        { data.endAt }
-                      </Typography>
-                      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                        { data.title }
-                      </Typography>
-                      <Typography variant="body2">
-                        { data.content }
-                      </Typography>
-                    </CardContent>
-                    <CardActions sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                      <Button
-                        size="small"
-                        variant="contained"
-                        sx={{ alignItems: 'center', fontSize: 18 }}
-                        onClick={() => openForm({ rowId: data.id })}
-                      >
-                        <EditIcon size="small" />
-                        編輯
-                      </Button>
-                    </CardActions>
-                  </Card>
+              : Object.keys(noteList).map((group, index) => (
+                <Grid item key={group} xs={12}>
+                  <Divider
+                    sx={{ marginBottom: '2em' }}
+                  >
+                    {group}
+                    年
+                  </Divider>
+                  <Grid container spacing={2}>
+                    {
+                      noteList[group].map((data) => (
+                        <Grid item xs={12} md={4} key={data.id}>
+                          <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%' }}>
+                            <CardContent>
+                              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                { data.startAt }
+                                {' '}
+                                ~
+                                {' '}
+                                { data.endAt }
+                              </Typography>
+                              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                { data.title }
+                              </Typography>
+                              <Typography variant="body2">
+                                { data.content }
+                              </Typography>
+                            </CardContent>
+                            <CardActions sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                              <Button
+                                size="small"
+                                variant="contained"
+                                sx={{ alignItems: 'center', fontSize: 18 }}
+                                onClick={() => openForm({ rowId: data.id })}
+                              >
+                                <EditIcon size="small" />
+                                編輯
+                              </Button>
+                            </CardActions>
+                          </Card>
+                        </Grid>
+                      ))
+                    }
+                  </Grid>
                 </Grid>
+
               ))
           }
         </Grid>
