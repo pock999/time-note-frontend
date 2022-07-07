@@ -25,6 +25,7 @@ import {
 
 // mui icons
 import TouchAppIcon from '@mui/icons-material/TouchApp';
+import EditIcon from '@mui/icons-material/Edit';
 
 // use query params
 import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
@@ -126,9 +127,17 @@ export default function NoteList() {
       let resultAction;
       console.log('formData => ', formData);
 
-      // TODO:
+      if (formData.id) {
+        resultAction = await dispatch(updateNote(formData));
+      } else {
+        resultAction = await dispatch(createNote(formData));
+      }
+
+      await unwrapResult(resultAction);
 
       SwalHelper.success(`${formData.id ? '更新' : '新增'}成功`);
+
+      closeForm();
     } catch (e) {
       SwalHelper.fail(e.message);
     }
@@ -198,6 +207,13 @@ export default function NoteList() {
   return (
     <BaseLayout>
       <Container sx={{ paddingTop: '4.5em', paddingBottom: '2em', marginBottom: '2em' }}>
+        <FormModal
+          isOpen={modalOpen}
+          note={formData}
+          handleClose={() => closeForm()}
+          editForm={editForm}
+          handleSave={() => saveForm()}
+        />
         <Grid container spacing={2}>
           {
             (query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null)
@@ -265,8 +281,16 @@ export default function NoteList() {
                         { data.content }
                       </Typography>
                     </CardContent>
-                    <CardActions>
-                      <Button size="small">編輯</Button>
+                    <CardActions sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        sx={{ alignItems: 'center', fontSize: 18 }}
+                        onClick={() => openForm({ rowId: data.id })}
+                      >
+                        <EditIcon size="small" />
+                        編輯
+                      </Button>
                     </CardActions>
                   </Card>
                 </Grid>
