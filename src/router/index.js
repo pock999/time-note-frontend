@@ -99,7 +99,11 @@ function ProtectedRoutes(props) {
 
   // TODO: token-login
   React.useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    });
     // 監聽 store裡的auth
     // 當 store裡的auth拿不到，且有localStorage又有token，才敲token-login
     (async () => {
