@@ -13,13 +13,15 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: (props) => ({
-    width: `${(100 / 12) * props.col}%`,
+    width: `${((100 - 1 * (12 / props.col + 1)) * props.col) / 12}%`,
     minHeight: '100px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
     cursor: 'pointer',
+    margin: 5,
+    marginBottom: '3em',
   }),
 }));
 

@@ -13,6 +13,7 @@ import _ from 'lodash';
 // mui(npm)
 import {
   Container,
+  AppBar,
   Button,
   Typography,
   Grid,
@@ -27,6 +28,8 @@ import {
 // mui icons
 import TouchAppIcon from '@mui/icons-material/TouchApp';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // use query params
 import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
@@ -215,7 +218,43 @@ export default function NoteList() {
           editForm={editForm}
           handleSave={() => saveForm()}
         />
-        <Grid container spacing={5}>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <AppBar position="static" color="inherit">
+              <Container
+                maxWidth={false}
+                sx={{
+                  width: '100%', p: 2, justifyContent: 'flex-end', display: 'flex',
+                }}
+              >
+                {
+                  query.isGroup === 0 && (
+                  <Button
+                    variant="contained"
+                    sx={{ alignItems: 'center', fontSize: 18, mr: 1 }}
+                    onClick={() => setQuery({ isGroup: 1 })}
+                  >
+                    <ArrowBackIcon size="small" />
+                    返回
+                  </Button>
+                  )
+                }
+
+                <Button
+                  variant="contained"
+                  sx={{ alignItems: 'center', fontSize: 18 }}
+                  onClick={() => openForm({})}
+                >
+                  <AddIcon size="small" />
+                  新增
+                </Button>
+              </Container>
+            </AppBar>
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={5} sx={{ marginTop: '.5em' }}>
           {
             (query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null)
               ? (
@@ -227,7 +266,7 @@ export default function NoteList() {
                       {group}
                       年
                     </Divider>
-                    <Grid container spacing={2}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', flexFlow: 'row wrap' }}>
                       {
                         Object.keys(noteList[group]).map((subGroup, ind) => (
                           <CardStack
@@ -274,7 +313,7 @@ export default function NoteList() {
                           />
                         ))
                       }
-                    </Grid>
+                    </div>
                   </Grid>
 
                 ))
