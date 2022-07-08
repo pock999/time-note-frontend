@@ -119,12 +119,17 @@ export const updateNote = createAsyncThunk(
     });
 
     const store = thunkApi.getState();
-    const currentList = [...store.note.list];
-    const newList = currentList.map((note) => {
-      if (note.id === payload.id) {
-        return payload;
-      }
-      return note;
+    const currentList = _.cloneDeep(store.note.list);
+
+    const newList = {};
+    Object.keys(currentList).map((year) => {
+      const temp = currentList[year].map((note) => {
+        if (note.id === payload.id) {
+          return payload;
+        }
+        return note;
+      });
+      newList[year] = temp;
     });
 
     thunkApi.dispatch(setList(newList));
