@@ -39,6 +39,7 @@ const drawerWidth = 320;
 function DrawerContent(props) {
   const {
     drawerTypes,
+    pathname,
   } = props;
 
   return (
@@ -47,7 +48,11 @@ function DrawerContent(props) {
       <Divider />
       <List>
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton
+            to="/notes"
+            component={Link}
+            selected={pathname === '/notes'}
+          >
             <ListItemIcon>
               <BookmarksSharp />
             </ListItemIcon>
@@ -58,7 +63,11 @@ function DrawerContent(props) {
           _.isArray(drawerTypes)
             ? drawerTypes.map((typeItem, index) => (
               <ListItem key={typeItem.value} disablePadding>
-                <ListItemButton>
+                <ListItemButton
+                  to={`/notes/${typeItem.value}`}
+                  component={Link}
+                  selected={pathname === `/notes/${typeItem.value}`}
+                >
                   <ListItemIcon>
                     <BookmarksSharp />
                   </ListItemIcon>
@@ -213,7 +222,7 @@ export default function BaseLayout(props) {
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
-          <DrawerContent drawerTypes={drawerTypes} />
+          <DrawerContent drawerTypes={drawerTypes} pathname={location.pathname} />
         </Drawer>
         <Drawer
           variant="permanent"
@@ -223,7 +232,7 @@ export default function BaseLayout(props) {
           }}
           open
         >
-          <DrawerContent drawerTypes={drawerTypes} />
+          <DrawerContent drawerTypes={drawerTypes} pathname={location.pathname} />
         </Drawer>
       </Box>
 

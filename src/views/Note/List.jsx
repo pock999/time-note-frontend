@@ -4,7 +4,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { useLocation, useHistory, Link } from 'react-router-dom';
+import {
+  useLocation, useHistory, Link, useParams,
+} from 'react-router-dom';
 
 // common tools(npm)
 import dayjs from 'dayjs';
@@ -66,6 +68,9 @@ const emptyNote = {
 };
 
 export default function NoteList() {
+  // /notes/:type
+  const { type } = useParams();
+
   const history = useHistory();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -155,8 +160,10 @@ export default function NoteList() {
       (async () => {
         await dispatch(fetchNoteTypes());
 
+        const typeQuery = (typeof type !== 'undefined' && type !== null) ? `type=${type}` : '';
+
         const resultAction = await dispatch(fetchNoteList({
-          searchStr: location.search.split('?')[1],
+          searchAry: [location.search.split('?')[1], typeQuery],
         }));
 
         const result = unwrapResult(resultAction);
@@ -164,7 +171,7 @@ export default function NoteList() {
     } catch (e) {
       SwalHelper.error('錯誤', e.message);
     }
-  }, [location.search]);
+  }, [location.search, location.pathname]);
 
   // 偵測螢幕尺寸
   React.useEffect(() => {
