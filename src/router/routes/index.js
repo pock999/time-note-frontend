@@ -40,6 +40,14 @@ export default [
     exact: true,
   },
   {
+    path: '/notes/:type',
+    name: 'NoteListWithType',
+    component: React.lazy(() => import('../../views/Note/List')),
+    // component: NoteList,
+    roles: ['isUser'],
+    exact: true,
+  },
+  {
     path: '/404',
     name: 'Page404',
     component: React.lazy(() => import('../../views/Page404')),

@@ -5,6 +5,11 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const Dotenv = require('dotenv-webpack');
 
+const publicUrl = {
+  http: 'http://localhost:9000/',
+  https: 'https://localhost:9000/',
+};
+
 module.exports = {
   // 進入點
   entry: './index.js',
@@ -63,6 +68,7 @@ module.exports = {
       name: 'index.html',
       inject: false,
       template: 'public/index.html',
+      PUBLIC_URL: publicUrl.http,
     }),
     // 複製靜態檔案
     new CopyWebpackPlugin({
@@ -82,7 +88,7 @@ module.exports = {
     liveReload: true,
     port: 9000,
     devMiddleware: {
-      publicPath: 'https://localhost:9000/',
+      publicPath: publicUrl.https,
     },
 
     // for browserouter

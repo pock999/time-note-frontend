@@ -199,6 +199,9 @@ export default function NoteList() {
               </AppBar>
             </Grid>
             <Grid container spacing={2}>
+              <Divider
+                sx={{ marginBottom: '4em', marginTop: '4em' }}
+              />
               <Grid item xs={12} md={4}>
                 <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
                   <CardContent>
