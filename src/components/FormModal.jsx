@@ -30,8 +30,6 @@ export default function FormModal(props) {
     handleSave,
   } = props;
 
-  // console.log('note => ', note);
-
   return (
     <Dialog open={isOpen} onClose={handleClose}>
       <DialogTitle>{ !_.has(note, 'id') ? '新增' : `編輯${note.id}` }</DialogTitle>
