@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import _ from 'lodash';
+import dayjs from 'dayjs';
 
 import ApiServiceClass from '../../../services/ApiService';
 
@@ -107,34 +108,13 @@ export const createNote = createAsyncThunk(
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.note.list);
 
-    const newList = {};
-    Object.keys(currentList).map((year) => {
-      if (_.isArray(currentList[year])) {
-        const temp = [...currentList[year], data.data].sort((a, b) =>
-          a.startAt > b.startAt ? -1 : 1
-        );
-        newList[year] = temp;
-      } else {
-        if (!newList[year]) {
-          newList[year] = {};
-        }
+    const dataYear = data.data.startAt.slice(0, 4);
+    const dataGroup = data.data.startAt.slice(0, 7);
 
-        Object.keys(currentList[year]).map((group) => {
-          const temp = [...currentList[year][group].notes, data.data].sort(
-            (a, b) => (a.startAt > b.startAt ? -1 : 1)
-          );
-
-          newList[year][group] = {
-            notes: temp,
-            startAt: currentList[year][group].startAt,
-            endAt: currentList[year][group].endAt,
-            count: currentList[year][group].count + 1,
-          };
-        });
-      }
-    });
-
-    thunkApi.dispatch(setList(newList));
+    // 直接重call list api
+    thunkApi.dispatch(
+      fetchNoteList({ searchStr: window.location.search.split('?')[1] })
+    );
 
     return data.data;
   }
