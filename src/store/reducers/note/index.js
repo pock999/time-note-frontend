@@ -104,6 +104,38 @@ export const createNote = createAsyncThunk(
       data: payload,
     });
 
+    const store = thunkApi.getState();
+    const currentList = _.cloneDeep(store.note.list);
+
+    const newList = {};
+    Object.keys(currentList).map((year) => {
+      if (_.isArray(currentList[year])) {
+        const temp = [...currentList[year], data.data].sort((a, b) =>
+          a.startAt > b.startAt ? -1 : 1
+        );
+        newList[year] = temp;
+      } else {
+        if (!newList[year]) {
+          newList[year] = {};
+        }
+
+        Object.keys(currentList[year]).map((group) => {
+          const temp = [...currentList[year][group].notes, data.data].sort(
+            (a, b) => (a.startAt > b.startAt ? -1 : 1)
+          );
+
+          newList[year][group] = {
+            notes: temp,
+            startAt: currentList[year][group].startAt,
+            endAt: currentList[year][group].endAt,
+            count: currentList[year][group].count + 1,
+          };
+        });
+      }
+    });
+
+    thunkApi.dispatch(setList(newList));
+
     return data.data;
   }
 );
@@ -129,7 +161,7 @@ export const updateNote = createAsyncThunk(
         }
         return note;
       });
-      newList[year] = temp;
+      newList[year] = temp.sort((a, b) => (a.startAt > b.startAt ? -1 : 1));
     });
 
     thunkApi.dispatch(setList(newList));

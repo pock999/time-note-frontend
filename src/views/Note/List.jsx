@@ -233,7 +233,8 @@ export default function NoteList() {
                   <Button
                     variant="contained"
                     sx={{ alignItems: 'center', fontSize: 18, mr: 1 }}
-                    onClick={() => setQuery({ isGroup: 1 })}
+                    // TODO: 改成真正上一頁
+                    onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
                   >
                     <ArrowBackIcon size="small" />
                     返回
