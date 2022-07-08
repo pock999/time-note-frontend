@@ -57,9 +57,6 @@ import { showLoading, hideLoading } from '../../store/reducers/loading';
 // yup schema
 import { createSchema, updateSchema } from './formSchema';
 
-// TODO: fake
-import FakeView from './FakeView';
-
 const emptyNote = {
   title: '',
   content: '',
@@ -185,23 +182,41 @@ export default function NoteList() {
         }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
-                <CardContent>
+            <Grid item xs={12}>
+              <AppBar position="static" color="inherit">
+                <Container
+                  maxWidth={false}
+                  sx={{
+                    width: '100%', p: 2, justifyContent: 'flex-end', display: 'flex',
+                  }}
+                >
                   <Skeleton
                     variant="rectangular"
-                    width="100%"
-                    height={150}
+                    width={100}
+                    height={50}
                   />
-                </CardContent>
-                <CardActions>
-                  <Skeleton
-                    variant="rectangular"
-                    width="100%"
-                    height={20}
-                  />
-                </CardActions>
-              </Card>
+                </Container>
+              </AppBar>
+            </Grid>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={4}>
+                <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
+                  <CardContent>
+                    <Skeleton
+                      variant="rectangular"
+                      width="100%"
+                      height={150}
+                    />
+                  </CardContent>
+                  <CardActions>
+                    <Skeleton
+                      variant="rectangular"
+                      width="100%"
+                      height={20}
+                    />
+                  </CardActions>
+                </Card>
+              </Grid>
             </Grid>
           </Grid>
         </Container>
