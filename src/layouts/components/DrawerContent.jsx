@@ -39,6 +39,7 @@ export default function DrawerContent(props) {
     drawerTypes,
     drawerCategories,
     pathname,
+    openForm,
   } = props;
 
   return (
@@ -106,7 +107,7 @@ export default function DrawerContent(props) {
                         </ListItemIcon>
                         <ListItemText primary={category.name} />
                       </ListItemButton>
-                      <IconButton aria-label="edit">
+                      <IconButton aria-label="edit" onClick={() => openForm({ rowId: category.value })}>
                         <EditIcon />
                       </IconButton>
                       <IconButton aria-label="delete">
@@ -116,7 +117,10 @@ export default function DrawerContent(props) {
                   ))
                 }
                 <ListItem disablePadding>
-                  <ListItemButton sx={{ display: 'flex', justifyContent: 'center' }}>
+                  <ListItemButton
+                    sx={{ display: 'flex', justifyContent: 'center' }}
+                    onClick={() => openForm({})}
+                  >
                     <ListItemText primary="新增分類" />
                     <AddIcon />
                   </ListItemButton>

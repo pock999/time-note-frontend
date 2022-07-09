@@ -32,7 +32,7 @@ export default function FormModal(props) {
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle>{ !_.has(note, 'id') ? '新增' : `編輯${note.id}` }</DialogTitle>
+      <DialogTitle>{ !_.has(note, 'id') ? '新增' : '編輯' }</DialogTitle>
       <DialogContent>
         <TextField
           id="title"

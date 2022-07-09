@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -24,9 +25,20 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { logoutAction } from '../store/reducers/auth';
-import { DrawerContent } from './components';
+import { fetchNoteCategory } from '../store/reducers/note';
+
+// custom utils
+import SwalHelper from '../utils/SwalHelper';
+
+// custom components
+import { DrawerContent, CategoryFormModal } from './components';
 
 const drawerWidth = 320;
+
+const emptyCategory = {
+  name: '',
+  color: '#707070',
+};
 
 export default function BaseLayout(props) {
   const dispatch = useDispatch();
@@ -48,6 +60,68 @@ export default function BaseLayout(props) {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  // FormModal is open
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const [formData, setFormData] = React.useState({ ...emptyCategory });
+
+  // 關閉category編輯
+  const closeForm = async () => {
+    setModalOpen(false);
+    setFormData({ ...emptyCategory });
+  };
+
+  const openForm = async ({ rowId = null }) => {
+    console.log('openForm ===');
+    if (rowId) {
+      const resultAction = await dispatch(fetchNoteCategory({ id: rowId }));
+      const data = await unwrapResult(resultAction);
+
+      setModalOpen((pre) => {
+        setFormData(data);
+        return true;
+      });
+    } else {
+      setModalOpen((pre) => {
+        setFormData({
+          ...emptyCategory,
+        });
+        return true;
+      });
+    }
+  };
+
+  // 對category編輯(onChange)
+  const editForm = (value, target) => {
+    // console.log('value => ', value);
+    // console.log('target => ', target);
+    setFormData({
+      ...formData,
+      [target]: value,
+    });
+  };
+
+  // 保存
+  const saveForm = async () => {
+    try {
+      let resultAction;
+      console.log('formData => ', formData);
+
+      if (formData.id) {
+        // resultAction = await dispatch(updateNote(formData));
+      } else {
+        // resultAction = await dispatch(createNote(formData));
+      }
+
+      // await unwrapResult(resultAction);
+
+      SwalHelper.success(`${formData.id ? '更新' : '新增'}成功`);
+
+      closeForm();
+    } catch (e) {
+      SwalHelper.fail(e.message);
+    }
   };
 
   const container = window !== undefined ? () => window.document.body : undefined;
@@ -132,6 +206,14 @@ export default function BaseLayout(props) {
         </Toolbar>
       </AppBar>
 
+      <CategoryFormModal
+        isOpen={modalOpen}
+        category={formData}
+        handleClose={() => closeForm()}
+        editForm={editForm}
+        handleSave={() => saveForm()}
+      />
+
       <Box
         component="nav"
         sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
@@ -154,6 +236,7 @@ export default function BaseLayout(props) {
             drawerTypes={drawerTypes}
             drawerCategories={drawerCategories}
             pathname={location.pathname}
+            openForm={openForm}
           />
         </Drawer>
         <Drawer
@@ -168,6 +251,7 @@ export default function BaseLayout(props) {
             drawerTypes={drawerTypes}
             drawerCategories={drawerCategories}
             pathname={location.pathname}
+            openForm={openForm}
           />
         </Drawer>
       </Box>
