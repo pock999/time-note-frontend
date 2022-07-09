@@ -30,6 +30,10 @@ import {
   AccountCircle,
 } from '@mui/icons-material';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { logoutAction } from '../store/reducers/auth';
@@ -98,16 +102,32 @@ function DrawerContent(props) {
         {
           _.isArray(drawerCategories)
             ? (
-              drawerCategories.map((category, index) => (
-                <ListItem key={category.value} disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <FiberManualRecordIcon style={{ color: category.color }} />
-                    </ListItemIcon>
-                    <ListItemText primary={category.name} />
+              <>
+                {
+                  drawerCategories.map((category, index) => (
+                    <ListItem key={category.value} disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>
+                          <FiberManualRecordIcon style={{ color: category.color }} />
+                        </ListItemIcon>
+                        <ListItemText primary={category.name} />
+                      </ListItemButton>
+                      <IconButton aria-label="edit">
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton aria-label="delete">
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItem>
+                  ))
+                }
+                <ListItem disablePadding>
+                  <ListItemButton sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <ListItemText primary="新增分類" />
+                    <AddIcon />
                   </ListItemButton>
                 </ListItem>
-              ))
+              </>
             )
             : (
               <>
