@@ -39,6 +39,7 @@ const drawerWidth = 320;
 function DrawerContent(props) {
   const {
     drawerTypes,
+    drawerCategories,
     pathname,
   } = props;
 
@@ -56,7 +57,7 @@ function DrawerContent(props) {
             <ListItemIcon>
               <BookmarksSharp />
             </ListItemIcon>
-            <ListItemText primary="全部" />
+            <ListItemText primary="全部類型" />
           </ListItemButton>
         </ListItem>
         {
@@ -86,16 +87,36 @@ function DrawerContent(props) {
       </List>
       <Divider />
       <List>
-        {['重要', '待辦', '數學', '國文'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <FiberManualRecordIcon />
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <FiberManualRecordIcon />
+            </ListItemIcon>
+            <ListItemText primary="全部分類(自定義分類)" />
+          </ListItemButton>
+        </ListItem>
+        {
+          _.isArray(drawerCategories)
+            ? (
+              drawerCategories.map((category, index) => (
+                <ListItem key={category.value} disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <FiberManualRecordIcon style={{ color: category.color }} />
+                    </ListItemIcon>
+                    <ListItemText primary={category.name} />
+                  </ListItemButton>
+                </ListItem>
+              ))
+            )
+            : (
+              <>
+                <Skeleton animation="wave" variant="ListItem" />
+                <Skeleton animation="wave" variant="ListItem" />
+                <Skeleton animation="wave" variant="ListItem" />
+              </>
+            )
+        }
       </List>
     </div>
   );
@@ -105,6 +126,7 @@ export default function BaseLayout(props) {
   const dispatch = useDispatch();
   const location = useLocation();
   const drawerTypes = useSelector((state) => state.layout.drawerTypes);
+  const drawerCategories = useSelector((state) => state.layout.drawerCategories);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -222,7 +244,11 @@ export default function BaseLayout(props) {
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
-          <DrawerContent drawerTypes={drawerTypes} pathname={location.pathname} />
+          <DrawerContent
+            drawerTypes={drawerTypes}
+            drawerCategories={drawerCategories}
+            pathname={location.pathname}
+          />
         </Drawer>
         <Drawer
           variant="permanent"
@@ -232,7 +258,11 @@ export default function BaseLayout(props) {
           }}
           open
         >
-          <DrawerContent drawerTypes={drawerTypes} pathname={location.pathname} />
+          <DrawerContent
+            drawerTypes={drawerTypes}
+            drawerCategories={drawerCategories}
+            pathname={location.pathname}
+          />
         </Drawer>
       </Box>
 

@@ -53,7 +53,7 @@ import SwalHelper from '../../utils/SwalHelper';
 
 // store
 import {
-  fetchNoteList, fetchNoteDetail, createNote, updateNote, fetchNoteTypes,
+  fetchNoteList, fetchNoteDetail, createNote, updateNote, fetchNoteTypes, fetchNoteCategoies,
 } from '../../store/reducers/note';
 import { showLoading, hideLoading } from '../../store/reducers/loading';
 
@@ -162,6 +162,7 @@ export default function NoteList() {
     try {
       (async () => {
         await dispatch(fetchNoteTypes());
+        await dispatch(fetchNoteCategoies());
 
         const typeQuery = (typeof type !== 'undefined' && type !== null) ? `type=${type}` : '';
 
@@ -208,27 +209,29 @@ export default function NoteList() {
                 </Container>
               </AppBar>
             </Grid>
-            <Grid container spacing={2}>
-              <Divider
-                sx={{ marginBottom: '4em', marginTop: '4em' }}
-              />
-              <Grid item xs={12} md={4}>
-                <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
-                  <CardContent>
-                    <Skeleton
-                      variant="rectangular"
-                      width="100%"
-                      height={150}
-                    />
-                  </CardContent>
-                  <CardActions>
-                    <Skeleton
-                      variant="rectangular"
-                      width="100%"
-                      height={20}
-                    />
-                  </CardActions>
-                </Card>
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                <Divider
+                  sx={{ marginBottom: '4em', marginTop: '4em' }}
+                />
+                <Grid item xs={12} md={4}>
+                  <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
+                    <CardContent>
+                      <Skeleton
+                        variant="rectangular"
+                        width="100%"
+                        height={150}
+                      />
+                    </CardContent>
+                    <CardActions>
+                      <Skeleton
+                        variant="rectangular"
+                        width="100%"
+                        height={20}
+                      />
+                    </CardActions>
+                  </Card>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
