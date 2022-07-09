@@ -26,6 +26,7 @@ import {
   CardContent,
   CardActions,
   Divider,
+  Chip,
 } from '@mui/material';
 
 // mui icons
@@ -79,6 +80,7 @@ export default function NoteList() {
 
   const noteList = useSelector((state) => state.note.list);
   const notePagination = useSelector((state) => state.note.pagination);
+  const noteTypes = useSelector((state) => state.note.noteTypes);
 
   //
   // url params
@@ -234,6 +236,14 @@ export default function NoteList() {
     );
   }
 
+  const currentType = (typeId) => {
+    if (_.isArray(noteTypes)) {
+      return noteTypes.find((item) => item.value === typeId).name;
+    }
+
+    return null;
+  };
+
   return (
     <BaseLayout>
       <Container sx={{ paddingTop: '4.5em', paddingBottom: '2em', marginBottom: '2em' }}>
@@ -359,6 +369,11 @@ export default function NoteList() {
                         <Grid item xs={12} md={4} key={data.id}>
                           <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%' }}>
                             <CardContent>
+                              <div
+                                style={{ display: 'flex', justifyContent: 'flex-end' }}
+                              >
+                                <Chip label={currentType(data.type)} color="warning" />
+                              </div>
                               <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                                 { data.startAt }
                                 {' '}
