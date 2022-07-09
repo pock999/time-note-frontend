@@ -106,6 +106,7 @@ export default function NoteList() {
       setModalOpen((pre) => {
         setFormData({
           ...emptyNote,
+          type: type || null,
           startAt: dateTime,
           endAt: dateTime,
         });
