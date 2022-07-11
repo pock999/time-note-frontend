@@ -15,20 +15,20 @@ const ApiService = new ApiServiceClass();
 export const categorySlice = createSlice({
   name: 'category',
   initialState: {
-    categories: null,
-    category: null,
+    list: null,
+    detail: null,
   },
   reducers: {
-    setCategories: (state, { type, payload }) => {
-      state.categories = payload;
+    setList: (state, { type, payload }) => {
+      state.list = payload;
     },
-    setCategory: (state, { type, payload }) => {
-      state.category = payload;
+    setDetail: (state, { type, payload }) => {
+      state.detail = payload;
     },
   },
 });
 
-export const { setCategories, setCategory } = categorySlice.actions;
+export const { setList, setDetail } = categorySlice.actions;
 
 export const fetchCategories = createAsyncThunk(
   'category/fetchCategories',
@@ -40,7 +40,7 @@ export const fetchCategories = createAsyncThunk(
     });
 
     thunkApi.dispatch(setDrawerCategories(data.data));
-    thunkApi.dispatch(setCategories(data.data));
+    thunkApi.dispatch(setList(data.data));
     return data.data;
   }
 );
@@ -50,13 +50,13 @@ export const fetchCategory = createAsyncThunk(
   async (payload, thunkApi) => {
     const { id } = payload;
 
-    thunkApi.dispatch(setCategory(null));
+    thunkApi.dispatch(setDetail(null));
 
     const { data } = await ApiService.get({
       url: `category/${id}`,
     });
 
-    thunkApi.dispatch(setCategory(data.data));
+    thunkApi.dispatch(setDetail(data.data));
 
     return data.data;
   }
@@ -71,9 +71,9 @@ export const createCategory = createAsyncThunk(
     });
 
     const store = thunkApi.getState();
-    const currentList = _.cloneDeep(store.category.categories);
+    const currentList = _.cloneDeep(store.category.list);
 
-    setCategories([...currentList, data.data]);
+    setList([...currentList, data.data]);
     thunkApi.dispatch(setDrawerCategories([...currentList, data.data]));
     return data.data;
   }
