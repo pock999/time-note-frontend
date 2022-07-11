@@ -73,8 +73,36 @@ export const createCategory = createAsyncThunk(
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.category.list);
 
-    setList([...currentList, data.data]);
+    thunkApi.dispatch(setList([...currentList, data.data]));
     thunkApi.dispatch(setDrawerCategories([...currentList, data.data]));
+    return data.data;
+  }
+);
+
+export const updateCategory = createAsyncThunk(
+  'category/updateCategory',
+  async (payload, thunkApi) => {
+    console.log('category/updateCategory payload => ', payload);
+    const { data } = await ApiService.put({
+      url: `category/${payload.id}`,
+      data: { ..._.omit(payload, ['id']) },
+    });
+
+    const store = thunkApi.getState();
+    const currentList = _.cloneDeep(store.category.list);
+
+    const newList = currentList.map((item) => {
+      if (item.id === data.data.id) {
+        return {
+          ...item,
+          ..._.pick(data.data, ['name', 'color']),
+        };
+      }
+      return item;
+    });
+
+    thunkApi.dispatch(setList(newList));
+    thunkApi.dispatch(setDrawerCategories(newList));
     return data.data;
   }
 );

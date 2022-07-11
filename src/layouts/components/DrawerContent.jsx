@@ -100,14 +100,14 @@ export default function DrawerContent(props) {
               <>
                 {
                   drawerCategories.map((category, index) => (
-                    <ListItem key={category.value} disablePadding>
+                    <ListItem key={category.id} disablePadding>
                       <ListItemButton>
                         <ListItemIcon>
                           <FiberManualRecordIcon style={{ color: category.color }} />
                         </ListItemIcon>
                         <ListItemText primary={category.name} />
                       </ListItemButton>
-                      <IconButton aria-label="edit" onClick={() => openForm({ rowId: category.value })}>
+                      <IconButton aria-label="edit" onClick={() => openForm({ rowId: category.id })}>
                         <EditIcon />
                       </IconButton>
                       <IconButton aria-label="delete">

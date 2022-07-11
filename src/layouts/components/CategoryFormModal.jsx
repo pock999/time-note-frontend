@@ -26,7 +26,7 @@ export default function CategoryFormModal(props) {
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle>{ !_.has(category, 'value') ? '新增' : '編輯' }</DialogTitle>
+      <DialogTitle>{ !_.has(category, 'id') ? '新增' : '編輯' }</DialogTitle>
       <DialogContent>
         <TextField
           id="title"

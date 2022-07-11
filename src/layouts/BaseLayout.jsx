@@ -25,7 +25,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { logoutAction } from '../store/reducers/auth';
-import { fetchCategory, createCategory } from '../store/reducers/category';
+import { fetchCategory, createCategory, updateCategory } from '../store/reducers/category';
 
 // custom utils
 import SwalHelper from '../utils/SwalHelper';
@@ -109,7 +109,7 @@ export default function BaseLayout(props) {
       console.log('formData => ', formData);
 
       if (formData.id) {
-        // resultAction = await dispatch(updateNote(formData));
+        resultAction = await dispatch(updateCategory(formData));
       } else {
         resultAction = await dispatch(createCategory(formData));
       }
