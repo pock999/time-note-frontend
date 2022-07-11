@@ -25,7 +25,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { logoutAction } from '../store/reducers/auth';
-import { fetchNoteCategory } from '../store/reducers/note';
+import { fetchCategory } from '../store/reducers/category';
 
 // custom utils
 import SwalHelper from '../utils/SwalHelper';
@@ -75,7 +75,7 @@ export default function BaseLayout(props) {
   const openForm = async ({ rowId = null }) => {
     console.log('openForm ===');
     if (rowId) {
-      const resultAction = await dispatch(fetchNoteCategory({ id: rowId }));
+      const resultAction = await dispatch(fetchCategory({ id: rowId }));
       const data = await unwrapResult(resultAction);
 
       setModalOpen((pre) => {

@@ -35,23 +35,11 @@ export const noteSlice = createSlice({
     setNoteTypes: (state, { type, payload }) => {
       state.noteTypes = payload;
     },
-    setNoteCategories: (state, { type, payload }) => {
-      state.noteCategories = payload;
-    },
-    setNoteCategory: (state, { type, payload }) => {
-      state.noteCategory = payload;
-    },
   },
 });
 
-export const {
-  setList,
-  setDetail,
-  setPagination,
-  setNoteTypes,
-  setNoteCategories,
-  setNoteCategory,
-} = noteSlice.actions;
+export const { setList, setDetail, setPagination, setNoteTypes } =
+  noteSlice.actions;
 
 export const fetchNoteTypes = createAsyncThunk(
   'note/fetchTypes',
@@ -64,38 +52,6 @@ export const fetchNoteTypes = createAsyncThunk(
 
     thunkApi.dispatch(setDrawerTypes(data.data));
     thunkApi.dispatch(setNoteTypes(data.data));
-    return data.data;
-  }
-);
-
-export const fetchNoteCategories = createAsyncThunk(
-  'note/fetchNoteCategories',
-  async (payload, thunkApi) => {
-    thunkApi.dispatch(setDrawerCategories(null));
-
-    const { data } = await ApiService.get({
-      url: 'note/categories',
-    });
-
-    thunkApi.dispatch(setDrawerCategories(data.data));
-    thunkApi.dispatch(setNoteCategories(data.data));
-    return data.data;
-  }
-);
-
-export const fetchNoteCategory = createAsyncThunk(
-  'note/fetchNoteCategory',
-  async (payload, thunkApi) => {
-    const { id } = payload;
-
-    thunkApi.dispatch(setNoteCategory(null));
-
-    const { data } = await ApiService.get({
-      url: `note/category/${id}`,
-    });
-
-    thunkApi.dispatch(setNoteCategory(data.data));
-
     return data.data;
   }
 );

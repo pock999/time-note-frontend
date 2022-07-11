@@ -53,8 +53,11 @@ import SwalHelper from '../../utils/SwalHelper';
 
 // store
 import {
-  fetchNoteList, fetchNoteDetail, createNote, updateNote, fetchNoteTypes, fetchNoteCategories,
+  fetchNoteList, fetchNoteDetail, createNote, updateNote, fetchNoteTypes,
 } from '../../store/reducers/note';
+import {
+  fetchCategories,
+} from '../../store/reducers/category';
 import { showLoading, hideLoading } from '../../store/reducers/loading';
 
 // yup schema
@@ -162,7 +165,7 @@ export default function NoteList() {
     try {
       (async () => {
         await dispatch(fetchNoteTypes());
-        await dispatch(fetchNoteCategories());
+        await dispatch(fetchCategories());
 
         const typeQuery = (typeof type !== 'undefined' && type !== null) ? `type=${type}` : '';
 
