@@ -37,7 +37,7 @@ const drawerWidth = 320;
 
 const emptyCategory = {
   name: '',
-  color: '#707070',
+  color: '#9DA6A4',
 };
 
 export default function BaseLayout(props) {
