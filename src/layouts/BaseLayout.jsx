@@ -25,7 +25,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { logoutAction } from '../store/reducers/auth';
-import { fetchCategory } from '../store/reducers/category';
+import { fetchCategory, createCategory } from '../store/reducers/category';
 
 // custom utils
 import SwalHelper from '../utils/SwalHelper';
@@ -111,10 +111,10 @@ export default function BaseLayout(props) {
       if (formData.id) {
         // resultAction = await dispatch(updateNote(formData));
       } else {
-        // resultAction = await dispatch(createNote(formData));
+        resultAction = await dispatch(createCategory(formData));
       }
 
-      // await unwrapResult(resultAction);
+      await unwrapResult(resultAction);
 
       SwalHelper.success(`${formData.id ? '更新' : '新增'}成功`);
 

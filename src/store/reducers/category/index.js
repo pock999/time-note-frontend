@@ -62,4 +62,21 @@ export const fetchCategory = createAsyncThunk(
   }
 );
 
+export const createCategory = createAsyncThunk(
+  'category/createCategory',
+  async (payload, thunkApi) => {
+    const { data } = await ApiService.post({
+      url: 'category/',
+      data: payload,
+    });
+
+    const store = thunkApi.getState();
+    const currentList = _.cloneDeep(store.category.categories);
+
+    setCategories([...currentList, data.data]);
+    thunkApi.dispatch(setDrawerCategories([...currentList, data.data]));
+    return data.data;
+  }
+);
+
 export default categorySlice.reducer;
