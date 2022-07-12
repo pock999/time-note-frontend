@@ -28,4 +28,18 @@ export default {
   error: async (title, message) => {
     await Swal.fire(title, message, 'error');
   },
+  awiatQuestion: async (title, message) => {
+    const result = await Swal.fire({
+      title,
+      text: message,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '確定',
+      cancelButtonText: '取消',
+    });
+
+    return result;
+  },
 };

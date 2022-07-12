@@ -25,7 +25,9 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 
 import { logoutAction } from '../store/reducers/auth';
-import { fetchCategory, createCategory, updateCategory } from '../store/reducers/category';
+import {
+  fetchCategory, createCategory, updateCategory, deleteCategory,
+} from '../store/reducers/category';
 
 // custom utils
 import SwalHelper from '../utils/SwalHelper';
@@ -119,6 +121,22 @@ export default function BaseLayout(props) {
       SwalHelper.success(`${formData.id ? '更新' : '新增'}成功`);
 
       closeForm();
+    } catch (e) {
+      SwalHelper.fail(e.message);
+    }
+  };
+
+  const deleteCategoryItem = async (id, name) => {
+    try {
+      const questionResult = await SwalHelper.awiatQuestion(`是否刪除"${name}"分類?`, null);
+
+      if (questionResult.isConfirmed) {
+        const resultAction = await dispatch(deleteCategory({ id }));
+
+        await unwrapResult(resultAction);
+
+        SwalHelper.success('刪除成功');
+      }
     } catch (e) {
       SwalHelper.fail(e.message);
     }
@@ -237,6 +255,7 @@ export default function BaseLayout(props) {
             drawerCategories={drawerCategories}
             pathname={location.pathname}
             openForm={openForm}
+            deleteCategory={deleteCategoryItem}
           />
         </Drawer>
         <Drawer
@@ -252,6 +271,7 @@ export default function BaseLayout(props) {
             drawerCategories={drawerCategories}
             pathname={location.pathname}
             openForm={openForm}
+            deleteCategory={deleteCategoryItem}
           />
         </Drawer>
       </Box>

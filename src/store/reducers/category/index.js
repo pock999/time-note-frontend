@@ -107,4 +107,22 @@ export const updateCategory = createAsyncThunk(
   }
 );
 
+export const deleteCategory = createAsyncThunk(
+  'category/deleteCategory',
+  async (payload, thunkApi) => {
+    const { data } = await ApiService.delete({
+      url: `category/${payload.id}`,
+    });
+
+    const store = thunkApi.getState();
+    const currentList = _.cloneDeep(store.category.list);
+
+    const newList = currentList.filter((item) => item.id !== payload.id);
+
+    thunkApi.dispatch(setList(newList));
+    thunkApi.dispatch(setDrawerCategories(newList));
+    return data.data;
+  }
+);
+
 export default categorySlice.reducer;

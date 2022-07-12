@@ -40,6 +40,7 @@ export default function DrawerContent(props) {
     drawerCategories,
     pathname,
     openForm,
+    deleteCategory,
   } = props;
 
   return (
@@ -110,7 +111,7 @@ export default function DrawerContent(props) {
                       <IconButton aria-label="edit" onClick={() => openForm({ rowId: category.id })}>
                         <EditIcon />
                       </IconButton>
-                      <IconButton aria-label="delete">
+                      <IconButton aria-label="delete" onClick={() => deleteCategory(category.id, category.name)}>
                         <DeleteIcon />
                       </IconButton>
                     </ListItem>
