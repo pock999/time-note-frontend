@@ -19,8 +19,6 @@ export const noteSlice = createSlice({
     pagination: null,
     detail: null,
     noteTypes: null,
-    noteCategories: null,
-    noteCategory: null,
   },
   reducers: {
     setList: (state, { type, payload }) => {
@@ -47,7 +45,7 @@ export const fetchNoteTypes = createAsyncThunk(
     thunkApi.dispatch(setNoteTypes(null));
 
     const { data } = await ApiService.get({
-      url: 'note/types',
+      url: '/note/types',
     });
 
     thunkApi.dispatch(setDrawerTypes(data.data));
@@ -69,7 +67,7 @@ export const fetchNoteList = createAsyncThunk(
       const searchStr = searchAry.filter((str) => !!str).join('&');
 
       const { data } = await ApiService.get({
-        url: `note/list${searchStr ? `?${searchStr}` : ''}`,
+        url: `/note/list${searchStr ? `?${searchStr}` : ''}`,
       });
 
       thunkApi.dispatch(setList(data.data.notes));
@@ -92,7 +90,7 @@ export const fetchNoteDetail = createAsyncThunk(
     thunkApi.dispatch(setDetail(null));
 
     const { data } = await ApiService.get({
-      url: `note/${id}`,
+      url: `/note/${id}`,
     });
 
     thunkApi.dispatch(setDetail(data.data));
@@ -105,7 +103,7 @@ export const createNote = createAsyncThunk(
   'note/createNote',
   async (payload, thunkApi) => {
     const { data } = await ApiService.post({
-      url: 'note/',
+      url: '/note/',
       data: payload,
     });
 
@@ -130,7 +128,7 @@ export const updateNote = createAsyncThunk(
     console.log('updateNote payload => ', payload);
 
     const { data } = await ApiService.put({
-      url: `note/${payload.id}`,
+      url: `/note/${payload.id}`,
       data: { ..._.omit(payload, ['id']) },
     });
 

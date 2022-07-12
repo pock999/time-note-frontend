@@ -36,7 +36,7 @@ export const fetchCategories = createAsyncThunk(
     thunkApi.dispatch(setDrawerCategories(null));
 
     const { data } = await ApiService.get({
-      url: 'category/list',
+      url: '/category/list',
     });
 
     thunkApi.dispatch(setDrawerCategories(data.data));
@@ -53,7 +53,7 @@ export const fetchCategory = createAsyncThunk(
     thunkApi.dispatch(setDetail(null));
 
     const { data } = await ApiService.get({
-      url: `category/${id}`,
+      url: `/category/${id}`,
     });
 
     thunkApi.dispatch(setDetail(data.data));
@@ -66,7 +66,7 @@ export const createCategory = createAsyncThunk(
   'category/createCategory',
   async (payload, thunkApi) => {
     const { data } = await ApiService.post({
-      url: 'category/',
+      url: '/category/',
       data: payload,
     });
 
@@ -84,7 +84,7 @@ export const updateCategory = createAsyncThunk(
   async (payload, thunkApi) => {
     console.log('category/updateCategory payload => ', payload);
     const { data } = await ApiService.put({
-      url: `category/${payload.id}`,
+      url: `/category/${payload.id}`,
       data: { ..._.omit(payload, ['id']) },
     });
 
@@ -111,7 +111,7 @@ export const deleteCategory = createAsyncThunk(
   'category/deleteCategory',
   async (payload, thunkApi) => {
     const { data } = await ApiService.delete({
-      url: `category/${payload.id}`,
+      url: `/category/${payload.id}`,
     });
 
     const store = thunkApi.getState();

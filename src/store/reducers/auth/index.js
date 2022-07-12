@@ -51,7 +51,7 @@ export const registerAction = createAsyncThunk(
   'auth/login',
   async (payload, thunkApi) => {
     const { data } = await ApiService.post({
-      url: 'auth/register',
+      url: '/auth/register',
       data: payload,
     });
 
@@ -63,7 +63,7 @@ export const loginAction = createAsyncThunk(
   'auth/login',
   async (payload, thunkApi) => {
     const { data } = await ApiService.post({
-      url: 'auth/login',
+      url: '/auth/login',
       data: payload,
     });
 
@@ -99,7 +99,7 @@ export const getProfileAction = createAsyncThunk(
   async (payload, thunkApi) => {
     try {
       const { data } = await ApiService.get({
-        url: 'auth/profile',
+        url: '/auth/profile',
       });
 
       localStorage.setItem('token', data.data.token);
@@ -141,7 +141,7 @@ export const updateProfileAction = createAsyncThunk(
   'auth/update-profile',
   async (payload, thunkApi) => {
     const { data } = await ApiService.put({
-      url: 'auth/profile',
+      url: '/auth/profile',
       data: payload,
     });
     thunkApi.dispatch(setUser(data.data));

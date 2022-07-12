@@ -84,6 +84,7 @@ export default function NoteList() {
   const noteList = useSelector((state) => state.note.list);
   const notePagination = useSelector((state) => state.note.pagination);
   const noteTypes = useSelector((state) => state.note.noteTypes);
+  const categories = useSelector((state) => state.category.list);
 
   //
   // url params
@@ -454,9 +455,17 @@ export default function NoteList() {
                           <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%' }}>
                             <CardContent>
                               <div
-                                style={{ display: 'flex', justifyContent: 'flex-end' }}
+                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                               >
-                                <Chip label={currentType(data.type)} color="warning" />
+                                <span
+                                  style={{
+                                    width: 10,
+                                    height: 10,
+                                    borderRadius: '50%',
+                                    backgroundColor: _.get(data, 'Category.color') || 'white',
+                                  }}
+                                />
+                                <Chip label={currentType(data.type)} />
                               </div>
                               <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                                 { data.startAt }

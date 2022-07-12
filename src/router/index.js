@@ -57,7 +57,7 @@ function ProtectedRoutes(props) {
   const refreshToken = async () => {
     try {
       const { data } = await ApiService.get({
-        url: 'auth/profile',
+        url: '/auth/profile',
       });
 
       localStorage.setItem('token', data.data.token);
