@@ -42,7 +42,7 @@ import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
 import { useQuery, useWindowSize } from '../../hooks';
 
 // custom components
-import { FormModal, CardStack } from '../../components';
+import { FormModal, CardStack, Empty } from '../../components';
 
 // custom layout
 import { BaseLayout } from '../../layouts';
@@ -250,6 +250,80 @@ export default function NoteList() {
 
     return null;
   };
+
+  if (_.has(notePagination, 'totalCount') && notePagination.totalCount === 0) {
+    return (
+      <BaseLayout>
+        <Container sx={{
+          paddingTop: '3.5em',
+          paddingBottom: '2em',
+          marginBottom: '2em',
+          display: 'flex',
+        }}
+        >
+          <Grid container spacing={2}>
+            <FormModal
+              isOpen={modalOpen}
+              note={formData}
+              handleClose={() => closeForm()}
+              editForm={editForm}
+              handleSave={() => saveForm()}
+            />
+
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <AppBar position="static" color="inherit">
+                  <Container
+                    maxWidth={false}
+                    sx={{
+                      width: '100%', p: 2, justifyContent: 'flex-end', display: 'flex',
+                    }}
+                  >
+                    {
+                  query.isGroup === 0 && (
+                  <Button
+                    variant="contained"
+                    sx={{ alignItems: 'center', fontSize: 18, mr: 1 }}
+                    // TODO: 改成真正上一頁
+                    onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
+                  >
+                    <ArrowBackIcon size="small" />
+                    返回
+                  </Button>
+                  )
+                }
+
+                    <Button
+                      variant="contained"
+                      sx={{ alignItems: 'center', fontSize: 18 }}
+                      onClick={() => openForm({})}
+                    >
+                      <AddIcon size="small" />
+                      新增
+                    </Button>
+                  </Container>
+                </AppBar>
+              </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                <Divider
+                  sx={{ marginBottom: '4em', marginTop: '4em' }}
+                />
+                <Grid item xs={12} sx={{ minHeight: '60vh' }}>
+                  <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%' }}>
+                    <CardContent sx={{ width: '100%', height: '100%' }}>
+                      <Empty title="空的，請點擊上方新增鈕建立新資料" />
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Container>
+      </BaseLayout>
+    );
+  }
 
   return (
     <BaseLayout>
