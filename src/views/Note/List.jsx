@@ -306,12 +306,15 @@ export default function NoteList() {
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <Grid container spacing={2}>
+              <Grid container>
                 <Divider
                   sx={{ marginBottom: '4em', marginTop: '4em' }}
                 />
-                <Grid item xs={12} sx={{ minHeight: '60vh' }}>
-                  <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%' }}>
+                <Grid item xs={12} sx={{ minHeight: '60vh', display: 'flex', justifyContent: 'center' }}>
+                  <Card sx={{
+                    boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%', flex: 1,
+                  }}
+                  >
                     <CardContent sx={{ width: '100%', height: '100%' }}>
                       <Empty title="空的，請點擊上方新增鈕建立新資料" />
                     </CardContent>
