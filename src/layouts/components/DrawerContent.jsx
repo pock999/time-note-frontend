@@ -1,5 +1,8 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
+
+// use query params
+import { useQueryParam, NumberParam, StringParam } from 'use-query-params';
 
 import _ from 'lodash';
 
@@ -42,6 +45,11 @@ export default function DrawerContent(props) {
     openForm,
     deleteCategory,
   } = props;
+
+  //
+  // url params
+  //
+  const [categoryId, setCategoryId] = useQueryParam('CategoryId', NumberParam);
 
   return (
     <div>
@@ -88,11 +96,16 @@ export default function DrawerContent(props) {
       <Divider />
       <List>
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton
+            selected={!categoryId}
+            onClick={() => (categoryId ? setCategoryId(undefined) : null)}
+          >
             <ListItemIcon>
               <FiberManualRecordIcon />
             </ListItemIcon>
-            <ListItemText primary="全部分類(自定義分類)" />
+            <ListItemText
+              primary="全部分類(自定義分類)"
+            />
           </ListItemButton>
         </ListItem>
         {
@@ -102,7 +115,11 @@ export default function DrawerContent(props) {
                 {
                   drawerCategories.map((category, index) => (
                     <ListItem key={category.id} disablePadding>
-                      <ListItemButton>
+                      <ListItemButton
+                        selected={categoryId === category.id}
+                        // eslint-disable-next-line max-len
+                        onClick={() => (categoryId !== category.id ? setCategoryId(category.id) : null)}
+                      >
                         <ListItemIcon>
                           <FiberManualRecordIcon style={{ color: category.color }} />
                         </ListItemIcon>
