@@ -189,73 +189,7 @@ export default function NoteList() {
   React.useEffect(() => {
   }, [windowWidth]);
 
-  // 沒有資料 || 分組狀態但資料不為分組資料形式 || 不為分組狀態但資料為分組資料形式
-  if (!noteList || ((query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null) && !_.isObject(noteList)) || (query.isGroup === 0 && !_.isArray(noteList[Object.keys(noteList)[0]]))) {
-    return (
-      <BaseLayout>
-        <Container sx={{
-          paddingTop: '3.5em',
-          paddingBottom: '2em',
-          marginBottom: '2em',
-          display: 'flex',
-        }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <AppBar position="static" color="inherit">
-                <Container
-                  maxWidth={false}
-                  sx={{
-                    width: '100%', p: 2, justifyContent: 'flex-end', display: 'flex',
-                  }}
-                >
-                  <Skeleton
-                    variant="rectangular"
-                    width={100}
-                    height={50}
-                  />
-                </Container>
-              </AppBar>
-            </Grid>
-            <Grid item xs={12}>
-              <Grid container spacing={2}>
-                <Divider
-                  sx={{ marginBottom: '4em', marginTop: '4em' }}
-                />
-                <Grid item xs={12} md={4}>
-                  <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
-                    <CardContent>
-                      <Skeleton
-                        variant="rectangular"
-                        width="100%"
-                        height={150}
-                      />
-                    </CardContent>
-                    <CardActions>
-                      <Skeleton
-                        variant="rectangular"
-                        width="100%"
-                        height={20}
-                      />
-                    </CardActions>
-                  </Card>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Container>
-      </BaseLayout>
-    );
-  }
-
-  const currentType = (typeId) => {
-    if (_.isArray(noteTypes)) {
-      return noteTypes.find((item) => item.value === typeId).name;
-    }
-
-    return null;
-  };
-
+  // empty
   if (_.has(notePagination, 'totalCount') && notePagination.totalCount === 0) {
     return (
       <BaseLayout>
@@ -332,6 +266,74 @@ export default function NoteList() {
       </BaseLayout>
     );
   }
+
+  // null => not loading finish
+  // 沒有資料 || 分組狀態但資料不為分組資料形式 || 不為分組狀態但資料為分組資料形式
+  if (!noteList || ((query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null) && !_.isObject(noteList)) || (query.isGroup === 0 && !_.isArray(noteList[Object.keys(noteList)[0]]))) {
+    return (
+      <BaseLayout>
+        <Container sx={{
+          paddingTop: '3.5em',
+          paddingBottom: '2em',
+          marginBottom: '2em',
+          display: 'flex',
+        }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <AppBar position="static" color="inherit">
+                <Container
+                  maxWidth={false}
+                  sx={{
+                    width: '100%', p: 2, justifyContent: 'flex-end', display: 'flex',
+                  }}
+                >
+                  <Skeleton
+                    variant="rectangular"
+                    width={100}
+                    height={50}
+                  />
+                </Container>
+              </AppBar>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                <Divider
+                  sx={{ marginBottom: '4em', marginTop: '4em' }}
+                />
+                <Grid item xs={12} md={4}>
+                  <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
+                    <CardContent>
+                      <Skeleton
+                        variant="rectangular"
+                        width="100%"
+                        height={150}
+                      />
+                    </CardContent>
+                    <CardActions>
+                      <Skeleton
+                        variant="rectangular"
+                        width="100%"
+                        height={20}
+                      />
+                    </CardActions>
+                  </Card>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Container>
+      </BaseLayout>
+    );
+  }
+
+  const currentType = (typeId) => {
+    if (_.isArray(noteTypes)) {
+      return noteTypes.find((item) => item.value === typeId).name;
+    }
+
+    return null;
+  };
 
   return (
     <BaseLayout>
