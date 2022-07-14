@@ -33,6 +33,7 @@ import {
 import TouchAppIcon from '@mui/icons-material/TouchApp';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // use query params
@@ -53,7 +54,7 @@ import SwalHelper from '../../utils/SwalHelper';
 
 // store
 import {
-  fetchNoteList, fetchNoteDetail, createNote, updateNote, fetchNoteTypes,
+  fetchNoteList, fetchNoteDetail, createNote, updateNote, fetchNoteTypes, deleteNote,
 } from '../../store/reducers/note';
 import {
   fetchCategories,
@@ -485,6 +486,21 @@ export default function NoteList() {
                               </Typography>
                             </CardContent>
                             <CardActions sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                              <Button
+                                size="small"
+                                variant="contained"
+                                sx={{ alignItems: 'center', fontSize: 18 }}
+                                onClick={async () => {
+                                  const result = await SwalHelper.awiatQuestion('確定要刪除?', data.title);
+
+                                  if (result.isConfirmed) {
+                                    dispatch(deleteNote({ id: data.id }));
+                                  }
+                                }}
+                              >
+                                <DeleteIcon size="small" />
+                                刪除
+                              </Button>
                               <Button
                                 size="small"
                                 variant="contained"

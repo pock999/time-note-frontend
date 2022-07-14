@@ -162,4 +162,26 @@ export const updateNote = createAsyncThunk(
   }
 );
 
+export const deleteNote = createAsyncThunk(
+  'note/deleteNote',
+  async (payload, thunkApi) => {
+    const { data } = await ApiService.delete({
+      url: `/note/${payload.id}`,
+    });
+
+    const store = thunkApi.getState();
+    const currentList = _.cloneDeep(store.note.list);
+
+    const newList = {};
+    Object.keys(currentList).map((year) => {
+      const temp = currentList[year].filter((note) => note.id !== payload.id);
+      newList[year] = temp.sort((a, b) => (a.startAt > b.startAt ? -1 : 1));
+    });
+
+    thunkApi.dispatch(setList(newList));
+
+    return data.data;
+  }
+);
+
 export default noteSlice.reducer;
