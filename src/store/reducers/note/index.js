@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 
@@ -104,7 +104,9 @@ export const createNote = createAsyncThunk(
   async (payload, thunkApi) => {
     const { data } = await ApiService.post({
       url: '/note/',
-      data: payload,
+      data: {
+        ..._.omit(payload, ['search']),
+      },
     });
 
     const store = thunkApi.getState();
@@ -114,9 +116,12 @@ export const createNote = createAsyncThunk(
     const dataGroup = data.data.startAt.slice(0, 7);
 
     // 直接重call list api
-    thunkApi.dispatch(
-      fetchNoteList({ searchStr: window.location.search.split('?')[1] })
+    console.log('location.search => ', window.location.search);
+    const resultAction = await thunkApi.dispatch(
+      fetchNoteList({ searchAry: payload.search.split('?')[1].split('&') })
     );
+
+    await unwrapResult(resultAction);
 
     return data.data;
   }
@@ -135,11 +140,16 @@ export const updateNote = createAsyncThunk(
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.note.list);
 
+    const categories = store.category.list;
+
     const newList = {};
     Object.keys(currentList).map((year) => {
       const temp = currentList[year].map((note) => {
         if (note.id === payload.id) {
-          return payload;
+          return {
+            ...payload,
+            Category: categories.find((item) => item.id === payload.CategoryId),
+          };
         }
         return note;
       });

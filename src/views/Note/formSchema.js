@@ -7,6 +7,7 @@ export const createSchema = yup.object().shape({
     .required(),
   content: yup.string().required(),
   type: yup.mixed().oneOf([1, 2, 3]).required('請選擇類型'),
+  CategoryId: yup.number().nullable(true),
   startAt: yup.date().required('請選擇開始日期'),
   endAt: yup
     .date()
@@ -22,6 +23,7 @@ export const updateSchema = yup.object().shape({
     .required(),
   content: yup.string().required(),
   type: yup.mixed().oneOf([1, 2, 3]).required('請選擇類型'),
+  CategoryId: yup.number().nullable(true),
   startAt: yup.date().required('請選擇開始日期'),
   endAt: yup
     .date()

@@ -73,7 +73,7 @@ export default function DrawerContent(props) {
             ? drawerTypes.map((typeItem, index) => (
               <ListItem key={typeItem.value} disablePadding>
                 <ListItemButton
-                  to={`/notes/${typeItem.value}`}
+                  to={`/notes/${typeItem.value}${categoryId ? `?CategoryId=${categoryId}` : ''}`}
                   component={Link}
                   selected={pathname === `/notes/${typeItem.value}`}
                 >
@@ -147,9 +147,9 @@ export default function DrawerContent(props) {
             )
             : (
               <>
-                <Skeleton animation="wave" variant="ListItem" />
-                <Skeleton animation="wave" variant="ListItem" />
-                <Skeleton animation="wave" variant="ListItem" />
+                <Skeleton animation="wave" variant="ListItem" sx={{ marginBottom: 1, padding: 3 }} />
+                <Skeleton animation="wave" variant="ListItem" sx={{ marginBottom: 1, padding: 3 }} />
+                <Skeleton animation="wave" variant="ListItem" sx={{ marginBottom: 1, padding: 3 }} />
               </>
             )
         }

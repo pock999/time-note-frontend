@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import _ from 'lodash';
 
 import {
@@ -29,6 +30,8 @@ export default function FormModal(props) {
     editForm,
     handleSave,
   } = props;
+
+  const categories = useSelector((state) => state.category.list);
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
@@ -70,6 +73,26 @@ export default function FormModal(props) {
             <MenuItem value={1}>筆記</MenuItem>
             <MenuItem value={2}>行程(提醒)</MenuItem>
             <MenuItem value={3}>文章</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl variant="standard" fullWidth margin="dense">
+          <InputLabel id="type-label">&emsp;自定義分類</InputLabel>
+          <Select
+            labelId="type-label"
+            id="CategoryId"
+            value={note.CategoryId}
+            onChange={(evt) => editForm(evt.target.value, 'CategoryId')}
+            label="自定義分類"
+            fullWidth
+            variant="outlined"
+            margin="dense"
+          >
+            <MenuItem value={0}>無</MenuItem>
+            {
+              _.isArray(categories) && categories.map((category) => (
+                <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>
+              ))
+            }
           </Select>
         </FormControl>
         <LocalizationProvider dateAdapter={AdapterDayjs} locale={zhTW}>

@@ -66,6 +66,7 @@ import { createSchema, updateSchema } from './formSchema';
 const emptyNote = {
   title: '',
   content: '',
+  CategoryId: null,
   type: null,
   startAt: null,
   endAt: null,
@@ -84,7 +85,6 @@ export default function NoteList() {
   const noteList = useSelector((state) => state.note.list);
   const notePagination = useSelector((state) => state.note.pagination);
   const noteTypes = useSelector((state) => state.note.noteTypes);
-  const categories = useSelector((state) => state.category.list);
 
   //
   // url params
@@ -144,7 +144,10 @@ export default function NoteList() {
       if (formData.id) {
         resultAction = await dispatch(updateNote(formData));
       } else {
-        resultAction = await dispatch(createNote(formData));
+        resultAction = await dispatch(createNote({
+          ...formData,
+          search: location.search,
+        }));
       }
 
       await unwrapResult(resultAction);
