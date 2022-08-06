@@ -19,6 +19,7 @@ module.exports = {
     'react/require-default-props': 'warn',
     'react/no-unescaped-entities': 'warn',
     'react/jsx-props-no-spreading': 'warn',
+    'react/no-unused-prop-types': 'warn',
     'react/forbid-prop-types': 'warn',
     'react/button-has-type': 'off',
     'jsx-a11y/control-has-associated-label': 'warn',

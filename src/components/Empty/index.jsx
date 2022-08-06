@@ -1,8 +1,8 @@
 // react
 import React from 'react';
 
-// mui(npm)
-import { styled } from '@mui/material/styles';
+// styled-components
+import styled from 'styled-components';
 
 // styled-component
 const Center = styled('div')`

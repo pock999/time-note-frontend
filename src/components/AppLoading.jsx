@@ -3,7 +3,7 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { Box, LinearProgress } from '@mui/material';
+import ReactLoading from 'react-loading';
 
 export default function AppLoading() {
   const loadingIsShow = useSelector((state) => state.loading.isShow);
@@ -25,9 +25,9 @@ export default function AppLoading() {
             alignItems: 'center',
           }}
         >
-          <Box sx={{ width: '200px' }}>
-            <LinearProgress />
-          </Box>
+          <div style={{ width: '200px' }}>
+            <ReactLoading type="cylon" color="#fff" width="200px" height="200px" delay={2} />
+          </div>
         </div>
         )
       }
