@@ -44,17 +44,37 @@ Card.propTypes = {
   p: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
+    PropTypes.object,
   ]),
   m: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
+    PropTypes.object,
   ]),
-  w: PropTypes.string,
-  h: PropTypes.string,
-  maxW: PropTypes.string,
-  maxH: PropTypes.string,
-  minW: PropTypes.string,
-  minH: PropTypes.string,
+  w: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
+  h: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
+  maxW: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
+  maxH: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
+  minW: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
+  minH: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
 
   d: PropTypes.string,
   align: PropTypes.string,
