@@ -138,6 +138,7 @@ export default function Login() {
                       hoverBg="warning800"
                       rounded="circle"
                       p={{ r: '1.5rem', l: '1.5rem' }}
+                      m={{ r: '.5rem' }}
                       shadow="3"
                       hoverShadow="4"
                       type="button"
@@ -190,6 +191,7 @@ export default function Login() {
                       hoverBg="warning800"
                       rounded="circle"
                       p={{ r: '1.5rem', l: '1.5rem' }}
+                      m={{ r: '.5rem' }}
                       shadow="3"
                       hoverShadow="4"
                       type="button"
