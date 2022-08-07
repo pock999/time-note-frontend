@@ -13,10 +13,28 @@ import dayjs from 'dayjs';
 import moment from 'moment';
 import _ from 'lodash';
 
-// atomize
+// mui(npm)
 import {
-  Container, Row, Col, Div, Text, Button, Icon, Dropdown, Anchor,
-} from 'atomize';
+  Container,
+  AppBar,
+  Button,
+  Typography,
+  Grid,
+  Skeleton,
+  ButtonGroup,
+  Card,
+  CardContent,
+  CardActions,
+  Divider,
+  Chip,
+} from '@mui/material';
+
+// mui icons
+import TouchAppIcon from '@mui/icons-material/TouchApp';
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // use query params
 import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
@@ -25,7 +43,7 @@ import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
 import { useQuery, useWindowSize } from '../../hooks';
 
 // custom components
-import { Empty, ToolBar, Card } from '../../components';
+import { FormModal, CardStack, Empty } from '../../components';
 
 // custom layout
 import { BaseLayout } from '../../layouts';
@@ -175,76 +193,75 @@ export default function NoteList() {
   if (_.has(notePagination, 'totalCount') && notePagination.totalCount === 0) {
     return (
       <BaseLayout>
-        <Container
-          p={{
-            t: '3.5em',
-            b: '2em',
-          }}
-          m={{
-            b: '2em',
-          }}
-          d="flex"
+        <Container sx={{
+          paddingTop: '3.5em',
+          paddingBottom: '2em',
+          marginBottom: '2em',
+          display: 'flex',
+        }}
         >
-          <Container>
-            {/* <FormModal
+          <Grid container spacing={2}>
+            <FormModal
               isOpen={modalOpen}
               note={formData}
               handleClose={() => closeForm()}
               editForm={editForm}
               handleSave={() => saveForm()}
-            /> */}
+            />
 
-            <Div>
-              <ToolBar>
-                <Container
-                  w="100%"
-                  p="2"
-                  d="flex"
-                  justify="flex-end"
-                >
-                  {
-                query.isGroup === 0 && (
-                <Button
-                  align="center"
-                  m={{ r: 1 }}
-                  // TODO: 改成真正上一頁
-                  onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
-                >
-                  返回
-                </Button>
-                )
-              }
-                  <Button
-                    align="center"
-                    onClick={() => openForm({})}
-                  >
-                    新增
-                  </Button>
-                </Container>
-              </ToolBar>
-            </Div>
-
-            <Row p="5" m={{ t: '.5em' }}>
-              <Col size="12">
-                <Row>
-                  <Col
-                    minH="60vh"
-                    d="flex"
-                    justify="center"
-                  >
-                    <Card sx={{
-                      boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%', flex: 1,
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <AppBar position="static" color="inherit">
+                  <Container
+                    maxWidth={false}
+                    sx={{
+                      width: '100%', p: 2, justifyContent: 'flex-end', display: 'flex',
                     }}
+                  >
+                    {
+                  query.isGroup === 0 && (
+                  <Button
+                    variant="contained"
+                    sx={{ alignItems: 'center', fontSize: 18, mr: 1 }}
+                    // TODO: 改成真正上一頁
+                    onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
+                  >
+                    <ArrowBackIcon size="small" />
+                    返回
+                  </Button>
+                  )
+                }
+
+                    <Button
+                      variant="contained"
+                      sx={{ alignItems: 'center', fontSize: 18 }}
+                      onClick={() => openForm({})}
                     >
-                      {/* <CardContent sx={{ width: '100%', height: '100%' }}>
-                        <Empty title="空的，請點擊上方新增鈕建立新資料" />
-                      </CardContent> */}
-                    </Card>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Container>
+                      <AddIcon size="small" />
+                      新增
+                    </Button>
+                  </Container>
+                </AppBar>
+              </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container>
+                <Divider
+                  sx={{ marginBottom: '4em', marginTop: '4em' }}
+                />
+                <Grid item xs={12} sx={{ minHeight: '60vh', display: 'flex', justifyContent: 'center' }}>
+                  <Card sx={{
+                    boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%', flex: 1,
+                  }}
+                  >
+                    <CardContent sx={{ width: '100%', height: '100%' }}>
+                      <Empty title="空的，請點擊上方新增鈕建立新資料" />
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
         </Container>
       </BaseLayout>
     );
@@ -255,52 +272,38 @@ export default function NoteList() {
   if (!noteList || ((query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null) && !_.isObject(noteList)) || (query.isGroup === 0 && !_.isArray(noteList[Object.keys(noteList)[0]]))) {
     return (
       <BaseLayout>
-        <Container
-          p={{
-            t: '3.5em',
-            b: '2em',
-          }}
-          m={{
-            b: '2em',
-          }}
-          d="flex"
+        <Container sx={{
+          paddingTop: '3.5em',
+          paddingBottom: '2em',
+          marginBottom: '2em',
+          display: 'flex',
+        }}
         >
-          <Div>
-            <ToolBar>
-              <Container
-                w="100%"
-                p="2"
-                d="flex"
-                justify="flex-end"
-              >
-                {
-                query.isGroup === 0 && (
-                <Button
-                  align="center"
-                  m={{ r: 1 }}
-                  // TODO: 改成真正上一頁
-                  onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <AppBar position="static" color="inherit">
+                <Container
+                  maxWidth={false}
+                  sx={{
+                    width: '100%', p: 2, justifyContent: 'flex-end', display: 'flex',
+                  }}
                 >
-                  返回
-                </Button>
-                )
-              }
-                <Button
-                  align="center"
-                  onClick={() => openForm({})}
-                >
-                  新增
-                </Button>
-              </Container>
-            </ToolBar>
-          </Div>
-
-          <Row>
-            <Col size="12">
-              <Row>
-                <Col size={{ xs: 12, md: 4 }}>
+                  <Skeleton
+                    variant="rectangular"
+                    width={100}
+                    height={50}
+                  />
+                </Container>
+              </AppBar>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                <Divider
+                  sx={{ marginBottom: '4em', marginTop: '4em' }}
+                />
+                <Grid item xs={12} md={4}>
                   <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
-                    {/* <CardContent>
+                    <CardContent>
                       <Skeleton
                         variant="rectangular"
                         width="100%"
@@ -313,12 +316,12 @@ export default function NoteList() {
                         width="100%"
                         height={20}
                       />
-                    </CardActions> */}
+                    </CardActions>
                   </Card>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
         </Container>
       </BaseLayout>
     );
@@ -334,67 +337,67 @@ export default function NoteList() {
 
   return (
     <BaseLayout>
-      <Container
-        p={{
-          t: '4.5em',
-          b: '2em',
-        }}
-        m={{
-          b: '2em',
-        }}
-      >
-        {/* <FormModal
+      <Container sx={{ paddingTop: '4.5em', paddingBottom: '2em', marginBottom: '2em' }}>
+        <FormModal
           isOpen={modalOpen}
           note={formData}
           handleClose={() => closeForm()}
           editForm={editForm}
           handleSave={() => saveForm()}
-        /> */}
+        />
 
-        <Div>
-          <ToolBar>
-            <Container
-              w="100%"
-              p="2"
-              d="flex"
-              justify="flex-end"
-            >
-              {
-                query.isGroup === 0 && (
-                <Button
-                  align="center"
-                  m={{ r: 1 }}
-                  // TODO: 改成真正上一頁
-                  onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
-                >
-                  返回
-                </Button>
-                )
-              }
-              <Button
-                align="center"
-                onClick={() => openForm({})}
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <AppBar position="static" color="inherit">
+              <Container
+                maxWidth={false}
+                sx={{
+                  width: '100%', p: 2, justifyContent: 'flex-end', display: 'flex',
+                }}
               >
-                新增
-              </Button>
-            </Container>
-          </ToolBar>
-        </Div>
+                {
+                  query.isGroup === 0 && (
+                  <Button
+                    variant="contained"
+                    sx={{ alignItems: 'center', fontSize: 18, mr: 1 }}
+                    // TODO: 改成真正上一頁
+                    onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
+                  >
+                    <ArrowBackIcon size="small" />
+                    返回
+                  </Button>
+                  )
+                }
 
-        <Row p="5" m={{ t: '.5em' }}>
+                <Button
+                  variant="contained"
+                  sx={{ alignItems: 'center', fontSize: 18 }}
+                  onClick={() => openForm({})}
+                >
+                  <AddIcon size="small" />
+                  新增
+                </Button>
+              </Container>
+            </AppBar>
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={5} sx={{ marginTop: '.5em' }}>
           {
             (query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null)
               ? (
                 Object.keys(noteList).map((group, index) => (
-                  <Col item key={group} xs={12}>
-                    -
-                    {group}
-                    年
-                    -
+                  <Grid item key={group} xs={12}>
+                    <Divider
+                      sx={{ marginBottom: '4em' }}
+                    >
+                      {group}
+                      年
+                    </Divider>
                     <div style={{ display: 'flex', justifyContent: 'space-between', flexFlow: 'row wrap' }}>
                       {
                         Object.keys(noteList[group]).map((subGroup, ind) => (
-                          <Card
+                          <CardStack
                             key={subGroup}
                             col={6}
                             cards={noteList[group][subGroup].notes}
@@ -405,56 +408,58 @@ export default function NoteList() {
                                 endAt: noteList[group][subGroup].endAt,
                               });
                             }}
-                            // cardContent={(
-                            //   <>
-                            //     <CardContent>
-                            //       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                            //         { noteList[group][subGroup].startAt }
-                            //         {' '}
-                            //         ~
-                            //         {' '}
-                            //         { noteList[group][subGroup].endAt }
-                            //       </Typography>
-                            //       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                            //         共
-                            //         {' '}
-                            //         {noteList[group][subGroup].count}
-                            //         筆
-                            //       </Typography>
-                            //     </CardContent>
-                            //     <CardActions
-                            //       sx={{
-                            //         display: 'center',
-                            //         justifyContent: 'center',
-                            //       }}
-                            //     >
-                            //       <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
-                            //         點擊查看
-                            //       </Typography>
-                            //       <TouchAppIcon />
-                            //     </CardActions>
-                            //   </>
-                            // )}
+                            cardContent={(
+                              <>
+                                <CardContent>
+                                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                    { noteList[group][subGroup].startAt }
+                                    {' '}
+                                    ~
+                                    {' '}
+                                    { noteList[group][subGroup].endAt }
+                                  </Typography>
+                                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                    共
+                                    {' '}
+                                    {noteList[group][subGroup].count}
+                                    筆
+                                  </Typography>
+                                </CardContent>
+                                <CardActions
+                                  sx={{
+                                    display: 'center',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
+                                    點擊查看
+                                  </Typography>
+                                  <TouchAppIcon />
+                                </CardActions>
+                              </>
+                            )}
                           />
                         ))
                       }
                     </div>
-                  </Col>
+                  </Grid>
 
                 ))
               )
               : Object.keys(noteList).map((group, index) => (
-                <Col key={group} size="12">
-                  -
-                  {group}
-                  年
-                  -
-                  <Row>
+                <Grid item key={group} xs={12}>
+                  <Divider
+                    sx={{ marginBottom: '2em' }}
+                  >
+                    {group}
+                    年
+                  </Divider>
+                  <Grid container spacing={2}>
                     {
                       noteList[group].map((data) => (
-                        <Col size={{ xs: 12, md: 4 }} key={data.id}>
+                        <Grid item xs={12} md={4} key={data.id}>
                           <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%' }}>
-                            {/* <CardContent>
+                            <CardContent>
                               <div
                                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                               >
@@ -507,18 +512,17 @@ export default function NoteList() {
                                 <EditIcon size="small" />
                                 編輯
                               </Button>
-                            </CardActions> */}
+                            </CardActions>
                           </Card>
-                        </Col>
+                        </Grid>
                       ))
                     }
-                  </Row>
-                </Col>
+                  </Grid>
+                </Grid>
 
               ))
           }
-        </Row>
-
+        </Grid>
       </Container>
     </BaseLayout>
   );
