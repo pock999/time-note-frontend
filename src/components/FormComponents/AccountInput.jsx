@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 // atomize
 import { Input, Icon } from 'atomize';
 
-function AccountInput({ value, onChange }) {
+function AccountInput({ value, onChange, name }) {
   return (
     <Input
       placeholder="Email"
@@ -13,6 +13,7 @@ function AccountInput({ value, onChange }) {
       m=".5rem"
       value={value}
       onChange={onChange}
+      name={name}
       prefix={(
         <Icon
           name="UserSolid"
@@ -31,11 +32,13 @@ function AccountInput({ value, onChange }) {
 
 AccountInput.defaultProps = {
   value: '',
+  name: null,
   onChange() {},
 };
 
 AccountInput.propTypes = {
   value: PropTypes.string,
+  name: PropTypes.string,
   onChange: PropTypes.func,
 };
 

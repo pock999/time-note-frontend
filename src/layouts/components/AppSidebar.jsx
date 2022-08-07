@@ -15,17 +15,9 @@ import Sidebar from 'react-sidebar';
 // custom hooks
 import { useWindowSize } from '../../hooks';
 
-const menuList = (
-  <Div p={{ x: '1rem', y: '0.5rem' }}>
-    {[{ name: '個人資料', to: '/profile' }, { name: '登出' }].map((menuItem, index) => (
-      <Anchor d="block" p={{ y: '0.25rem' }}>
-        {menuItem.name}
-      </Anchor>
-    ))}
-  </Div>
-);
-
-function AppSidebar({ children, appBar: AppBar, drawerContent }) {
+function AppSidebar({
+  children, appBar: AppBar, drawerContent, topMenu,
+}) {
   const sidebarCollapsed = localStorage.getItem('sidebar-collapsed');
   const [isExanded, setIsExanded] = React.useState(!sidebarCollapsed);
   const handleToggler = () => {
@@ -53,7 +45,7 @@ function AppSidebar({ children, appBar: AppBar, drawerContent }) {
       docked={isExanded}
       styles={{ sidebar: { background: 'white' } }}
     >
-      { AppBar && <AppBar handleToggler={handleToggler} /> }
+      { AppBar && <AppBar handleToggler={handleToggler} topMenu={topMenu} /> }
       { children }
     </Sidebar>
   );
@@ -63,12 +55,14 @@ AppSidebar.defaultProps = {
   children: null,
   appBar: null,
   drawerContent: <b>Sidebar content</b>,
+  topMenu: <Div>menu</Div>,
 };
 
 AppSidebar.propTypes = {
   children: PropTypes.node,
   appBar: PropTypes.elementType,
   drawerContent: PropTypes.node,
+  topMenu: PropTypes.node,
 };
 
 export default AppSidebar;

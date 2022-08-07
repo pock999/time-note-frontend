@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import dayjs from 'dayjs';
@@ -9,17 +10,8 @@ import {
   Div, Text, Button, Icon, Dropdown, Anchor,
 } from 'atomize';
 
-const menuList = (
-  <Div p={{ x: '1rem', y: '0.5rem' }}>
-    {[{ name: '個人資料', to: '/profile' }, { name: '登出' }].map((menuItem, index) => (
-      <Anchor d="block" p={{ y: '0.25rem' }}>
-        {menuItem.name}
-      </Anchor>
-    ))}
-  </Div>
-);
-
-function AppBar({ handleToggler }) {
+function AppBar({ handleToggler, topMenu }) {
+  const location = useLocation();
   const [showDropdown, setShowDropdown] = React.useState(false);
   return (
     <Div
@@ -46,13 +38,26 @@ function AppBar({ handleToggler }) {
       <Dropdown
         isOpen={showDropdown}
         onClick={() => setShowDropdown((pre) => !pre)}
-        menu={menuList}
-        maxW="100px"
+        menu={topMenu}
+        maxW="200px"
       >
         <Icon name="UserCircle" size="20px" color="gray700" />
+        {
+          location.pathname.includes('profile') && '個人資料'
+        }
       </Dropdown>
     </Div>
   );
 }
+
+AppBar.defaultProps = {
+  topMenu: <Div>menu</Div>,
+  handleToggler: () => {},
+};
+
+AppBar.defaultProps = {
+  topMenu: PropTypes.node,
+  handleToggler: PropTypes.func,
+};
 
 export default AppBar;

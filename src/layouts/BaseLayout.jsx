@@ -19,7 +19,9 @@ import {
 import SwalHelper from '../utils/SwalHelper';
 
 // custom components
-import { AppSidebar, AppBar, DrawerContent } from './components';
+import {
+  AppSidebar, AppBar, DrawerContent, AppTopMenu,
+} from './components';
 
 const emptyCategory = {
   name: '',
@@ -42,6 +44,7 @@ export default function BaseLayout(props) {
   return (
     <AppSidebar
       appBar={AppBar}
+      topMenu={<AppTopMenu />}
       drawerContent={(
         <DrawerContent
           drawerTypes={drawerTypes}

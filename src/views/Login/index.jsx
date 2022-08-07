@@ -18,9 +18,7 @@ import {
 } from 'atomize';
 
 // custom components
-import { Card } from '../../components';
-import AccountInput from './AccountInput';
-import PasswordInput from './PasswordInput';
+import { Card, AccountInput, PasswordInput } from '../../components';
 
 // custom utils
 import SwalHelper from '../../utils/SwalHelper';

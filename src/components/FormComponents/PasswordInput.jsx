@@ -5,7 +5,9 @@ import PropTypes from 'prop-types';
 // atomize
 import { Input, Button, Icon } from 'atomize';
 
-function PasswordInput({ value, onChange, placeholder }) {
+function PasswordInput({
+  value, onChange, placeholder, name,
+}) {
   const [showPassword, setShowPassword] = React.useState(false);
 
   return (
@@ -15,6 +17,7 @@ function PasswordInput({ value, onChange, placeholder }) {
       m=".5rem"
       value={value}
       onChange={onChange}
+      name={name}
       prefix={(
         <Button
           pos="absolute"
@@ -40,12 +43,14 @@ function PasswordInput({ value, onChange, placeholder }) {
 PasswordInput.defaultProps = {
   value: '',
   placeholder: '密碼',
+  name: null,
   onChange() {},
 };
 
 PasswordInput.propTypes = {
   value: PropTypes.string,
   placeholder: PropTypes.string,
+  name: PropTypes.string,
   onChange: PropTypes.func,
 };
 
