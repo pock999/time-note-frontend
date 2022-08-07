@@ -7,6 +7,9 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 
 // redux store
+import {
+  Div, Text, Button, Icon, Dropdown, Anchor,
+} from 'atomize';
 import { logoutAction } from '../store/reducers/auth';
 import {
   fetchCategories, fetchCategory, createCategory, updateCategory, deleteCategory,
@@ -14,6 +17,8 @@ import {
 import {
   fetchNoteTypes,
 } from '../store/reducers/note';
+
+// atomize
 
 // custom utils
 import SwalHelper from '../utils/SwalHelper';
@@ -55,7 +60,15 @@ export default function BaseLayout(props) {
         />
       )}
     >
-      {props.children}
+      <Div
+        tag="main"
+        flexGrow="1"
+        p="1"
+        d="flex"
+        justify="center"
+      >
+        {props.children}
+      </Div>
     </AppSidebar>
   );
 }

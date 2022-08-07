@@ -168,6 +168,12 @@ export default function Profile() {
                 justify="flex-end"
               >
                 <Button
+                  bg="warning700"
+                  hoverBg="warning800"
+                  rounded="circle"
+                  p={{ r: '1.5rem', l: '1.5rem' }}
+                  shadow="3"
+                  hoverShadow="4"
                   type="submit"
                 >
                   送出
