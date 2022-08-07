@@ -137,7 +137,8 @@ function ProtectedRoutes(props) {
                   (route.roles.length > 0 && !!getToken()) ? (
                   <route.component {...props} />
                 ) : route.roles.length === 0 && getToken() ? (
-                  <Redirect {...props} to="/notes" />
+                  // <Redirect {...props} to="/notes" />
+                  <Redirect {...props} to="/profile" />
                 ) : route.roles.length > 0 && !getToken() ? (
                   <Redirect {...props} to="/login" />
                 ) : (

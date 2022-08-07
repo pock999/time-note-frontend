@@ -23,14 +23,14 @@ export default [
     roles: [],
     exact: true,
   },
-  // {
-  //   path: '/profile',
-  //   name: 'Profile',
-  //   component: React.lazy(() => import('../../views/Profile')),
-  //   // component: Profile,
-  //   roles: ['isUser'],
-  //   exact: true,
-  // },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: React.lazy(() => import('../../views/Profile')),
+    // component: Profile,
+    roles: ['isUser'],
+    exact: true,
+  },
   // {
   //   path: '/notes',
   //   name: 'NoteList',

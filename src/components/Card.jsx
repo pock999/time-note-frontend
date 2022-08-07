@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// atomize
 import { Div } from 'atomize';
 
 function Card({ children, ...others }) {
@@ -38,7 +39,7 @@ Card.defaultProps = {
 
 Card.propTypes = {
   id: PropTypes.string,
-  class: PropTypes.string,
+  className: PropTypes.string,
   children: PropTypes.node,
 
   p: PropTypes.oneOfType([
