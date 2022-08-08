@@ -25,7 +25,9 @@ import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
 import { useQuery, useWindowSize } from '../../hooks';
 
 // custom components
-import { Empty, ToolBar, Card } from '../../components';
+import {
+  Empty, ToolBar, Card, FormModal,
+} from '../../components';
 
 // custom layout
 import { BaseLayout } from '../../layouts';
@@ -186,13 +188,13 @@ export default function NoteList() {
           d="flex"
         >
           <Container>
-            {/* <FormModal
+            <FormModal
               isOpen={modalOpen}
               note={formData}
               handleClose={() => closeForm()}
               editForm={editForm}
               handleSave={() => saveForm()}
-            /> */}
+            />
 
             <Div>
               <ToolBar>
@@ -343,13 +345,13 @@ export default function NoteList() {
           b: '2em',
         }}
       >
-        {/* <FormModal
+        <FormModal
           isOpen={modalOpen}
           note={formData}
           handleClose={() => closeForm()}
           editForm={editForm}
           handleSave={() => saveForm()}
-        /> */}
+        />
 
         <Div>
           <ToolBar>
