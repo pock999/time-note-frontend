@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import {
   Div, Row, Col, Text, Button, Icon, Textarea, Modal, Input, Label,
 } from 'atomize';
-import { SliderPicker } from 'react-color';
+import { SwatchesPicker } from 'react-color';
 
 function CategoryFormModal(props) {
   const {
@@ -38,7 +38,7 @@ function CategoryFormModal(props) {
         </Col>
         <Col size="12">
           <Label m={{ t: '.5em' }}>標籤顏色</Label>
-          <SliderPicker
+          <SwatchesPicker
             style={{
               marginTop: '.2em',
             }}

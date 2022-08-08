@@ -30,7 +30,7 @@ import {
 
 const emptyCategory = {
   name: '',
-  color: '#9DA6A4',
+  color: '#969696',
 };
 
 export default function BaseLayout(props) {
@@ -83,10 +83,10 @@ export default function BaseLayout(props) {
   const editForm = (value, target) => {
     // console.log('value => ', value);
     // console.log('target => ', target);
-    setFormData({
-      ...formData,
+    setFormData((pre) => ({
+      ...pre,
       [target]: value,
-    });
+    }));
   };
 
   // 保存
