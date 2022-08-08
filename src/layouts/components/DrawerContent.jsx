@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 // use query params
 import { useQueryParam, NumberParam, StringParam } from 'use-query-params';
@@ -64,20 +65,28 @@ function DrawerContent(props) {
       h="100%"
       minW="250px"
     >
-      <Button
-        {...pathname === '/notes' ? focusMenuItemStyle : fullMenuItemStyle}
+      <Link
+        to="/notes"
       >
-        全部類型
-      </Button>
+        <Button
+          {...pathname === '/notes' ? focusMenuItemStyle : fullMenuItemStyle}
+        >
+          全部類型
+        </Button>
+      </Link>
       {
         _.isArray(drawerTypes)
           ? drawerTypes.map((typeItem, index) => (
-            <Button
+            <Link
+              to={`/notes/${typeItem.value}${categoryId ? `?CategoryId=${categoryId}` : ''}`}
               key={typeItem.value}
-              {...pathname === `/notes/${typeItem.value}` ? focusFullMenuItemStyle : fullMenuItemStyle}
             >
-              {typeItem.name}
-            </Button>
+              <Button
+                {...pathname === `/notes/${typeItem.value}` ? focusFullMenuItemStyle : fullMenuItemStyle}
+              >
+                {typeItem.name}
+              </Button>
+            </Link>
           ))
           : (
             <Skeleton count={3} />
@@ -86,6 +95,7 @@ function DrawerContent(props) {
       <hr />
       <Button
         {...(!categoryId && pathname.includes('/notes')) ? focusFullMenuItemStyle : fullMenuItemStyle}
+        onClick={() => (categoryId ? setCategoryId(undefined) : null)}
       >
         全部分類(自定義分類)
       </Button>
@@ -97,6 +107,7 @@ function DrawerContent(props) {
                  key={category.id}
                  {...(categoryId === category.id && pathname.includes('/notes')) ? focusMenuItemStyle : menuItemStyle}
                  w="calc(100% - 70px)"
+                 onClick={() => (categoryId !== category.id ? setCategoryId(category.id) : null)}
                >
                  <Icon
                    name="Dot"

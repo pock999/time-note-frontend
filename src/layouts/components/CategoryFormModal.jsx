@@ -48,6 +48,14 @@ function CategoryFormModal(props) {
         </Col>
       </Row>
       <Div d="flex" justify="flex-end">
+        <Button
+          onClick={handleClose}
+          bg="gray200"
+          textColor="medium"
+          m={{ r: '1rem' }}
+        >
+          取消
+        </Button>
         <Button onClick={handleSave} bg="info700">
           保存
         </Button>
