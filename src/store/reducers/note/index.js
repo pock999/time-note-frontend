@@ -16,7 +16,10 @@ export const noteSlice = createSlice({
   name: 'note',
   initialState: {
     list: null,
-    pagination: null,
+    pagination: {
+      page: 1,
+      totalCount: 0,
+    },
     detail: null,
     noteTypes: null,
   },
@@ -60,17 +63,24 @@ export const fetchNoteList = createAsyncThunk(
     try {
       const { searchAry = [] } = payload;
 
-      // 先清掉
-      thunkApi.dispatch(setList(null));
-      thunkApi.dispatch(setPagination(null));
+      const store = thunkApi.getState();
+      const currentPagination = _.cloneDeep(store.note.pagination);
+      const currentList = _.cloneDeep(store.note.list);
 
-      const searchStr = searchAry.filter((str) => !!str).join('&');
+      const searchStr = [...searchAry, `page=${currentPagination.page}`]
+        .filter((str) => !!str)
+        .join('&');
 
       const { data } = await ApiService.get({
         url: `/note/list${searchStr ? `?${searchStr}` : ''}`,
       });
 
-      thunkApi.dispatch(setList(data.data.notes));
+      const newList = [
+        ...(currentPagination.page === 1 ? [] : currentList),
+        ...data.data,
+      ];
+
+      thunkApi.dispatch(setList(newList));
       thunkApi.dispatch(setPagination(data.paging));
 
       return data;

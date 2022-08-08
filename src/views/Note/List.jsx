@@ -18,8 +18,14 @@ import {
   Container, Row, Col, Div, Text, Button, Icon, Dropdown, Anchor,
 } from 'atomize';
 
+// react-loading
+import ReactLoading from 'react-loading';
+
 // use query params
 import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
+
+// react-intersection-observer (for scroll api)
+import { useInView } from 'react-intersection-observer';
 
 // custom hooks
 import { useQuery, useWindowSize } from '../../hooks';
@@ -33,12 +39,12 @@ import {
 import { BaseLayout } from '../../layouts';
 
 // custom utils
-import { delayFunction, dateFormat } from '../../utils/commons';
+import { delayFunction, dateFormat, sleep } from '../../utils/commons';
 import SwalHelper from '../../utils/SwalHelper';
 
 // store
 import {
-  fetchNoteList, fetchNoteDetail, createNote, updateNote, fetchNoteTypes, deleteNote,
+  fetchNoteList, fetchNoteDetail, createNote, updateNote, fetchNoteTypes, deleteNote, setPagination,
 } from '../../store/reducers/note';
 import {
   fetchCategories,
@@ -146,193 +152,56 @@ export default function NoteList() {
   };
 
   //
-  // useEffect
+  // api
   //
 
-  // 偵測 url query string
+  // types, categories
   React.useEffect(() => {
+    (async () => {
+      await dispatch(fetchNoteTypes());
+      await dispatch(fetchCategories());
+    })();
+  }, []);
+
+  // note list
+  const loadData = async () => {
     try {
-      (async () => {
-        await dispatch(fetchNoteTypes());
-        await dispatch(fetchCategories());
+      const typeQuery = (typeof type !== 'undefined' && type !== null) ? `type=${type}` : '';
 
-        const typeQuery = (typeof type !== 'undefined' && type !== null) ? `type=${type}` : '';
+      const resultAction = await dispatch(fetchNoteList({
+        searchAry: [...location.search.includes('?') ? [location.search.split('?')[1]] : [], typeQuery],
+      }));
 
-        const resultAction = await dispatch(fetchNoteList({
-          searchAry: [location.search.split('?')[1], typeQuery],
-        }));
-
-        const result = unwrapResult(resultAction);
-      })();
+      const result = unwrapResult(resultAction);
     } catch (e) {
       SwalHelper.error('錯誤', e.message);
     }
-  }, [location.search, location.pathname]);
-
-  // 偵測螢幕尺寸
-  React.useEffect(() => {
-  }, [windowWidth]);
-
-  // empty
-  if (_.has(notePagination, 'totalCount') && notePagination.totalCount === 0) {
-    return (
-      <BaseLayout>
-        <Container
-          p={{
-            t: '1.5em',
-            b: '2em',
-          }}
-          m={{
-            b: '2em',
-          }}
-          d="flex"
-        >
-          <Container>
-            <FormModal
-              isOpen={modalOpen}
-              note={formData}
-              handleClose={() => closeForm()}
-              editForm={editForm}
-              handleSave={() => saveForm()}
-            />
-
-            <Div>
-              <ToolBar>
-                <Container
-                  w="100%"
-                  p="2"
-                  d="flex"
-                  justify="flex-end"
-                >
-                  {
-                query.isGroup === 0 && (
-                <Button
-                  align="center"
-                  m={{ r: 1 }}
-                  // TODO: 改成真正上一頁
-                  onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
-                >
-                  返回
-                </Button>
-                )
-              }
-                  <Button
-                    align="center"
-                    onClick={() => openForm({})}
-                  >
-                    新增
-                  </Button>
-                </Container>
-              </ToolBar>
-            </Div>
-
-            <Row p="5" m={{ t: '.5em' }}>
-              <Col size="12">
-                <Row>
-                  <Col
-                    minH="60vh"
-                    d="flex"
-                    justify="center"
-                  >
-                    <Card sx={{
-                      boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%', flex: 1,
-                    }}
-                    >
-                      {/* <CardContent sx={{ width: '100%', height: '100%' }}>
-                        <Empty title="空的，請點擊上方新增鈕建立新資料" />
-                      </CardContent> */}
-                    </Card>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Container>
-        </Container>
-      </BaseLayout>
-    );
-  }
-
-  // null => not loading finish
-  // 沒有資料 || 分組狀態但資料不為分組資料形式 || 不為分組狀態但資料為分組資料形式
-  if (!noteList || ((query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null) && !_.isObject(noteList)) || (query.isGroup === 0 && !_.isArray(noteList[Object.keys(noteList)[0]]))) {
-    return (
-      <BaseLayout>
-        <Container
-          p={{
-            t: '1.5em',
-            b: '2em',
-          }}
-          m={{
-            b: '2em',
-          }}
-          d="flex"
-        >
-          <Div>
-            <ToolBar>
-              <Container
-                w="100%"
-                p="2"
-                d="flex"
-                justify="flex-end"
-              >
-                {
-                query.isGroup === 0 && (
-                <Button
-                  align="center"
-                  m={{ r: 1 }}
-                  // TODO: 改成真正上一頁
-                  onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
-                >
-                  返回
-                </Button>
-                )
-              }
-                <Button
-                  align="center"
-                  onClick={() => openForm({})}
-                >
-                  新增
-                </Button>
-              </Container>
-            </ToolBar>
-          </Div>
-
-          <Row>
-            <Col size="12">
-              <Row>
-                <Col size={{ xs: 12, md: 4 }}>
-                  <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
-                    {/* <CardContent>
-                      <Skeleton
-                        variant="rectangular"
-                        width="100%"
-                        height={150}
-                      />
-                    </CardContent>
-                    <CardActions>
-                      <Skeleton
-                        variant="rectangular"
-                        width="100%"
-                        height={20}
-                      />
-                    </CardActions> */}
-                  </Card>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Container>
-      </BaseLayout>
-    );
-  }
-
-  const currentType = (typeId) => {
-    if (_.isArray(noteTypes)) {
-      return noteTypes.find((item) => item.value === typeId).name;
-    }
-
-    return null;
   };
+
+  const { ref, inView, entry } = useInView({
+    threshold: 0,
+  });
+
+  // 偵測 有無滑到底
+  React.useEffect(() => {
+    // TODO: 避免到底一直敲
+    if (inView) {
+      (async () => {
+        await sleep(350);
+        await loadData();
+        dispatch(setPagination({
+          page: notePagination.page + 1,
+        }));
+      })();
+    }
+  }, [inView]);
+
+  // 偵測 url query string
+  React.useEffect(() => {
+    dispatch(setPagination({
+      page: 1,
+    }));
+  }, [location.search, location.pathname]);
 
   return (
     <BaseLayout>
@@ -344,183 +213,76 @@ export default function NoteList() {
         m={{
           b: '2em',
         }}
+        d="flex"
+        flexDir="column"
       >
-        <FormModal
-          isOpen={modalOpen}
-          note={formData}
-          handleClose={() => closeForm()}
-          editForm={editForm}
-          handleSave={() => saveForm()}
-        />
-
-        <Div>
-          <ToolBar>
-            <Container
-              w="100%"
-              p="2"
-              d="flex"
-              justify="flex-end"
-            >
-              {
-                query.isGroup === 0 && (
-                <Button
-                  align="center"
-                  m={{ r: 1 }}
-                  // TODO: 改成真正上一頁
-                  onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
-                >
-                  返回
-                </Button>
-                )
-              }
-              <Button
-                align="center"
-                onClick={() => openForm({})}
-              >
-                新增
-              </Button>
-            </Container>
-          </ToolBar>
-        </Div>
-
-        <Row p="5" m={{ t: '.5em' }}>
+        <Row
+          d="flex"
+          flexDir="row"
+          m={{ b: '2em' }}
+        >
           {
-            (query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null)
-              ? (
-                Object.keys(noteList).map((group, index) => (
-                  <Col item key={group} xs={12}>
-                    -
-                    {group}
-                    年
-                    -
-                    <div style={{ display: 'flex', justifyContent: 'space-between', flexFlow: 'row wrap' }}>
-                      {
-                        Object.keys(noteList[group]).map((subGroup, ind) => (
-                          <Card
-                            key={subGroup}
-                            col={6}
-                            cards={noteList[group][subGroup].notes}
-                            onClick={() => {
-                              setQuery({
-                                isGroup: 0,
-                                startAt: noteList[group][subGroup].startAt,
-                                endAt: noteList[group][subGroup].endAt,
-                              });
-                            }}
-                            // cardContent={(
-                            //   <>
-                            //     <CardContent>
-                            //       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                            //         { noteList[group][subGroup].startAt }
-                            //         {' '}
-                            //         ~
-                            //         {' '}
-                            //         { noteList[group][subGroup].endAt }
-                            //       </Typography>
-                            //       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                            //         共
-                            //         {' '}
-                            //         {noteList[group][subGroup].count}
-                            //         筆
-                            //       </Typography>
-                            //     </CardContent>
-                            //     <CardActions
-                            //       sx={{
-                            //         display: 'center',
-                            //         justifyContent: 'center',
-                            //       }}
-                            //     >
-                            //       <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
-                            //         點擊查看
-                            //       </Typography>
-                            //       <TouchAppIcon />
-                            //     </CardActions>
-                            //   </>
-                            // )}
-                          />
-                        ))
-                      }
-                    </div>
-                  </Col>
-
-                ))
-              )
-              : Object.keys(noteList).map((group, index) => (
-                <Col key={group} size="12">
-                  -
-                  {group}
-                  年
-                  -
-                  <Row>
-                    {
-                      noteList[group].map((data) => (
-                        <Col size={{ xs: 12, md: 4 }} key={data.id}>
-                          <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%' }}>
-                            {/* <CardContent>
-                              <div
-                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                              >
-                                <span
-                                  style={{
-                                    width: 10,
-                                    height: 10,
-                                    borderRadius: '50%',
-                                    backgroundColor: _.get(data, 'Category.color') || 'white',
-                                  }}
-                                />
-                                <Chip label={currentType(data.type)} />
-                              </div>
-                              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                { data.startAt }
-                                {' '}
-                                ~
-                                {' '}
-                                { data.endAt }
-                              </Typography>
-                              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                { data.title }
-                              </Typography>
-                              <Typography variant="body2">
-                                { data.content }
-                              </Typography>
-                            </CardContent>
-                            <CardActions sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                              <Button
-                                size="small"
-                                variant="contained"
-                                sx={{ alignItems: 'center', fontSize: 18 }}
-                                onClick={async () => {
-                                  const result = await SwalHelper.awiatQuestion('確定要刪除?', data.title);
-
-                                  if (result.isConfirmed) {
-                                    dispatch(deleteNote({ id: data.id }));
-                                  }
-                                }}
-                              >
-                                <DeleteIcon size="small" />
-                                刪除
-                              </Button>
-                              <Button
-                                size="small"
-                                variant="contained"
-                                sx={{ alignItems: 'center', fontSize: 18 }}
-                                onClick={() => openForm({ rowId: data.id })}
-                              >
-                                <EditIcon size="small" />
-                                編輯
-                              </Button>
-                            </CardActions> */}
-                          </Card>
-                        </Col>
-                      ))
-                    }
-                  </Row>
-                </Col>
-
-              ))
+            noteList && _.isArray(noteList)
+            && noteList.map((data) => (
+              <Col
+                size={{ xs: '12', md: '6' }}
+              >
+                <Card
+                  key={data.id}
+                  bg="gray200"
+                  hoverBg="gray300"
+                  rounded="md"
+                  shadow="3"
+                  hoverShadow="4"
+                  w="100%"
+                  p={{
+                    r: '1em',
+                    l: '1em',
+                  }}
+                  m={{
+                    t: '.5em',
+                    b: '.5em',
+                  }}
+                  minH="150px"
+                >
+                  <Div>
+                    { data.startAt }
+                    {' '}
+                    ~
+                    {' '}
+                    { data.endAt }
+                  </Div>
+                  <Div>
+                    { data.color }
+                    { data.title }
+                  </Div>
+                  <Div>
+                    { data.content }
+                  </Div>
+                  <Div>
+                    {/* action */}
+                  </Div>
+                </Card>
+              </Col>
+            ))
           }
         </Row>
-
+        {/* loading */}
+        <div ref={ref}>
+          <Div
+            bg="success600"
+            w="100%"
+            d="flex"
+            flexDir="column"
+            justify="center"
+            align="center"
+            p="5em"
+            rounded="md"
+          >
+            <ReactLoading type="spinningBubbles" color="#fff" width="200px" height="200px" delay={2} />
+            <Text textColor="white" textSize="heading">- 載入更多，沒有就到底了 -</Text>
+          </Div>
+        </div>
       </Container>
     </BaseLayout>
   );
