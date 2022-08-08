@@ -63,9 +63,14 @@ export default function BaseLayout(props) {
       <Div
         tag="main"
         flexGrow="1"
-        p="1"
+        p={{
+          b: '.5em',
+          l: '.5em',
+          r: '.5em',
+        }}
         d="flex"
         justify="center"
+        align="flex-start"
       >
         {props.children}
       </Div>

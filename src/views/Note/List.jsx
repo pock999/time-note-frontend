@@ -177,7 +177,7 @@ export default function NoteList() {
       <BaseLayout>
         <Container
           p={{
-            t: '3.5em',
+            t: '1.5em',
             b: '2em',
           }}
           m={{
@@ -257,7 +257,7 @@ export default function NoteList() {
       <BaseLayout>
         <Container
           p={{
-            t: '3.5em',
+            t: '1.5em',
             b: '2em',
           }}
           m={{
@@ -336,7 +336,7 @@ export default function NoteList() {
     <BaseLayout>
       <Container
         p={{
-          t: '4.5em',
+          t: '1.5em',
           b: '2em',
         }}
         m={{
