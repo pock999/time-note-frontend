@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link, useLocation, useHistory } from 'react-router-dom';
 
 // use query params
 import { useQueryParam, NumberParam, StringParam } from 'use-query-params';
@@ -8,7 +7,7 @@ import _ from 'lodash';
 
 // atomize
 import {
-  Div, Text, Button, Icon, Dropdown, Anchor,
+  Div, Text, Button, Icon,
 } from 'atomize';
 
 // custom components
@@ -29,9 +28,19 @@ const menuItemStyle = {
   hoverBg: 'gray500',
 };
 
+const fullMenuItemStyle = {
+  w: '100%',
+  ...menuItemStyle,
+};
+
 // 菜單項目(on focus)
 const focusMenuItemStyle = {
   ...menuItemStyle,
+  bg: 'gray400',
+};
+
+const focusFullMenuItemStyle = {
+  ...fullMenuItemStyle,
   bg: 'gray400',
 };
 
@@ -53,9 +62,10 @@ function DrawerContent(props) {
     <Div
       bg="gray100"
       h="100%"
+      minW="250px"
     >
       <Button
-        {...pathname === '/notes' ? focusMenuItemStyle : menuItemStyle}
+        {...pathname === '/notes' ? focusMenuItemStyle : fullMenuItemStyle}
       >
         全部類型
       </Button>
@@ -64,7 +74,7 @@ function DrawerContent(props) {
           ? drawerTypes.map((typeItem, index) => (
             <Button
               key={typeItem.value}
-              {...pathname === `/notes/${typeItem.value}` ? focusMenuItemStyle : menuItemStyle}
+              {...pathname === `/notes/${typeItem.value}` ? focusFullMenuItemStyle : fullMenuItemStyle}
             >
               {typeItem.name}
             </Button>
@@ -75,24 +85,60 @@ function DrawerContent(props) {
       }
       <hr />
       <Button
-        {...(!categoryId && pathname.includes('/notes')) ? focusMenuItemStyle : menuItemStyle}
+        {...(!categoryId && pathname.includes('/notes')) ? focusFullMenuItemStyle : fullMenuItemStyle}
       >
         全部分類(自定義分類)
       </Button>
       {
          _.isArray(drawerCategories)
            ? drawerCategories.map((category, index) => (
-             <Button
-               key={category.id}
-               {...(categoryId === category.id && pathname.includes('/notes')) ? focusMenuItemStyle : menuItemStyle}
-             >
-               {category.name}
-             </Button>
+             <Div w="100%" d="flex" flexDir="row">
+               <Button
+                 key={category.id}
+                 {...(categoryId === category.id && pathname.includes('/notes')) ? focusMenuItemStyle : menuItemStyle}
+                 w="calc(100% - 70px)"
+               >
+                 <Icon
+                   name="Dot"
+                   size="20px"
+                   color={category.color}
+                   m={{ r: '.25em' }}
+                 />
+                 {category.name}
+               </Button>
+               <Button
+                 {...menuItemStyle}
+                 w="35px"
+                 d="flex"
+                 justify="center"
+                 align="center"
+                 onClick={() => openForm({ rowId: category.id })}
+               >
+                 <Icon name="Edit" size="20px" />
+               </Button>
+               <Button
+                 {...menuItemStyle}
+                 w="35px"
+                 d="flex"
+                 justify="center"
+                 align="center"
+                 onClick={() => deleteCategory(category.id, category.name)}
+               >
+                 <Icon name="Delete" size="20px" />
+               </Button>
+             </Div>
            ))
            : (
              <Skeleton count={3} />
            )
       }
+      <Button
+        {...fullMenuItemStyle}
+        onClick={() => openForm({})}
+      >
+        <Icon name="Add" color="black" size="20px" m={{ r: '1em' }} />
+        新增分類
+      </Button>
     </Div>
   );
 }

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -16,7 +17,7 @@ import Sidebar from 'react-sidebar';
 import { useWindowSize } from '../../hooks';
 
 function AppSidebar({
-  children, appBar: AppBar, drawerContent, topMenu,
+  children, appBar: AppBar, drawerContent, topMenu, categoryFormModal,
 }) {
   const sidebarCollapsed = localStorage.getItem('sidebar-collapsed');
   const [isExanded, setIsExanded] = React.useState(!sidebarCollapsed);
@@ -45,7 +46,7 @@ function AppSidebar({
       docked={isExanded}
       styles={{ sidebar: { background: 'white' } }}
     >
-      { AppBar && <AppBar handleToggler={handleToggler} topMenu={topMenu} /> }
+      { AppBar && <AppBar handleToggler={handleToggler} topMenu={topMenu} categoryFormModal={categoryFormModal} /> }
       { children }
     </Sidebar>
   );
@@ -54,6 +55,7 @@ function AppSidebar({
 AppSidebar.defaultProps = {
   children: null,
   appBar: null,
+  categoryFormModal: null,
   drawerContent: <b>Sidebar content</b>,
   topMenu: <Div>menu</Div>,
 };
@@ -61,6 +63,7 @@ AppSidebar.defaultProps = {
 AppSidebar.propTypes = {
   children: PropTypes.node,
   appBar: PropTypes.elementType,
+  categoryFormModal: PropTypes.elementType,
   drawerContent: PropTypes.node,
   topMenu: PropTypes.node,
 };
