@@ -256,10 +256,18 @@ export default function NoteList() {
             p={{ r: '1.5rem', l: '1.5rem' }}
             shadow="3"
             hoverShadow="4"
+            onClick={() => openForm({})}
           >
             新增
           </Button>
         </Div>
+        <FormModal
+          isOpen={modalOpen}
+          note={formData}
+          handleClose={() => closeForm()}
+          editForm={editForm}
+          handleSave={() => saveForm()}
+        />
         <Row
           d="flex"
           flexDir="row"
@@ -335,28 +343,29 @@ export default function NoteList() {
                     m={{ t: '2em' }}
                   >
                     <Button
-                      h="2.5rem"
-                      w="2.5rem"
                       bg="danger700"
                       hoverBg="danger600"
                       rounded="circle"
                       m={{ r: '1rem' }}
+                      p={{ r: '1.5rem', l: '1.5rem' }}
                       shadow="2"
                       hoverShadow="4"
                     >
                       <Icon name="DeleteSolid" size="20px" color="white" />
+                      刪除
                     </Button>
                     <Button
-                      h="2.5rem"
-                      w="2.5rem"
                       bg="info700"
                       hoverBg="info600"
                       rounded="circle"
                       m={{ r: '1rem' }}
+                      p={{ r: '1.5rem', l: '1.5rem' }}
                       shadow="2"
                       hoverShadow="4"
+                      onClick={() => openForm({ rowId: data.id })}
                     >
                       <Icon name="EditSolid" size="20px" color="white" />
+                      編輯
                     </Button>
                   </Div>
                 </Card>
