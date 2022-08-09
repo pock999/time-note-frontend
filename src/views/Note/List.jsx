@@ -236,6 +236,30 @@ export default function NoteList() {
         d="flex"
         flexDir="column"
       >
+        <Div
+          d="flex"
+          flexDir="row"
+          m={{ b: '2em', r: '.75em', l: '.75em' }}
+          p={{
+            b: '.75em', t: '.75em', r: '.5em', l: '.5em',
+          }}
+          bg="gray200"
+          rounded="sm"
+          shadow="2"
+          justify="flex-end"
+          align="center"
+        >
+          <Button
+            bg="warning700"
+            hoverBg="warning800"
+            rounded="circle"
+            p={{ r: '1.5rem', l: '1.5rem' }}
+            shadow="3"
+            hoverShadow="4"
+          >
+            新增
+          </Button>
+        </Div>
         <Row
           d="flex"
           flexDir="row"
