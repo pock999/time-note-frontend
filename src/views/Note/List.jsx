@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable radix */
 
 // react
@@ -164,6 +165,9 @@ export default function NoteList() {
     })();
   }, []);
 
+  // 檢測是否到底
+  const [isLast, setIsLast] = React.useState(false);
+
   // note list
   const loadData = async () => {
     try {
@@ -174,6 +178,12 @@ export default function NoteList() {
       }));
 
       const result = unwrapResult(resultAction);
+      // console.log('result => ', result);
+
+      // 表示到底了
+      if (!result.data || _.isEmpty(result.data)) {
+        setIsLast(true);
+      }
     } catch (e) {
       SwalHelper.error('錯誤', e.message);
     }
@@ -186,6 +196,7 @@ export default function NoteList() {
   // 偵測 url query string
   React.useEffect(() => {
     (async () => {
+      setIsLast(false);
       await dispatch(setPagination({
         page: 1,
       }));
@@ -330,21 +341,41 @@ export default function NoteList() {
           }
         </Row>
         {/* loading */}
-        <div ref={ref}>
-          <Div
-            bg="success600"
-            w="100%"
-            d="flex"
-            flexDir="column"
-            justify="center"
-            align="center"
-            p="5em"
-            rounded="md"
-          >
-            <ReactLoading type="spinningBubbles" color="#fff" width="200px" height="200px" delay={2} />
-            <Text textColor="white" textSize="heading">- 載入更多，沒有就到底了 -</Text>
-          </Div>
-        </div>
+        {
+          // 到底就把偵測的組件藏起來
+          !isLast ? (
+            <div ref={ref}>
+              <Div
+                bg="success600"
+                w="100%"
+                d="flex"
+                flexDir="column"
+                justify="center"
+                align="center"
+                p="5em"
+                rounded="md"
+              >
+                <ReactLoading type="cubes" color="#fff" width="200px" height="200px" delay={2} />
+                <Text textColor="white" textSize="heading">- 載入更多，沒有就到底了 -</Text>
+              </Div>
+            </div>
+          ) : (
+            <Div
+              bg="success600"
+              w="100%"
+              d="flex"
+              flexDir="column"
+              justify="center"
+              align="center"
+              p="5em"
+              rounded="md"
+            >
+              <ReactLoading type="cubes" color="#fff" width="200px" height="200px" delay={2} />
+              <Text textColor="white" textSize="heading">- 到底了 -</Text>
+            </Div>
+          )
+        }
+
       </Container>
     </BaseLayout>
   );
