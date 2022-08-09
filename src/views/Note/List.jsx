@@ -208,7 +208,6 @@ export default function NoteList() {
 
   // 偵測 有無滑到底
   React.useEffect(() => {
-    // TODO: 避免到底一直敲
     if (inView) {
       (async () => {
         if (notePagination.page !== 1) {
@@ -221,6 +220,15 @@ export default function NoteList() {
       })();
     }
   }, [inView]);
+
+  // 取得當前種類名稱
+  const currentType = (typeId) => {
+    if (_.isArray(noteTypes)) {
+      return noteTypes.find((item) => item.value === typeId).name;
+    }
+
+    return null;
+  };
 
   return (
     <BaseLayout>
@@ -304,17 +312,31 @@ export default function NoteList() {
                     align="center"
                     m={{ b: '.5em' }}
                   >
-                    <div
-                      style={{
-                        backgroundColor: _.get(data, 'Category.color'),
-                        width: 15,
-                        height: 15,
-                        borderRadius: '50%',
-                        ...!_.get(data, 'Category.color') && {
-                          border: '1px dashed black',
-                        },
-                      }}
-                    />
+                    <Div
+                      d="flex"
+                      flexDir="row"
+                      justify="flex-start"
+                      align="center"
+                    >
+                      <Text
+                        m={{ r: '.5em' }}
+                        textSize="paragraph"
+                        textWeight="800"
+                      >
+                        { currentType(data.type) }
+                      </Text>
+                      <div
+                        style={{
+                          backgroundColor: _.get(data, 'Category.color'),
+                          width: 15,
+                          height: 15,
+                          borderRadius: '50%',
+                          ...!_.get(data, 'Category.color') && {
+                            border: '1px dashed black',
+                          },
+                        }}
+                      />
+                    </Div>
                     <Text
                       textColor="gray800"
                       textSize="caption"
