@@ -28,6 +28,7 @@ import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
 import { useInView } from 'react-intersection-observer';
 
 // custom hooks
+import { async } from 'regenerator-runtime';
 import { useQuery, useWindowSize } from '../../hooks';
 
 // custom components
@@ -182,26 +183,34 @@ export default function NoteList() {
     threshold: 0,
   });
 
+  // 偵測 url query string
+  React.useEffect(() => {
+    (async () => {
+      await dispatch(setPagination({
+        page: 1,
+      }));
+      await loadData();
+      await dispatch(setPagination({
+        page: 2,
+      }));
+    })();
+  }, [location.search, location.pathname]);
+
   // 偵測 有無滑到底
   React.useEffect(() => {
     // TODO: 避免到底一直敲
     if (inView) {
       (async () => {
-        await sleep(350);
-        await loadData();
-        dispatch(setPagination({
-          page: notePagination.page + 1,
-        }));
+        if (notePagination.page !== 1) {
+          await sleep(350);
+          await loadData();
+          await dispatch(setPagination({
+            page: notePagination.page + 1,
+          }));
+        }
       })();
     }
   }, [inView]);
-
-  // 偵測 url query string
-  React.useEffect(() => {
-    dispatch(setPagination({
-      page: 1,
-    }));
-  }, [location.search, location.pathname]);
 
   return (
     <BaseLayout>
