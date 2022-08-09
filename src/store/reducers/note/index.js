@@ -65,6 +65,11 @@ export const fetchNoteList = createAsyncThunk(
 
       const store = thunkApi.getState();
       const currentPagination = _.cloneDeep(store.note.pagination);
+
+      if (currentPagination.page === 1) {
+        thunkApi.dispatch(setList(null));
+      }
+
       const currentList = _.cloneDeep(store.note.list);
 
       const searchStr = [...searchAry, `page=${currentPagination.page}`]

@@ -229,7 +229,7 @@ export default function NoteList() {
               >
                 <Card
                   key={data.id}
-                  bg="gray200"
+                  bg="gray100"
                   hoverBg="gray300"
                   rounded="md"
                   shadow="3"
@@ -238,29 +238,82 @@ export default function NoteList() {
                   p={{
                     r: '1em',
                     l: '1em',
+                    t: '.5em',
                   }}
                   m={{
                     t: '.5em',
                     b: '.5em',
                   }}
-                  minH="150px"
+                  minH="200px"
                 >
-                  <Div>
-                    { data.startAt }
-                    {' '}
-                    ~
-                    {' '}
-                    { data.endAt }
+                  <Div
+                    d="flex"
+                    flexDir="row"
+                    justify="space-between"
+                    align="center"
+                    m={{ b: '.5em' }}
+                  >
+                    <div
+                      style={{
+                        backgroundColor: _.get(data, 'Category.color'),
+                        width: 15,
+                        height: 15,
+                        borderRadius: '50%',
+                        ...!_.get(data, 'Category.color') && {
+                          border: '1px dashed black',
+                        },
+                      }}
+                    />
+                    <Text
+                      textColor="gray800"
+                      textSize="caption"
+                    >
+                      { data.startAt }
+                      {' '}
+                      ~
+                      {' '}
+                      { data.endAt }
+                    </Text>
                   </Div>
+                  <hr />
                   <Div>
-                    { data.color }
-                    { data.title }
+                    <Text textSize="heading">
+                      { data.title }
+                    </Text>
                   </Div>
                   <Div>
                     { data.content }
                   </Div>
-                  <Div>
-                    {/* action */}
+                  <Div
+                    d="flex"
+                    flexDir="row"
+                    justify="flex-end"
+                    m={{ t: '2em' }}
+                  >
+                    <Button
+                      h="2.5rem"
+                      w="2.5rem"
+                      bg="danger700"
+                      hoverBg="danger600"
+                      rounded="circle"
+                      m={{ r: '1rem' }}
+                      shadow="2"
+                      hoverShadow="4"
+                    >
+                      <Icon name="DeleteSolid" size="20px" color="white" />
+                    </Button>
+                    <Button
+                      h="2.5rem"
+                      w="2.5rem"
+                      bg="info700"
+                      hoverBg="info600"
+                      rounded="circle"
+                      m={{ r: '1rem' }}
+                      shadow="2"
+                      hoverShadow="4"
+                    >
+                      <Icon name="EditSolid" size="20px" color="white" />
+                    </Button>
                   </Div>
                 </Card>
               </Col>
