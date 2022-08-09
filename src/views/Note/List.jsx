@@ -83,7 +83,6 @@ export default function NoteList() {
   // url params
   //
   const [query, setQuery] = useQueryParams({
-    isGroup: NumberParam,
     startAt: StringParam,
     endAt: StringParam,
   });
@@ -350,6 +349,13 @@ export default function NoteList() {
                       p={{ r: '1.5rem', l: '1.5rem' }}
                       shadow="2"
                       hoverShadow="4"
+                      onClick={async () => {
+                        const result = await SwalHelper.awiatQuestion('確定要刪除?', data.title);
+
+                        if (result.isConfirmed) {
+                          dispatch(deleteNote({ id: data.id }));
+                        }
+                      }}
                     >
                       <Icon name="DeleteSolid" size="20px" color="white" />
                       刪除
