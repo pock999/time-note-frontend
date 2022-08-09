@@ -96,7 +96,7 @@ export default function Profile() {
             <form onSubmit={handleSubmit}>
               <Text
                 m=".5rem"
-                p={{ l: '.5em' }}
+                p={{ l: '.15em' }}
                 textSize="title"
               >
                 {formData.email}
@@ -154,13 +154,13 @@ export default function Profile() {
                   t: '1.5em',
                   r: '.5rem',
                   b: '.5rem',
-                  l: '.5rem',
+                  l: '.75rem',
                 }}
               >
                 <Switch
                   checked={isResetPwd}
                 />
-                重設密碼
+                是否重設密碼
               </Label>
 
               <Div
