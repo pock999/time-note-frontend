@@ -132,18 +132,23 @@ export default function NoteList() {
   const saveForm = async () => {
     try {
       let resultAction;
-      console.log('formData => ', formData);
+
+      if (formData.type === 2 && !formData.timePoint) {
+        throw Error('請填寫提示時間');
+      }
 
       if (formData.id) {
+        const value = await updateSchema.validate(formData);
         resultAction = await dispatch(updateNote({
-          ...formData,
+          ...value,
           // 傳送當前頁面的type, categoryId
           currentType: type || null,
           currentCategoryId: categoryId || null,
         }));
       } else {
+        const value = await createSchema.validate(formData);
         resultAction = await dispatch(createNote({
-          ...formData,
+          ...value,
           search: location.search,
           // 傳送當前頁面的type, categoryId
           currentType: type || null,
