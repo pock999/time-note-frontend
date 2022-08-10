@@ -23,7 +23,9 @@ import {
 import ReactLoading from 'react-loading';
 
 // use query params
-import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
+import {
+  useQueryParams, NumberParam, StringParam, useQueryParam,
+} from 'use-query-params';
 
 // react-intersection-observer (for scroll api)
 import { useInView } from 'react-intersection-observer';
@@ -68,6 +70,7 @@ const emptyNote = {
 export default function NoteList() {
   // /notes/:type
   const { type } = useParams();
+  const [categoryId, setCategoryId] = useQueryParam('CategoryId', NumberParam);
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -134,11 +137,19 @@ export default function NoteList() {
       console.log('formData => ', formData);
 
       if (formData.id) {
-        resultAction = await dispatch(updateNote(formData));
+        resultAction = await dispatch(updateNote({
+          ...formData,
+          // 傳送當前頁面的type, categoryId
+          currentType: type || null,
+          currentCategoryId: categoryId || null,
+        }));
       } else {
         resultAction = await dispatch(createNote({
           ...formData,
           search: location.search,
+          // 傳送當前頁面的type, categoryId
+          currentType: type || null,
+          currentCategoryId: categoryId || null,
         }));
       }
 
@@ -271,8 +282,6 @@ export default function NoteList() {
         <FormModal
           isOpen={modalOpen}
           note={formData}
-          // 預設類別，確保在某分類之頁面時，選項不會出現其他的
-          defaultType={type || null}
           handleClose={() => closeForm()}
           editForm={editForm}
           handleSave={() => saveForm()}

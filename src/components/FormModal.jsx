@@ -13,14 +13,12 @@ import {
 const types = [{ value: 1, text: '筆記' }, { value: 2, text: '行程(提醒)' }, { value: 3, text: '文章' }];
 
 function FormModal({
-  isOpen, handleClose, note, editForm, handleSave, defaultType,
+  isOpen, handleClose, note, editForm, handleSave,
 }) {
   const [showTypeSelect, setShowTypeSelect] = React.useState(false);
   const [showCategorySelect, setShowCategorySelect] = React.useState(false);
 
   const categories = useSelector((state) => state.category.list);
-
-  console.log('defaultType => ', defaultType);
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} align="center" rounded="md">
@@ -62,7 +60,6 @@ function FormModal({
             menu={(
               <Div>
                 {types
-                  .filter((item) => (defaultType ? item.value === defaultType : true))
                   .map((item, index) => (
                     <Anchor
                       d="block"
@@ -97,7 +94,7 @@ function FormModal({
                   d="block"
                   p="0.5rem"
                   onClick={() => {
-                    editForm(0, 'CategoryId');
+                    editForm(null, 'CategoryId');
                     setShowCategorySelect(false);
                   }}
                 >
@@ -178,8 +175,6 @@ FormModal.defaultProps = {
   note: {},
   editForm: () => {},
   handleSave: () => {},
-  // 預設類別，確保在某分類之頁面時，選項不會出現其他的
-  defaultType: null,
 };
 
 FormModal.defaultProps = {
@@ -188,8 +183,6 @@ FormModal.defaultProps = {
   note: PropTypes.object,
   editForm: PropTypes.func,
   handleSave: PropTypes.func,
-  // 預設類別，確保在某分類之頁面時，選項不會出現其他的
-  defaultType: PropTypes.number,
 };
 
 export default FormModal;
