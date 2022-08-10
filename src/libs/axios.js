@@ -3,6 +3,7 @@ import axios from 'axios';
 import JsonHelper from '../utils/JsonHelper';
 
 import 'regenerator-runtime/runtime';
+import _ from 'lodash';
 
 const axiosIns = axios;
 
@@ -33,7 +34,7 @@ axiosIns.interceptors.response.use(
       axiosIns.defaults.headers.common.Authorization = '';
     }
 
-    throw error;
+    throw error.response.data;
   }
 );
 

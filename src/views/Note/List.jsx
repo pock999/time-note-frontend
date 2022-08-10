@@ -157,6 +157,7 @@ export default function NoteList() {
 
       closeForm();
     } catch (e) {
+      console.log('================================ e, ', e);
       SwalHelper.fail(e.message);
     }
   };

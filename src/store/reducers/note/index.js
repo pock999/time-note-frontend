@@ -159,11 +159,11 @@ export const createNote = createAsyncThunk(
 export const updateNote = createAsyncThunk(
   'note/updateNote',
   async (payload, thunkApi) => {
-    console.log('updateNote payload => ', payload);
-
     const { data } = await ApiService.put({
       url: `/note/${payload.id}`,
-      data: { ..._.omit(payload, ['id', 'currentType', 'currentCategoryId']) },
+      data: {
+        ..._.omit(payload, ['id', 'currentType', 'currentCategoryId']),
+      },
     });
 
     const store = thunkApi.getState();
