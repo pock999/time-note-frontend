@@ -374,38 +374,82 @@ export default function NoteList() {
                     justify="flex-end"
                     m={{ t: '2em' }}
                   >
-                    <Button
-                      bg="danger700"
-                      hoverBg="danger600"
-                      rounded="circle"
-                      m={{ r: '1rem' }}
-                      p={{ r: '1.5rem', l: '1.5rem' }}
-                      shadow="2"
-                      hoverShadow="4"
-                      onClick={async () => {
-                        const result = await SwalHelper.awiatQuestion('確定要刪除?', data.title);
+                    {
+                      windowWidth > 648
+                        ? (
+                          <>
+                            <Button
+                              bg="danger700"
+                              hoverBg="danger600"
+                              rounded="circle"
+                              m={{ r: '1rem' }}
+                              p={{ r: '1.5rem', l: '1.5rem' }}
+                              shadow="2"
+                              hoverShadow="4"
+                              onClick={async () => {
+                                const result = await SwalHelper.awiatQuestion('確定要刪除?', data.title);
 
-                        if (result.isConfirmed) {
-                          dispatch(deleteNote({ id: data.id }));
-                        }
-                      }}
-                    >
-                      <Icon name="DeleteSolid" size="20px" color="white" />
-                      刪除
-                    </Button>
-                    <Button
-                      bg="info700"
-                      hoverBg="info600"
-                      rounded="circle"
-                      m={{ r: '1rem' }}
-                      p={{ r: '1.5rem', l: '1.5rem' }}
-                      shadow="2"
-                      hoverShadow="4"
-                      onClick={() => openForm({ rowId: data.id })}
-                    >
-                      <Icon name="EditSolid" size="20px" color="white" />
-                      編輯
-                    </Button>
+                                if (result.isConfirmed) {
+                                  dispatch(deleteNote({ id: data.id }));
+                                }
+                              }}
+                            >
+                              <Icon name="DeleteSolid" size="20px" color="white" />
+                              刪除
+                            </Button>
+                            <Button
+                              bg="info700"
+                              hoverBg="info600"
+                              rounded="circle"
+                              m={{ r: '1rem' }}
+                              p={{ r: '1.5rem', l: '1.5rem' }}
+                              shadow="2"
+                              hoverShadow="4"
+                              onClick={() => openForm({ rowId: data.id })}
+                            >
+                              <Icon name="EditSolid" size="20px" color="white" />
+                              編輯
+                            </Button>
+                          </>
+                        )
+                        : (
+                          <>
+                            <Button
+                              h="2.5rem"
+                              w="2.5rem"
+                              bg="danger700"
+                              hoverBg="danger600"
+                              rounded="circle"
+                              m={{ r: '1rem' }}
+                              shadow="2"
+                              hoverShadow="4"
+                              onClick={async () => {
+                                const result = await SwalHelper.awiatQuestion('確定要刪除?', data.title);
+
+                                if (result.isConfirmed) {
+                                  dispatch(deleteNote({ id: data.id }));
+                                }
+                              }}
+                            >
+                              <Icon name="DeleteSolid" size="20px" color="white" />
+                            </Button>
+                            <Button
+                              h="2.5rem"
+                              w="2.5rem"
+                              bg="info700"
+                              hoverBg="info600"
+                              rounded="circle"
+                              m={{ r: '1rem' }}
+                              shadow="2"
+                              hoverShadow="4"
+                              onClick={() => openForm({ rowId: data.id })}
+                            >
+                              <Icon name="EditSolid" size="20px" color="white" />
+                            </Button>
+                          </>
+                        )
+                    }
+
                   </Div>
                 </Card>
               </Col>
