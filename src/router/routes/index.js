@@ -1,20 +1,20 @@
 import React from 'react';
 
-import Home from '../../views/Home';
-import Login from '../../views/Login';
-import Profile from '../../views/Profile';
-import NoteList from '../../views/Note/List';
-import Page404 from '../../views/Page404';
+// import Home from '../../views/Home';
+// import Login from '../../views/Login';
+// import Profile from '../../views/Profile';
+// import NoteList from '../../views/Note/List';
+// import Page404 from '../../views/Page404';
 
 export default [
-  {
-    path: '/',
-    name: 'Home',
-    component: React.lazy(() => import('../../views/Home')),
-    // component: Home,
-    roles: [],
-    exact: true,
-  },
+  // {
+  //   path: '/',
+  //   name: 'Home',
+  //   component: React.lazy(() => import('../../views/Home')),
+  //   // component: Home,
+  //   roles: [],
+  //   exact: true,
+  // },
   {
     path: '/login',
     name: 'Login',

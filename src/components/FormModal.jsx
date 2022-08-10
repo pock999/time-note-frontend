@@ -1,137 +1,188 @@
+/* eslint-disable max-len */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
+import dayjs from 'dayjs';
 
+// atomize
 import {
-  FormControl,
-  InputLabel,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Button,
-  Select,
-  MenuItem,
-} from '@mui/material';
+  Div, Row, Col, Text, Button, Icon, Textarea, Modal, Input, Dropdown, Anchor,
+} from 'atomize';
 
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+const types = [{ value: 1, text: '筆記' }, { value: 2, text: '行程(提醒)' }, { value: 3, text: '文章' }];
 
-import zhTW from 'dayjs/locale/zh-tw';
-import { dateFormat } from '../utils/commons';
-
-export default function FormModal(props) {
-  const {
-    isOpen,
-    note,
-    handleClose,
-    editForm,
-    handleSave,
-  } = props;
+function FormModal({
+  isOpen, handleClose, note, editForm, handleSave,
+}) {
+  const [showTypeSelect, setShowTypeSelect] = React.useState(false);
+  const [showCategorySelect, setShowCategorySelect] = React.useState(false);
 
   const categories = useSelector((state) => state.category.list);
 
   return (
-    <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle>{ !_.has(note, 'id') ? '新增' : '編輯' }</DialogTitle>
-      <DialogContent>
-        <TextField
-          id="title"
-          label="標題"
-          type="text"
-          fullWidth
-          variant="outlined"
-          value={note.title}
-          onChange={(evt) => editForm(evt.target.value, 'title')}
-          margin="dense"
-        />
-        <TextField
-          id="content"
-          label="內容"
-          multiline
-          rows={4}
-          fullWidth
-          value={note.content}
-          variant="outlined"
-          onChange={(evt) => editForm(evt.target.value, 'content')}
-          margin="dense"
-        />
-        <FormControl variant="standard" fullWidth margin="dense">
-          <InputLabel id="type-label">&emsp;類型</InputLabel>
-          <Select
-            labelId="type-label"
-            id="type"
-            value={note.type}
-            onChange={(evt) => editForm(evt.target.value, 'type')}
-            label="類型"
-            fullWidth
-            variant="outlined"
-            margin="dense"
+    <Modal isOpen={isOpen} onClose={handleClose} align="center" rounded="md">
+      <Text textSize="heading">{ !_.has(note, 'id') ? '新增' : '編輯' }</Text>
+      <Row d="flex" m={{ b: '4rem' }}>
+        <Col size="12">
+          <Input
+            placeholder="標題"
+            w="100%"
+            value={note.title}
+            onChange={(evt) => editForm(evt.target.value, 'title')}
+            m={{
+              t: '.25em',
+              b: '.25em',
+            }}
+          />
+        </Col>
+        <Col size="12">
+          <Textarea
+            placeholder="內容"
+            w="100%"
+            value={note.content}
+            onChange={(evt) => editForm(evt.target.value, 'content')}
+            m={{
+              t: '.25em',
+              b: '.25em',
+            }}
+          />
+        </Col>
+        <Col size="12">
+          <Dropdown
+            m={{
+              t: '.25em',
+              b: '.25em',
+            }}
+            isOpen={showTypeSelect}
+            name="type"
+            onClick={() => setShowTypeSelect((pre) => !pre)}
+            menu={(
+              <Div>
+                {types
+                  .map((item, index) => (
+                    <Anchor
+                      d="block"
+                      p="0.5rem"
+                      key={item.value}
+                      onClick={() => {
+                        editForm(item.value, 'type');
+                        setShowTypeSelect(false);
+                      }}
+                    >
+                      {item.text}
+                    </Anchor>
+                  ))}
+              </Div>
+            )}
           >
-            <MenuItem value={1}>筆記</MenuItem>
-            <MenuItem value={2}>行程(提醒)</MenuItem>
-            <MenuItem value={3}>文章</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl variant="standard" fullWidth margin="dense">
-          <InputLabel id="type-label">&emsp;自定義分類</InputLabel>
-          <Select
-            labelId="type-label"
-            id="CategoryId"
-            value={note.CategoryId}
-            onChange={(evt) => editForm(evt.target.value, 'CategoryId')}
-            label="自定義分類"
-            fullWidth
-            variant="outlined"
-            margin="dense"
+            {note.type && _.get(types.find((item) => `${item.value}` === `${note.type}`), 'text')}
+          </Dropdown>
+        </Col>
+        <Col size="12">
+          <Dropdown
+            m={{
+              t: '.25em',
+              b: '.25em',
+            }}
+            name="CategoryId"
+            isOpen={showCategorySelect}
+            onClick={() => setShowCategorySelect((pre) => !pre)}
+            menu={(
+              <Div>
+                <Anchor
+                  d="block"
+                  p="0.5rem"
+                  onClick={() => {
+                    editForm(null, 'CategoryId');
+                    setShowCategorySelect(false);
+                  }}
+                >
+                  無
+                </Anchor>
+                {
+                  _.isArray(categories) && categories.map((category) => (
+                    <Anchor
+                      d="block"
+                      p="0.5rem"
+                      key={category.id}
+                      onClick={() => {
+                        editForm(category.id, 'CategoryId');
+                        setShowCategorySelect(false);
+                      }}
+                    >
+                      {category.name}
+                    </Anchor>
+                  ))
+                }
+              </Div>
+            )}
           >
-            <MenuItem value={0}>無</MenuItem>
             {
-              _.isArray(categories) && categories.map((category) => (
-                <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>
-              ))
+              (note.CategoryId && _.isArray(categories))
+                ? categories.find((item) => item.id === note.CategoryId).name
+                : '無'
             }
-          </Select>
-        </FormControl>
-        <LocalizationProvider dateAdapter={AdapterDayjs} locale={zhTW}>
-          <DateTimePicker
-            label="開始時間"
+          </Dropdown>
+        </Col>
+        <Col size="12">
+          <Input
+            type="datetime-local"
+            placeholder="開始時間"
+            w="100%"
             value={note.startAt}
-            onChange={(val) => editForm(dateFormat(val), 'startAt')}
-            inputFormat="YYYY-MM-DD HH:mm:ss"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                margin="dense"
-                fullWidth
-              />
-            )}
+            onChange={(evt) => editForm(evt.target.value, 'startAt')}
+            m={{
+              t: '.25em',
+              b: '.25em',
+            }}
           />
-          <DateTimePicker
-            label="結束時間"
+        </Col>
+        <Col size="12">
+          <Input
+            type="datetime-local"
+            placeholder="結束時間"
+            w="100%"
             value={note.endAt}
-            onChange={(val) => editForm(dateFormat(val), 'endAt')}
-            inputFormat="YYYY-MM-DD HH:mm:ss"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                margin="dense"
-                fullWidth
-              />
-            )}
+            onChange={(evt) => editForm(evt.target.value, 'endAt')}
+            m={{
+              t: '.25em',
+              b: '.25em',
+            }}
           />
-        </LocalizationProvider>
-      </DialogContent>
-      <DialogActions>
+        </Col>
+      </Row>
+      <Div d="flex" justify="flex-end">
         <Button
-          variant="contained"
-          onClick={handleSave}
+          onClick={handleClose}
+          bg="gray200"
+          textColor="medium"
+          m={{ r: '1rem' }}
         >
+          取消
+        </Button>
+        <Button onClick={handleSave} bg="info700">
           保存
         </Button>
-      </DialogActions>
-    </Dialog>
+      </Div>
+    </Modal>
   );
 }
+
+FormModal.defaultProps = {
+  isOpen: false,
+  handleClose: () => {},
+  note: {},
+  editForm: () => {},
+  handleSave: () => {},
+};
+
+FormModal.defaultProps = {
+  isOpen: PropTypes.bool,
+  handleClose: PropTypes.func,
+  note: PropTypes.object,
+  editForm: PropTypes.func,
+  handleSave: PropTypes.func,
+};
+
+export default FormModal;

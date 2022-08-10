@@ -1,43 +1,51 @@
 import React from 'react';
-import { Link, useLocation, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // use query params
 import { useQueryParam, NumberParam, StringParam } from 'use-query-params';
 
 import _ from 'lodash';
 
+// atomize
 import {
-  Toolbar,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Divider,
+  Div, Text, Button, Icon,
+} from 'atomize';
+
+// custom components
+import {
   Skeleton,
-  FormControl,
-  InputLabel,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Button,
-  Select,
-  MenuItem,
-  IconButton,
-} from '@mui/material';
+} from '../../components';
 
-import {
-  BookmarksSharp,
-  AccountCircle,
-} from '@mui/icons-material';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+// 菜單項目
+const menuItemStyle = {
+  w: '100%',
+  bg: 'gray100',
+  textColor: 'black700',
+  rounded: '0',
+  d: 'flex',
+  justify: 'flex-start',
+  transition: true,
 
-export default function DrawerContent(props) {
+  hoverBg: 'gray500',
+};
+
+const fullMenuItemStyle = {
+  w: '100%',
+  ...menuItemStyle,
+};
+
+// 菜單項目(on focus)
+const focusMenuItemStyle = {
+  ...menuItemStyle,
+  bg: 'gray400',
+};
+
+const focusFullMenuItemStyle = {
+  ...fullMenuItemStyle,
+  bg: 'gray400',
+};
+
+function DrawerContent(props) {
   const {
     drawerTypes,
     drawerCategories,
@@ -52,108 +60,98 @@ export default function DrawerContent(props) {
   const [categoryId, setCategoryId] = useQueryParam('CategoryId', NumberParam);
 
   return (
-    <div>
-      <Toolbar />
-      <Divider />
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton
-            to="/notes"
-            component={Link}
-            selected={pathname === '/notes'}
-          >
-            <ListItemIcon>
-              <BookmarksSharp />
-            </ListItemIcon>
-            <ListItemText primary="全部類型" />
-          </ListItemButton>
-        </ListItem>
-        {
-          _.isArray(drawerTypes)
-            ? drawerTypes.map((typeItem, index) => (
-              <ListItem key={typeItem.value} disablePadding>
-                <ListItemButton
-                  to={`/notes/${typeItem.value}${categoryId ? `?CategoryId=${categoryId}` : ''}`}
-                  component={Link}
-                  selected={pathname === `/notes/${typeItem.value}`}
-                >
-                  <ListItemIcon>
-                    <BookmarksSharp />
-                  </ListItemIcon>
-                  <ListItemText primary={typeItem.name} />
-                </ListItemButton>
-              </ListItem>
-            ))
-            : (
-              <>
-                <Skeleton animation="wave" variant="ListItem" />
-                <Skeleton animation="wave" variant="ListItem" />
-                <Skeleton animation="wave" variant="ListItem" />
-              </>
-            )
-        }
-      </List>
-      <Divider />
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton
-            selected={!categoryId}
-            onClick={() => (categoryId ? setCategoryId(undefined) : null)}
-          >
-            <ListItemIcon>
-              <FiberManualRecordIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary="全部分類(自定義分類)"
-            />
-          </ListItemButton>
-        </ListItem>
-        {
-          _.isArray(drawerCategories)
-            ? (
-              <>
-                {
-                  drawerCategories.map((category, index) => (
-                    <ListItem key={category.id} disablePadding>
-                      <ListItemButton
-                        selected={categoryId === category.id}
-                        // eslint-disable-next-line max-len
-                        onClick={() => (categoryId !== category.id ? setCategoryId(category.id) : null)}
-                      >
-                        <ListItemIcon>
-                          <FiberManualRecordIcon style={{ color: category.color }} />
-                        </ListItemIcon>
-                        <ListItemText primary={category.name} />
-                      </ListItemButton>
-                      <IconButton aria-label="edit" onClick={() => openForm({ rowId: category.id })}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton aria-label="delete" onClick={() => deleteCategory(category.id, category.name)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItem>
-                  ))
-                }
-                <ListItem disablePadding>
-                  <ListItemButton
-                    sx={{ display: 'flex', justifyContent: 'center' }}
-                    onClick={() => openForm({})}
-                  >
-                    <ListItemText primary="新增分類" />
-                    <AddIcon />
-                  </ListItemButton>
-                </ListItem>
-              </>
-            )
-            : (
-              <>
-                <Skeleton animation="wave" variant="ListItem" sx={{ marginBottom: 1, padding: 3 }} />
-                <Skeleton animation="wave" variant="ListItem" sx={{ marginBottom: 1, padding: 3 }} />
-                <Skeleton animation="wave" variant="ListItem" sx={{ marginBottom: 1, padding: 3 }} />
-              </>
-            )
-        }
-      </List>
-    </div>
+    <Div
+      bg="gray100"
+      h="100%"
+      minW="250px"
+    >
+      <Link
+        to="/notes"
+      >
+        <Button
+          {...pathname === '/notes' ? focusMenuItemStyle : fullMenuItemStyle}
+        >
+          全部類型
+        </Button>
+      </Link>
+      {
+        _.isArray(drawerTypes)
+          ? drawerTypes.map((typeItem, index) => (
+            <Link
+              to={`/notes/${typeItem.value}${categoryId ? `?CategoryId=${categoryId}` : ''}`}
+              key={typeItem.value}
+            >
+              <Button
+                {...pathname === `/notes/${typeItem.value}` ? focusFullMenuItemStyle : fullMenuItemStyle}
+              >
+                {typeItem.name}
+              </Button>
+            </Link>
+          ))
+          : (
+            <Skeleton count={3} />
+          )
+      }
+      <hr />
+      <Button
+        {...(!categoryId && pathname.includes('/notes')) ? focusFullMenuItemStyle : fullMenuItemStyle}
+        onClick={() => (categoryId ? setCategoryId(undefined) : null)}
+      >
+        全部分類(自定義分類)
+      </Button>
+      {
+         _.isArray(drawerCategories)
+           ? drawerCategories.map((category, index) => (
+             <Div w="100%" d="flex" flexDir="row">
+               <Button
+                 key={category.id}
+                 {...(categoryId === category.id && pathname.includes('/notes')) ? focusMenuItemStyle : menuItemStyle}
+                 w="calc(100% - 70px)"
+                 onClick={() => (categoryId !== category.id ? setCategoryId(category.id) : null)}
+               >
+                 <Icon
+                   name="Dot"
+                   size="20px"
+                   color={category.color}
+                   m={{ r: '.25em' }}
+                 />
+                 {category.name}
+               </Button>
+               <Button
+                 {...menuItemStyle}
+                 w="35px"
+                 d="flex"
+                 justify="center"
+                 align="center"
+                 onClick={() => openForm({ rowId: category.id })}
+               >
+                 <Icon name="Edit" size="20px" />
+               </Button>
+               <Button
+                 {...menuItemStyle}
+                 w="35px"
+                 d="flex"
+                 justify="center"
+                 align="center"
+                 onClick={() => deleteCategory(category.id, category.name)}
+               >
+                 <Icon name="Delete" size="20px" />
+               </Button>
+             </Div>
+           ))
+           : (
+             <Skeleton count={3} />
+           )
+      }
+      <Button
+        {...fullMenuItemStyle}
+        onClick={() => openForm({})}
+      >
+        <Icon name="Add" color="black" size="20px" m={{ r: '1em' }} />
+        新增分類
+      </Button>
+    </Div>
   );
 }
+
+export default DrawerContent;

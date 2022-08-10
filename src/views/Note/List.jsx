@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable radix */
 
 // react
@@ -13,48 +14,41 @@ import dayjs from 'dayjs';
 import moment from 'moment';
 import _ from 'lodash';
 
-// mui(npm)
+// atomize
 import {
-  Container,
-  AppBar,
-  Button,
-  Typography,
-  Grid,
-  Skeleton,
-  ButtonGroup,
-  Card,
-  CardContent,
-  CardActions,
-  Divider,
-  Chip,
-} from '@mui/material';
+  Container, Row, Col, Div, Text, Button, Icon, Dropdown, Anchor,
+} from 'atomize';
 
-// mui icons
-import TouchAppIcon from '@mui/icons-material/TouchApp';
-import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+// react-loading
+import ReactLoading from 'react-loading';
 
 // use query params
-import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
+import {
+  useQueryParams, NumberParam, StringParam, useQueryParam,
+} from 'use-query-params';
+
+// react-intersection-observer (for scroll api)
+import { useInView } from 'react-intersection-observer';
 
 // custom hooks
+import { async } from 'regenerator-runtime';
 import { useQuery, useWindowSize } from '../../hooks';
 
 // custom components
-import { FormModal, CardStack, Empty } from '../../components';
+import {
+  Empty, ToolBar, Card, FormModal,
+} from '../../components';
 
 // custom layout
 import { BaseLayout } from '../../layouts';
 
 // custom utils
-import { delayFunction, dateFormat } from '../../utils/commons';
+import { delayFunction, dateFormat, sleep } from '../../utils/commons';
 import SwalHelper from '../../utils/SwalHelper';
 
 // store
 import {
-  fetchNoteList, fetchNoteDetail, createNote, updateNote, fetchNoteTypes, deleteNote,
+  fetchNoteList, fetchNoteDetail, createNote, updateNote, fetchNoteTypes, deleteNote, setPagination,
 } from '../../store/reducers/note';
 import {
   fetchCategories,
@@ -76,6 +70,7 @@ const emptyNote = {
 export default function NoteList() {
   // /notes/:type
   const { type } = useParams();
+  const [categoryId, setCategoryId] = useQueryParam('CategoryId', NumberParam);
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -91,7 +86,6 @@ export default function NoteList() {
   // url params
   //
   const [query, setQuery] = useQueryParams({
-    isGroup: NumberParam,
     startAt: StringParam,
     endAt: StringParam,
   });
@@ -143,11 +137,19 @@ export default function NoteList() {
       console.log('formData => ', formData);
 
       if (formData.id) {
-        resultAction = await dispatch(updateNote(formData));
+        resultAction = await dispatch(updateNote({
+          ...formData,
+          // 傳送當前頁面的type, categoryId
+          currentType: type || null,
+          currentCategoryId: categoryId || null,
+        }));
       } else {
         resultAction = await dispatch(createNote({
           ...formData,
           search: location.search,
+          // 傳送當前頁面的type, categoryId
+          currentType: type || null,
+          currentCategoryId: categoryId || null,
         }));
       }
 
@@ -162,171 +164,75 @@ export default function NoteList() {
   };
 
   //
-  // useEffect
+  // api
   //
 
-  // 偵測 url query string
+  // types, categories
   React.useEffect(() => {
+    (async () => {
+      await dispatch(fetchNoteTypes());
+      await dispatch(fetchCategories());
+    })();
+  }, []);
+
+  // 檢測是否到底
+  const [isLast, setIsLast] = React.useState(false);
+
+  // note list
+  const loadData = async () => {
     try {
-      (async () => {
-        await dispatch(fetchNoteTypes());
-        await dispatch(fetchCategories());
+      const typeQuery = (typeof type !== 'undefined' && type !== null) ? `type=${type}` : '';
 
-        const typeQuery = (typeof type !== 'undefined' && type !== null) ? `type=${type}` : '';
+      const resultAction = await dispatch(fetchNoteList({
+        searchAry: [...location.search.includes('?') ? [location.search.split('?')[1]] : [], typeQuery],
+      }));
 
-        const resultAction = await dispatch(fetchNoteList({
-          searchAry: [location.search.split('?')[1], typeQuery],
-        }));
+      const result = unwrapResult(resultAction);
+      // console.log('result => ', result);
 
-        const result = unwrapResult(resultAction);
-      })();
+      // 表示到底了
+      if (!result.data || _.isEmpty(result.data)) {
+        setIsLast(true);
+      }
     } catch (e) {
       SwalHelper.error('錯誤', e.message);
     }
+  };
+
+  const { ref, inView, entry } = useInView({
+    threshold: 0,
+  });
+
+  // 偵測 url query string
+  React.useEffect(() => {
+    (async () => {
+      setIsLast(false);
+      await dispatch(setPagination({
+        page: 1,
+      }));
+      await loadData();
+      await dispatch(setPagination({
+        page: 2,
+      }));
+    })();
   }, [location.search, location.pathname]);
 
-  // 偵測螢幕尺寸
+  // 偵測 有無滑到底
   React.useEffect(() => {
-  }, [windowWidth]);
+    if (inView) {
+      (async () => {
+        if (notePagination.page !== 1) {
+          await sleep(350);
+          await loadData();
+          await dispatch(setPagination({
+            page: notePagination.page + 1,
+          }));
+        }
+      })();
+    }
+  }, [inView]);
 
-  // empty
-  if (_.has(notePagination, 'totalCount') && notePagination.totalCount === 0) {
-    return (
-      <BaseLayout>
-        <Container sx={{
-          paddingTop: '3.5em',
-          paddingBottom: '2em',
-          marginBottom: '2em',
-          display: 'flex',
-        }}
-        >
-          <Grid container spacing={2}>
-            <FormModal
-              isOpen={modalOpen}
-              note={formData}
-              handleClose={() => closeForm()}
-              editForm={editForm}
-              handleSave={() => saveForm()}
-            />
-
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <AppBar position="static" color="inherit">
-                  <Container
-                    maxWidth={false}
-                    sx={{
-                      width: '100%', p: 2, justifyContent: 'flex-end', display: 'flex',
-                    }}
-                  >
-                    {
-                  query.isGroup === 0 && (
-                  <Button
-                    variant="contained"
-                    sx={{ alignItems: 'center', fontSize: 18, mr: 1 }}
-                    // TODO: 改成真正上一頁
-                    onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
-                  >
-                    <ArrowBackIcon size="small" />
-                    返回
-                  </Button>
-                  )
-                }
-
-                    <Button
-                      variant="contained"
-                      sx={{ alignItems: 'center', fontSize: 18 }}
-                      onClick={() => openForm({})}
-                    >
-                      <AddIcon size="small" />
-                      新增
-                    </Button>
-                  </Container>
-                </AppBar>
-              </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Grid container>
-                <Divider
-                  sx={{ marginBottom: '4em', marginTop: '4em' }}
-                />
-                <Grid item xs={12} sx={{ minHeight: '60vh', display: 'flex', justifyContent: 'center' }}>
-                  <Card sx={{
-                    boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%', flex: 1,
-                  }}
-                  >
-                    <CardContent sx={{ width: '100%', height: '100%' }}>
-                      <Empty title="空的，請點擊上方新增鈕建立新資料" />
-                    </CardContent>
-                  </Card>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Container>
-      </BaseLayout>
-    );
-  }
-
-  // null => not loading finish
-  // 沒有資料 || 分組狀態但資料不為分組資料形式 || 不為分組狀態但資料為分組資料形式
-  if (!noteList || ((query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null) && !_.isObject(noteList)) || (query.isGroup === 0 && !_.isArray(noteList[Object.keys(noteList)[0]]))) {
-    return (
-      <BaseLayout>
-        <Container sx={{
-          paddingTop: '3.5em',
-          paddingBottom: '2em',
-          marginBottom: '2em',
-          display: 'flex',
-        }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <AppBar position="static" color="inherit">
-                <Container
-                  maxWidth={false}
-                  sx={{
-                    width: '100%', p: 2, justifyContent: 'flex-end', display: 'flex',
-                  }}
-                >
-                  <Skeleton
-                    variant="rectangular"
-                    width={100}
-                    height={50}
-                  />
-                </Container>
-              </AppBar>
-            </Grid>
-            <Grid item xs={12}>
-              <Grid container spacing={2}>
-                <Divider
-                  sx={{ marginBottom: '4em', marginTop: '4em' }}
-                />
-                <Grid item xs={12} md={4}>
-                  <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB' }}>
-                    <CardContent>
-                      <Skeleton
-                        variant="rectangular"
-                        width="100%"
-                        height={150}
-                      />
-                    </CardContent>
-                    <CardActions>
-                      <Skeleton
-                        variant="rectangular"
-                        width="100%"
-                        height={20}
-                      />
-                    </CardActions>
-                  </Card>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Container>
-      </BaseLayout>
-    );
-  }
-
+  // 取得當前種類名稱
   const currentType = (typeId) => {
     if (_.isArray(noteTypes)) {
       return noteTypes.find((item) => item.value === typeId).name;
@@ -337,7 +243,42 @@ export default function NoteList() {
 
   return (
     <BaseLayout>
-      <Container sx={{ paddingTop: '4.5em', paddingBottom: '2em', marginBottom: '2em' }}>
+      <Container
+        p={{
+          t: '1.5em',
+          b: '2em',
+        }}
+        m={{
+          b: '2em',
+        }}
+        d="flex"
+        flexDir="column"
+      >
+        <Div
+          d="flex"
+          flexDir="row"
+          m={{ b: '2em', r: '.75em', l: '.75em' }}
+          p={{
+            b: '.75em', t: '.75em', r: '.5em', l: '.5em',
+          }}
+          bg="gray200"
+          rounded="sm"
+          shadow="2"
+          justify="flex-end"
+          align="center"
+        >
+          <Button
+            bg="warning700"
+            hoverBg="warning800"
+            rounded="circle"
+            p={{ r: '1.5rem', l: '1.5rem' }}
+            shadow="3"
+            hoverShadow="4"
+            onClick={() => openForm({})}
+          >
+            新增
+          </Button>
+        </Div>
         <FormModal
           isOpen={modalOpen}
           note={formData}
@@ -345,184 +286,168 @@ export default function NoteList() {
           editForm={editForm}
           handleSave={() => saveForm()}
         />
-
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <AppBar position="static" color="inherit">
-              <Container
-                maxWidth={false}
-                sx={{
-                  width: '100%', p: 2, justifyContent: 'flex-end', display: 'flex',
-                }}
-              >
-                {
-                  query.isGroup === 0 && (
-                  <Button
-                    variant="contained"
-                    sx={{ alignItems: 'center', fontSize: 18, mr: 1 }}
-                    // TODO: 改成真正上一頁
-                    onClick={() => setQuery({ isGroup: 1, startAt: undefined, endAt: undefined })}
-                  >
-                    <ArrowBackIcon size="small" />
-                    返回
-                  </Button>
-                  )
-                }
-
-                <Button
-                  variant="contained"
-                  sx={{ alignItems: 'center', fontSize: 18 }}
-                  onClick={() => openForm({})}
-                >
-                  <AddIcon size="small" />
-                  新增
-                </Button>
-              </Container>
-            </AppBar>
-          </Grid>
-        </Grid>
-
-        <Grid container spacing={5} sx={{ marginTop: '.5em' }}>
+        <Row
+          d="flex"
+          flexDir="row"
+          m={{ b: '2em' }}
+        >
           {
-            (query.isGroup || typeof query.isGroup === 'undefined' || query.isGroup === null)
-              ? (
-                Object.keys(noteList).map((group, index) => (
-                  <Grid item key={group} xs={12}>
-                    <Divider
-                      sx={{ marginBottom: '4em' }}
-                    >
-                      {group}
-                      年
-                    </Divider>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', flexFlow: 'row wrap' }}>
-                      {
-                        Object.keys(noteList[group]).map((subGroup, ind) => (
-                          <CardStack
-                            key={subGroup}
-                            col={6}
-                            cards={noteList[group][subGroup].notes}
-                            onClick={() => {
-                              setQuery({
-                                isGroup: 0,
-                                startAt: noteList[group][subGroup].startAt,
-                                endAt: noteList[group][subGroup].endAt,
-                              });
-                            }}
-                            cardContent={(
-                              <>
-                                <CardContent>
-                                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                    { noteList[group][subGroup].startAt }
-                                    {' '}
-                                    ~
-                                    {' '}
-                                    { noteList[group][subGroup].endAt }
-                                  </Typography>
-                                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                    共
-                                    {' '}
-                                    {noteList[group][subGroup].count}
-                                    筆
-                                  </Typography>
-                                </CardContent>
-                                <CardActions
-                                  sx={{
-                                    display: 'center',
-                                    justifyContent: 'center',
-                                  }}
-                                >
-                                  <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
-                                    點擊查看
-                                  </Typography>
-                                  <TouchAppIcon />
-                                </CardActions>
-                              </>
-                            )}
-                          />
-                        ))
-                      }
-                    </div>
-                  </Grid>
-
-                ))
-              )
-              : Object.keys(noteList).map((group, index) => (
-                <Grid item key={group} xs={12}>
-                  <Divider
-                    sx={{ marginBottom: '2em' }}
+            noteList && _.isArray(noteList)
+            && noteList.map((data) => (
+              <Col
+                size={{ xs: '12', md: '6' }}
+              >
+                <Card
+                  key={data.id}
+                  bg="gray100"
+                  hoverBg="gray300"
+                  rounded="md"
+                  shadow="3"
+                  hoverShadow="4"
+                  w="100%"
+                  p={{
+                    r: '1em',
+                    l: '1em',
+                    t: '.5em',
+                  }}
+                  m={{
+                    t: '.5em',
+                    b: '.5em',
+                  }}
+                  minH="200px"
+                >
+                  <Div
+                    d="flex"
+                    flexDir="row"
+                    justify="space-between"
+                    align="center"
+                    m={{ b: '.5em' }}
                   >
-                    {group}
-                    年
-                  </Divider>
-                  <Grid container spacing={2}>
-                    {
-                      noteList[group].map((data) => (
-                        <Grid item xs={12} md={4} key={data.id}>
-                          <Card sx={{ boxShadow: '5px 5px 5px #ABABAB', border: '1px solid #ABABAB', height: '100%' }}>
-                            <CardContent>
-                              <div
-                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                              >
-                                <span
-                                  style={{
-                                    width: 10,
-                                    height: 10,
-                                    borderRadius: '50%',
-                                    backgroundColor: _.get(data, 'Category.color') || 'white',
-                                  }}
-                                />
-                                <Chip label={currentType(data.type)} />
-                              </div>
-                              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                { data.startAt }
-                                {' '}
-                                ~
-                                {' '}
-                                { data.endAt }
-                              </Typography>
-                              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                { data.title }
-                              </Typography>
-                              <Typography variant="body2">
-                                { data.content }
-                              </Typography>
-                            </CardContent>
-                            <CardActions sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                              <Button
-                                size="small"
-                                variant="contained"
-                                sx={{ alignItems: 'center', fontSize: 18 }}
-                                onClick={async () => {
-                                  const result = await SwalHelper.awiatQuestion('確定要刪除?', data.title);
+                    <Div
+                      d="flex"
+                      flexDir="row"
+                      justify="flex-start"
+                      align="center"
+                    >
+                      <Text
+                        m={{ r: '.5em' }}
+                        textSize="paragraph"
+                        textWeight="800"
+                      >
+                        { currentType(data.type) }
+                      </Text>
+                      <div
+                        style={{
+                          backgroundColor: _.get(data, 'Category.color'),
+                          width: 15,
+                          height: 15,
+                          borderRadius: '50%',
+                          ...!_.get(data, 'Category.color') && {
+                            border: '1px dashed black',
+                          },
+                        }}
+                      />
+                    </Div>
+                    <Text
+                      textColor="gray800"
+                      textSize="caption"
+                    >
+                      { data.startAt }
+                      {' '}
+                      ~
+                      {' '}
+                      { data.endAt }
+                    </Text>
+                  </Div>
+                  <hr />
+                  <Div>
+                    <Text textSize="heading">
+                      { data.title }
+                    </Text>
+                  </Div>
+                  <Div>
+                    { data.content }
+                  </Div>
+                  <Div
+                    d="flex"
+                    flexDir="row"
+                    justify="flex-end"
+                    m={{ t: '2em' }}
+                  >
+                    <Button
+                      bg="danger700"
+                      hoverBg="danger600"
+                      rounded="circle"
+                      m={{ r: '1rem' }}
+                      p={{ r: '1.5rem', l: '1.5rem' }}
+                      shadow="2"
+                      hoverShadow="4"
+                      onClick={async () => {
+                        const result = await SwalHelper.awiatQuestion('確定要刪除?', data.title);
 
-                                  if (result.isConfirmed) {
-                                    dispatch(deleteNote({ id: data.id }));
-                                  }
-                                }}
-                              >
-                                <DeleteIcon size="small" />
-                                刪除
-                              </Button>
-                              <Button
-                                size="small"
-                                variant="contained"
-                                sx={{ alignItems: 'center', fontSize: 18 }}
-                                onClick={() => openForm({ rowId: data.id })}
-                              >
-                                <EditIcon size="small" />
-                                編輯
-                              </Button>
-                            </CardActions>
-                          </Card>
-                        </Grid>
-                      ))
-                    }
-                  </Grid>
-                </Grid>
-
-              ))
+                        if (result.isConfirmed) {
+                          dispatch(deleteNote({ id: data.id }));
+                        }
+                      }}
+                    >
+                      <Icon name="DeleteSolid" size="20px" color="white" />
+                      刪除
+                    </Button>
+                    <Button
+                      bg="info700"
+                      hoverBg="info600"
+                      rounded="circle"
+                      m={{ r: '1rem' }}
+                      p={{ r: '1.5rem', l: '1.5rem' }}
+                      shadow="2"
+                      hoverShadow="4"
+                      onClick={() => openForm({ rowId: data.id })}
+                    >
+                      <Icon name="EditSolid" size="20px" color="white" />
+                      編輯
+                    </Button>
+                  </Div>
+                </Card>
+              </Col>
+            ))
           }
-        </Grid>
+        </Row>
+        {/* loading */}
+        {
+          // 到底就把偵測的組件藏起來
+          !isLast ? (
+            <div ref={ref}>
+              <Div
+                bg="success600"
+                w="100%"
+                d="flex"
+                flexDir="column"
+                justify="center"
+                align="center"
+                p="5em"
+                rounded="md"
+              >
+                <ReactLoading type="cubes" color="#fff" width="200px" height="200px" delay={2} />
+                <Text textColor="white" textSize="heading">- 載入更多，沒有就到底了 -</Text>
+              </Div>
+            </div>
+          ) : (
+            <Div
+              bg="success600"
+              w="100%"
+              d="flex"
+              flexDir="column"
+              justify="center"
+              align="center"
+              p="5em"
+              rounded="md"
+            >
+              <ReactLoading type="cubes" color="#fff" width="200px" height="200px" delay={2} />
+              <Text textColor="white" textSize="heading">- 到底了 -</Text>
+            </Div>
+          )
+        }
+
       </Container>
     </BaseLayout>
   );

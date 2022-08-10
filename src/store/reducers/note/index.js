@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-confusing-arrow */
 import { createSlice, createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import dayjs from 'dayjs';
@@ -16,7 +18,10 @@ export const noteSlice = createSlice({
   name: 'note',
   initialState: {
     list: null,
-    pagination: null,
+    pagination: {
+      page: 1,
+      totalCount: 0,
+    },
     detail: null,
     noteTypes: null,
   },
@@ -60,17 +65,29 @@ export const fetchNoteList = createAsyncThunk(
     try {
       const { searchAry = [] } = payload;
 
-      // 先清掉
-      thunkApi.dispatch(setList(null));
-      thunkApi.dispatch(setPagination(null));
+      const store = thunkApi.getState();
+      const currentPagination = _.cloneDeep(store.note.pagination);
 
-      const searchStr = searchAry.filter((str) => !!str).join('&');
+      if (currentPagination.page === 1) {
+        thunkApi.dispatch(setList(null));
+      }
+
+      const currentList = _.cloneDeep(store.note.list);
+
+      const searchStr = [...searchAry, `page=${currentPagination.page}`]
+        .filter((str) => !!str)
+        .join('&');
 
       const { data } = await ApiService.get({
         url: `/note/list${searchStr ? `?${searchStr}` : ''}`,
       });
 
-      thunkApi.dispatch(setList(data.data.notes));
+      const newList = [
+        ...(currentPagination.page === 1 ? [] : currentList),
+        ...data.data,
+      ];
+
+      thunkApi.dispatch(setList(newList));
       thunkApi.dispatch(setPagination(data.paging));
 
       return data;
@@ -105,23 +122,29 @@ export const createNote = createAsyncThunk(
     const { data } = await ApiService.post({
       url: '/note/',
       data: {
-        ..._.omit(payload, ['search']),
+        ..._.omit(payload, ['search', 'currentType', 'currentCategoryId']),
       },
     });
 
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.note.list);
 
-    const dataYear = data.data.startAt.slice(0, 4);
-    const dataGroup = data.data.startAt.slice(0, 7);
+    const { currentType, currentCategoryId } = payload;
 
-    // 直接重call list api
-    console.log('location.search => ', window.location.search);
-    const resultAction = await thunkApi.dispatch(
-      fetchNoteList({ searchAry: payload.search.split('?')[1].split('&') })
-    );
+    // 若該表單之type, CategoryId與當前頁面的一樣，則放入redux內，使畫面更新
+    if (
+      ((_.isNil(payload.type) && _.isNil(currentType)) ||
+        `${payload.type}` === currentType) &&
+      ((_.isNil(payload.CategoryId) && _.isNil(currentCategoryId)) ||
+        `${payload.CategoryId}` === currentCategoryId)
+    ) {
+      const newList = [data.data, ...currentList].sort((a, b) =>
+        a.startAt > b.startAt ? -1 : a.startAt < b.startAt ? 1 : 1
+      );
+      thunkApi.dispatch(setList(newList));
+    }
 
-    await unwrapResult(resultAction);
+    console.log('data => ', data);
 
     return data.data;
   }
@@ -134,28 +157,30 @@ export const updateNote = createAsyncThunk(
 
     const { data } = await ApiService.put({
       url: `/note/${payload.id}`,
-      data: { ..._.omit(payload, ['id']) },
+      data: { ..._.omit(payload, ['id', 'currentType', 'currentCategoryId']) },
     });
 
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.note.list);
 
-    const categories = store.category.list;
+    const { currentType, currentCategoryId } = payload;
 
-    const newList = {};
-    Object.keys(currentList).map((year) => {
-      const temp = currentList[year].map((note) => {
-        if (note.id === payload.id) {
+    console.log('--------------------------------');
+    console.log('payload => ', payload);
+
+    const newList = currentList
+      .map((item) => {
+        console.log(`(item.id, data.data.id) => (${item.id}, ${data.data.id})`);
+        if (item.id === data.data.id) {
           return {
-            ...payload,
-            Category: categories.find((item) => item.id === payload.CategoryId),
+            ...data.data,
           };
         }
-        return note;
-      });
-      newList[year] = temp.sort((a, b) => (a.startAt > b.startAt ? -1 : 1));
-    });
-
+        return item;
+      })
+      .sort((a, b) =>
+        a.startAt > b.startAt ? -1 : a.startAt < b.startAt ? 1 : 1
+      );
     thunkApi.dispatch(setList(newList));
 
     return data.data;
@@ -172,11 +197,7 @@ export const deleteNote = createAsyncThunk(
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.note.list);
 
-    const newList = {};
-    Object.keys(currentList).map((year) => {
-      const temp = currentList[year].filter((note) => note.id !== payload.id);
-      newList[year] = temp.sort((a, b) => (a.startAt > b.startAt ? -1 : 1));
-    });
+    const newList = currentList.filter((item) => item.id !== payload.id);
 
     thunkApi.dispatch(setList(newList));
 

@@ -7,38 +7,19 @@ import { useLocation, useHistory, Link } from 'react-router-dom';
 // common tools(npm)
 import _ from 'lodash';
 
-// mui(npm)
-import { styled } from '@mui/material/styles';
+// atomize
 import {
-  FormControl,
-  TextField,
-  Container,
-  Card,
-  CardHeader,
-  CardActions,
-  CardContent,
-  Button,
-  Typography,
-  Divider,
-  InputLabel,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Select,
-  MenuItem,
-  FormLabel,
-  FormGroup,
-  Switch,
-  FormControlLabel,
-  Grid,
-} from '@mui/material';
+  Container, Row, Col, Div, Text, Button, Icon, Input, Switch, Label,
+} from 'atomize';
 
 // custom utils
 import SwalHelper from '../utils/SwalHelper';
 
 // custom layout
 import { BaseLayout } from '../layouts';
+
+// custom components
+import { Card, PasswordInput } from '../components';
 
 // store
 import { getProfileAction, updateProfileAction } from '../store/reducers/auth';
@@ -90,92 +71,118 @@ export default function Profile() {
 
       unwrapResult(resultAction);
 
+      setIsResetPwd(false);
       SwalHelper.success('更新成功');
     } catch (e) {
       SwalHelper.fail(e.message);
     }
   };
-
   return (
     <BaseLayout>
-      <Container sx={{ paddingTop: '2em', paddingBottom: '2em', marginBottom: '2em' }}>
-        <Typography variant="h5" sx={{ marginBottom: '1em' }}>行事曆</Typography>
-        {
+      <Container
+        p="2em"
+        m={{
+          b: '2em',
+        }}
+      >
+        <Card
+          p="3em"
+          rounded="md"
+          shadow="3"
+        >
+          <Text textSize="heading">個人資料</Text>
+          {
           formData && (
             <form onSubmit={handleSubmit}>
-              <TextField
-                id="email"
-                label="Email"
-                type="text"
-                fullWidth
-                variant="outlined"
-                value={formData.email}
-                margin="dense"
-                disabled
-              />
-              <TextField
-                id="name"
-                label="姓名"
-                type="text"
-                fullWidth
-                variant="outlined"
+              <Text
+                m=".5rem"
+                p={{ l: '.15em' }}
+                textSize="title"
+              >
+                {formData.email}
+              </Text>
+
+              <Input
+                placeholder="名字"
+                m={{
+                  t: '1.5em',
+                  r: '.5rem',
+                  b: '.5rem',
+                  l: '.5rem',
+                }}
                 name="name"
                 value={formData.name}
                 onChange={(e) => handleChanage(e)}
-                margin="dense"
               />
+
               {
                 isResetPwd && (
                   <>
-                    <TextField
-                      id="password"
-                      label="密碼"
-                      type="password"
-                      fullWidth
-                      variant="outlined"
+                    <PasswordInput
+                      m={{
+                        t: '1.5em',
+                        r: '.5rem',
+                        b: '.5rem',
+                        l: '.5rem',
+                      }}
                       value={formData.password}
-                      margin="dense"
                       name="password"
                       onChange={(e) => handleChanage(e)}
+                      placeholder="新密碼"
                     />
-                    <TextField
-                      id="repeat-password"
-                      label="密碼確認"
-                      type="password"
-                      fullWidth
-                      variant="outlined"
+                    <PasswordInput
+                      m={{
+                        t: '1.5em',
+                        r: '.5rem',
+                        b: '.5rem',
+                        l: '.5rem',
+                      }}
                       name="repeatPassword"
                       value={formData.repeatPassword}
-                      margin="dense"
                       onChange={(e) => handleChanage(e)}
+                      placeholder="密碼確認"
                     />
                   </>
                 )
               }
-              <FormControl component="fieldset" variant="standard">
-                <FormLabel component="legend">是否更改密碼</FormLabel>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <Switch checked={isResetPwd} onChange={() => setIsResetPwd((pre) => !pre)} name="gilad" />
-                    }
-                  />
-                </FormGroup>
-              </FormControl>
 
-              <Grid container justifyContent="flex-end">
+              <Label
+                onClick={() => setIsResetPwd((pre) => !pre)}
+                align="center"
+                textWeight="600"
+                m={{
+                  t: '1.5em',
+                  r: '.5rem',
+                  b: '.5rem',
+                  l: '.75rem',
+                }}
+              >
+                <Switch
+                  checked={isResetPwd}
+                />
+                是否重設密碼
+              </Label>
+
+              <Div
+                d="flex"
+                justify="flex-end"
+              >
                 <Button
-                  variant="contained"
+                  bg="warning700"
+                  hoverBg="warning800"
+                  rounded="circle"
+                  p={{ r: '1.5rem', l: '1.5rem' }}
+                  shadow="3"
+                  hoverShadow="4"
                   type="submit"
                 >
                   送出
                 </Button>
-              </Grid>
-
+              </Div>
             </form>
           )
         }
-
+        </Card>
       </Container>
     </BaseLayout>
   );
