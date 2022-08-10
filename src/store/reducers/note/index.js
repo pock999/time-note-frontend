@@ -140,7 +140,7 @@ export const createNote = createAsyncThunk(
         `${payload.CategoryId}` === currentCategoryId)
     ) {
       const newList = [data.data, ...currentList].sort((a, b) =>
-        a.startAt > b.startAt ? -1 : a.startAt < b.startAt ? 1 : 1
+        a.timePoint > b.timePoint ? -1 : a.timePoint < b.timePoint ? 1 : 0
       );
       thunkApi.dispatch(setList(newList));
     }
@@ -185,7 +185,7 @@ export const updateNote = createAsyncThunk(
         return item;
       })
       .sort((a, b) =>
-        a.startAt > b.startAt ? -1 : a.startAt < b.startAt ? 1 : 1
+        a.timePoint > b.timePoint ? -1 : a.timePoint < b.timePoint ? 1 : 0
       );
     thunkApi.dispatch(setList(newList));
 

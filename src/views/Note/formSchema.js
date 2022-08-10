@@ -8,11 +8,7 @@ export const createSchema = yup.object().shape({
   content: yup.string().required(),
   type: yup.mixed().oneOf([1, 2, 3]).required('請選擇類型'),
   CategoryId: yup.number().nullable(true),
-  startAt: yup.date().required('請選擇開始日期'),
-  endAt: yup
-    .date()
-    .required('請選擇結束日期')
-    .min(yup.ref('startAt'), '結束時間須比開始時間大'),
+  timePoint: yup.date().required('請選擇紀錄(提示)時間'),
 });
 
 export const updateSchema = yup.object().shape({
@@ -24,9 +20,5 @@ export const updateSchema = yup.object().shape({
   content: yup.string().required(),
   type: yup.mixed().oneOf([1, 2, 3]).required('請選擇類型'),
   CategoryId: yup.number().nullable(true),
-  startAt: yup.date().required('請選擇開始日期'),
-  endAt: yup
-    .date()
-    .required('請選擇結束日期')
-    .min(yup.ref('startAt'), '結束時間須比開始時間大'),
+  timePoint: yup.date().required('請選擇紀錄(提示)時間'),
 });

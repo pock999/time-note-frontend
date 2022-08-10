@@ -63,8 +63,7 @@ const emptyNote = {
   content: '',
   CategoryId: null,
   type: null,
-  startAt: null,
-  endAt: null,
+  timePoint: null,
 };
 
 export default function NoteList() {
@@ -106,8 +105,7 @@ export default function NoteList() {
         setFormData({
           ...emptyNote,
           type: type || null,
-          startAt: dateTime,
-          endAt: dateTime,
+          timePoint: dateTime,
         });
         return true;
       });
@@ -352,11 +350,7 @@ export default function NoteList() {
                       textColor="gray800"
                       textSize="caption"
                     >
-                      { data.startAt }
-                      {' '}
-                      ~
-                      {' '}
-                      { data.endAt }
+                      { data.timePoint }
                     </Text>
                   </Div>
                   <hr />
