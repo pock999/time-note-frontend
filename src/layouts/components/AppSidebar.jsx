@@ -32,7 +32,7 @@ function AppSidebar({
   // 螢幕寬度
   const [width] = useWindowSize();
   React.useEffect(() => {
-    if (window.innerWidth > 720) {
+    if (width > 720) {
       setIsExanded(true);
     } else {
       setIsExanded(false);
@@ -43,7 +43,8 @@ function AppSidebar({
     <Sidebar
       sidebar={drawerContent}
       onSetOpen={handleToggler}
-      docked={isExanded}
+      docked={width > 720 && isExanded}
+      open={width <= 720 && isExanded}
       styles={{ sidebar: { background: 'white' } }}
     >
       { AppBar && <AppBar handleToggler={handleToggler} topMenu={topMenu} categoryFormModal={categoryFormModal} /> }
