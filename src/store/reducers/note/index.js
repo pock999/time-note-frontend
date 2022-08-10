@@ -128,6 +128,7 @@ export const createNote = createAsyncThunk(
 
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.note.list);
+    const currentPagination = _.cloneDeep(store.note.pagination);
 
     const { currentType, currentCategoryId } = payload;
 
@@ -144,7 +145,12 @@ export const createNote = createAsyncThunk(
       thunkApi.dispatch(setList(newList));
     }
 
-    console.log('data => ', data);
+    thunkApi.dispatch(
+      setPagination({
+        ...currentPagination,
+        totalCount: _.get(currentPagination, 'totalCount') + 1,
+      })
+    );
 
     return data.data;
   }
@@ -196,10 +202,17 @@ export const deleteNote = createAsyncThunk(
 
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.note.list);
+    const currentPagination = _.cloneDeep(store.note.pagination);
 
     const newList = currentList.filter((item) => item.id !== payload.id);
 
     thunkApi.dispatch(setList(newList));
+    thunkApi.dispatch(
+      setPagination({
+        ...currentPagination,
+        totalCount: _.get(currentPagination, 'totalCount') - 1,
+      })
+    );
 
     return data.data;
   }
