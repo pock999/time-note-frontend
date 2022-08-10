@@ -13,14 +13,14 @@ import {
 const types = [{ value: 1, text: '筆記' }, { value: 2, text: '行程(提醒)' }, { value: 3, text: '文章' }];
 
 function FormModal({
-  isOpen, handleClose, note, editForm, handleSave,
+  isOpen, handleClose, note, editForm, handleSave, defaultType,
 }) {
   const [showTypeSelect, setShowTypeSelect] = React.useState(false);
   const [showCategorySelect, setShowCategorySelect] = React.useState(false);
 
   const categories = useSelector((state) => state.category.list);
 
-  console.log('categories => ', categories);
+  console.log('defaultType => ', defaultType);
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} align="center" rounded="md">
@@ -61,23 +61,25 @@ function FormModal({
             onClick={() => setShowTypeSelect((pre) => !pre)}
             menu={(
               <Div>
-                {types.map((item, index) => (
-                  <Anchor
-                    d="block"
-                    p="0.5rem"
-                    key={item.value}
-                    onClick={() => {
-                      editForm(item.value, 'type');
-                      setShowTypeSelect(false);
-                    }}
-                  >
-                    {item.text}
-                  </Anchor>
-                ))}
+                {types
+                  .filter((item) => (defaultType ? item.value === defaultType : true))
+                  .map((item, index) => (
+                    <Anchor
+                      d="block"
+                      p="0.5rem"
+                      key={item.value}
+                      onClick={() => {
+                        editForm(item.value, 'type');
+                        setShowTypeSelect(false);
+                      }}
+                    >
+                      {item.text}
+                    </Anchor>
+                  ))}
               </Div>
             )}
           >
-            {note.type && types.find((item) => item.value === note.type).text}
+            {note.type && _.get(types.find((item) => `${item.value}` === `${note.type}`), 'text')}
           </Dropdown>
         </Col>
         <Col size="12">
@@ -176,6 +178,8 @@ FormModal.defaultProps = {
   note: {},
   editForm: () => {},
   handleSave: () => {},
+  // 預設類別，確保在某分類之頁面時，選項不會出現其他的
+  defaultType: null,
 };
 
 FormModal.defaultProps = {
@@ -184,6 +188,8 @@ FormModal.defaultProps = {
   note: PropTypes.object,
   editForm: PropTypes.func,
   handleSave: PropTypes.func,
+  // 預設類別，確保在某分類之頁面時，選項不會出現其他的
+  defaultType: PropTypes.number,
 };
 
 export default FormModal;

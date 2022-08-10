@@ -127,16 +127,7 @@ export const createNote = createAsyncThunk(
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.note.list);
 
-    const dataYear = data.data.startAt.slice(0, 4);
-    const dataGroup = data.data.startAt.slice(0, 7);
-
-    // 直接重call list api
-    console.log('location.search => ', window.location.search);
-    const resultAction = await thunkApi.dispatch(
-      fetchNoteList({ searchAry: payload.search.split('?')[1].split('&') })
-    );
-
-    await unwrapResult(resultAction);
+    console.log('data => ', data);
 
     return data.data;
   }

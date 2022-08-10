@@ -271,6 +271,8 @@ export default function NoteList() {
         <FormModal
           isOpen={modalOpen}
           note={formData}
+          // 預設類別，確保在某分類之頁面時，選項不會出現其他的
+          defaultType={type || null}
           handleClose={() => closeForm()}
           editForm={editForm}
           handleSave={() => saveForm()}
