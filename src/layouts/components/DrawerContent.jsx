@@ -106,7 +106,7 @@ function DrawerContent(props) {
                <Button
                  key={category.id}
                  {...(categoryId === category.id && pathname.includes('/notes')) ? focusMenuItemStyle : menuItemStyle}
-                 w="calc(100% - 70px)"
+                 w={categoryId !== category.id ? 'calc(100% - 70px)' : 'calc(100% - 35px)'}
                  onClick={() => (categoryId !== category.id ? setCategoryId(category.id) : null)}
                >
                  <Icon
@@ -127,16 +127,22 @@ function DrawerContent(props) {
                >
                  <Icon name="Edit" size="20px" />
                </Button>
-               <Button
-                 {...menuItemStyle}
-                 w="35px"
-                 d="flex"
-                 justify="center"
-                 align="center"
-                 onClick={() => deleteCategory(category.id, category.name)}
-               >
-                 <Icon name="Delete" size="20px" />
-               </Button>
+               {
+                categoryId !== category.id
+                && (
+                <Button
+                  {...menuItemStyle}
+                  w="35px"
+                  d="flex"
+                  justify="center"
+                  align="center"
+                  onClick={() => deleteCategory(category.id, category.name)}
+                >
+                  <Icon name="Delete" size="20px" />
+                </Button>
+                )
+               }
+
              </Div>
            ))
            : (
