@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+/* eslint-disable no-confusing-arrow */
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import dayjs from 'dayjs';
@@ -9,6 +11,7 @@ import SwalHelper from '../../../utils/SwalHelper';
 
 // other store
 import { setDrawerTypes, setDrawerCategories } from '../layout';
+import { setList as setNoteList } from '../note';
 
 const ApiService = new ApiServiceClass();
 
@@ -90,6 +93,7 @@ export const updateCategory = createAsyncThunk(
 
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.category.list);
+    const currentNoteList = _.cloneDeep(store.note.list);
 
     const newList = currentList.map((item) => {
       if (item.id === data.data.id) {
@@ -101,7 +105,21 @@ export const updateCategory = createAsyncThunk(
       return item;
     });
 
+    const newNoteList = currentNoteList.map((item) =>
+      // eslint-disable-next-line implicit-arrow-linebreak
+      _.get(item, 'Category.id') === payload.id
+        ? {
+            ...item,
+            Category: {
+              ...item.Category,
+              ..._.pick(data.data, ['name', 'color']),
+            },
+          }
+        : item
+    );
+
     thunkApi.dispatch(setList(newList));
+    thunkApi.dispatch(setNoteList(newNoteList));
     thunkApi.dispatch(setDrawerCategories(newList));
     return data.data;
   }
@@ -116,10 +134,22 @@ export const deleteCategory = createAsyncThunk(
 
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.category.list);
+    const currentNoteList = _.cloneDeep(store.note.list);
 
     const newList = currentList.filter((item) => item.id !== payload.id);
 
+    const newNoteList = currentNoteList.map((item) =>
+      // eslint-disable-next-line implicit-arrow-linebreak
+      _.get(item, 'Category.id') === payload.id
+        ? {
+            ...item,
+            Category: null,
+          }
+        : item
+    );
+
     thunkApi.dispatch(setList(newList));
+    thunkApi.dispatch(setNoteList(newNoteList));
     thunkApi.dispatch(setDrawerCategories(newList));
     return data.data;
   }

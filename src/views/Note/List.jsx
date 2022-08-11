@@ -63,8 +63,7 @@ const emptyNote = {
   content: '',
   CategoryId: null,
   type: null,
-  startAt: null,
-  endAt: null,
+  timePoint: null,
 };
 
 export default function NoteList() {
@@ -76,7 +75,7 @@ export default function NoteList() {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const [windowWidth, windowHeight] = useWindowSize();
+  const [windowWidth] = useWindowSize();
 
   const noteList = useSelector((state) => state.note.list);
   const notePagination = useSelector((state) => state.note.pagination);
@@ -106,8 +105,7 @@ export default function NoteList() {
         setFormData({
           ...emptyNote,
           type: type || null,
-          startAt: dateTime,
-          endAt: dateTime,
+          timePoint: dateTime,
         });
         return true;
       });
@@ -134,18 +132,23 @@ export default function NoteList() {
   const saveForm = async () => {
     try {
       let resultAction;
-      console.log('formData => ', formData);
+
+      if (formData.type === 2 && !formData.timePoint) {
+        throw Error('請填寫提示時間');
+      }
 
       if (formData.id) {
+        const value = await updateSchema.validate(formData);
         resultAction = await dispatch(updateNote({
-          ...formData,
+          ...value,
           // 傳送當前頁面的type, categoryId
           currentType: type || null,
           currentCategoryId: categoryId || null,
         }));
       } else {
+        const value = await createSchema.validate(formData);
         resultAction = await dispatch(createNote({
-          ...formData,
+          ...value,
           search: location.search,
           // 傳送當前頁面的type, categoryId
           currentType: type || null,
@@ -159,6 +162,7 @@ export default function NoteList() {
 
       closeForm();
     } catch (e) {
+      console.log('================================ e, ', e);
       SwalHelper.fail(e.message);
     }
   };
@@ -352,11 +356,7 @@ export default function NoteList() {
                       textColor="gray800"
                       textSize="caption"
                     >
-                      { data.startAt }
-                      {' '}
-                      ~
-                      {' '}
-                      { data.endAt }
+                      { data.timePoint }
                     </Text>
                   </Div>
                   <hr />
@@ -375,11 +375,21 @@ export default function NoteList() {
                     m={{ t: '2em' }}
                   >
                     <Button
+                      {
+                        ... windowWidth <= 648 && {
+                          h: '2.5rem',
+                          w: '2.5rem',
+                        }
+                      }
                       bg="danger700"
                       hoverBg="danger600"
                       rounded="circle"
                       m={{ r: '1rem' }}
-                      p={{ r: '1.5rem', l: '1.5rem' }}
+                      {
+                        ... windowWidth > 648 && {
+                          p: { r: '1.5rem', l: '1.5rem' },
+                        }
+                      }
                       shadow="2"
                       hoverShadow="4"
                       onClick={async () => {
@@ -391,20 +401,30 @@ export default function NoteList() {
                       }}
                     >
                       <Icon name="DeleteSolid" size="20px" color="white" />
-                      刪除
+                      { windowWidth > 648 && '刪除' }
                     </Button>
                     <Button
+                      {
+                        ... windowWidth <= 648 && {
+                          h: '2.5rem',
+                          w: '2.5rem',
+                        }
+                      }
                       bg="info700"
                       hoverBg="info600"
                       rounded="circle"
                       m={{ r: '1rem' }}
-                      p={{ r: '1.5rem', l: '1.5rem' }}
+                      {
+                        ... windowWidth > 648 && {
+                          p: { r: '1.5rem', l: '1.5rem' },
+                        }
+                      }
                       shadow="2"
                       hoverShadow="4"
                       onClick={() => openForm({ rowId: data.id })}
                     >
                       <Icon name="EditSolid" size="20px" color="white" />
-                      編輯
+                      { windowWidth > 648 && '編輯' }
                     </Button>
                   </Div>
                 </Card>

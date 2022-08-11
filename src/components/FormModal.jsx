@@ -128,23 +128,10 @@ function FormModal({
         <Col size="12">
           <Input
             type="datetime-local"
-            placeholder="開始時間"
+            placeholder="紀錄(提示)時間"
             w="100%"
-            value={note.startAt}
-            onChange={(evt) => editForm(evt.target.value, 'startAt')}
-            m={{
-              t: '.25em',
-              b: '.25em',
-            }}
-          />
-        </Col>
-        <Col size="12">
-          <Input
-            type="datetime-local"
-            placeholder="結束時間"
-            w="100%"
-            value={note.endAt}
-            onChange={(evt) => editForm(evt.target.value, 'endAt')}
+            value={note.timePoint}
+            onChange={(evt) => editForm(evt.target.value, 'timePoint')}
             m={{
               t: '.25em',
               b: '.25em',

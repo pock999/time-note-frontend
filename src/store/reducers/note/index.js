@@ -128,6 +128,7 @@ export const createNote = createAsyncThunk(
 
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.note.list);
+    const currentPagination = _.cloneDeep(store.note.pagination);
 
     const { currentType, currentCategoryId } = payload;
 
@@ -139,12 +140,17 @@ export const createNote = createAsyncThunk(
         `${payload.CategoryId}` === currentCategoryId)
     ) {
       const newList = [data.data, ...currentList].sort((a, b) =>
-        a.startAt > b.startAt ? -1 : a.startAt < b.startAt ? 1 : 1
+        a.timePoint > b.timePoint ? -1 : a.timePoint < b.timePoint ? 1 : 0
       );
       thunkApi.dispatch(setList(newList));
     }
 
-    console.log('data => ', data);
+    thunkApi.dispatch(
+      setPagination({
+        ...currentPagination,
+        totalCount: _.get(currentPagination, 'totalCount') + 1,
+      })
+    );
 
     return data.data;
   }
@@ -153,11 +159,11 @@ export const createNote = createAsyncThunk(
 export const updateNote = createAsyncThunk(
   'note/updateNote',
   async (payload, thunkApi) => {
-    console.log('updateNote payload => ', payload);
-
     const { data } = await ApiService.put({
       url: `/note/${payload.id}`,
-      data: { ..._.omit(payload, ['id', 'currentType', 'currentCategoryId']) },
+      data: {
+        ..._.omit(payload, ['id', 'currentType', 'currentCategoryId']),
+      },
     });
 
     const store = thunkApi.getState();
@@ -179,7 +185,7 @@ export const updateNote = createAsyncThunk(
         return item;
       })
       .sort((a, b) =>
-        a.startAt > b.startAt ? -1 : a.startAt < b.startAt ? 1 : 1
+        a.timePoint > b.timePoint ? -1 : a.timePoint < b.timePoint ? 1 : 0
       );
     thunkApi.dispatch(setList(newList));
 
@@ -196,10 +202,17 @@ export const deleteNote = createAsyncThunk(
 
     const store = thunkApi.getState();
     const currentList = _.cloneDeep(store.note.list);
+    const currentPagination = _.cloneDeep(store.note.pagination);
 
     const newList = currentList.filter((item) => item.id !== payload.id);
 
     thunkApi.dispatch(setList(newList));
+    thunkApi.dispatch(
+      setPagination({
+        ...currentPagination,
+        totalCount: _.get(currentPagination, 'totalCount') - 1,
+      })
+    );
 
     return data.data;
   }
