@@ -5,6 +5,11 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const Dotenv = require('dotenv-webpack');
 
+const publicUrl = {
+  http: 'http://localhost:9000/',
+  https: 'https://localhost:9000/',
+};
+
 module.exports = {
   // 進入點
   entry: './index.js',
@@ -12,9 +17,9 @@ module.exports = {
   output: {
     // 輸出目錄
     path: path.resolve(__dirname, 'dist'),
- 
+
     // 請參考 dist/index.html裡的script src是引用什麼檔案
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   module: {
     rules: [
@@ -24,11 +29,24 @@ module.exports = {
         loader: 'babel-loader',
         options: {
           presets: ['@babel/preset-react', '@babel/preset-env'],
-        }
+          // lazy-loading
+          plugins: ['@babel/plugin-syntax-dynamic-import'],
+        },
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          // Creates `style` nodes from JS strings
+          'style-loader',
+          // Translates CSS into CommonJS
+          'css-loader',
+          // Compiles Sass to CSS
+          'sass-loader',
+        ],
       },
       {
         test: /\.css$/,
-        use: [ 'style-loader', 'css-loader' ],
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/i,
@@ -47,9 +65,10 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       // 解決 onClick 失效
-      name: "index.html",
+      name: 'index.html',
       inject: false,
-      template: 'public/index.html'
+      template: 'public/index.html',
+      PUBLIC_URL: publicUrl.http,
     }),
     // 複製靜態檔案
     new CopyWebpackPlugin({
@@ -57,19 +76,22 @@ module.exports = {
         {
           from: 'public/assets/',
           to: 'assets',
-        }
-      ]
+        },
+      ],
     }),
   ],
   mode: 'development',
   devServer: {
-    static : {
-      directory : path.join(__dirname, "dist/")
+    static: {
+      directory: path.join(__dirname, 'dist/'),
     },
     liveReload: true,
     port: 9000,
-    devMiddleware:{
-      publicPath: "https://localhost:9000/",
+    devMiddleware: {
+      publicPath: publicUrl.https,
     },
+
+    // for browserouter
+    historyApiFallback: true,
   },
 };
