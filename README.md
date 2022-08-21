@@ -21,7 +21,7 @@
 - Atomize([網址](https://atomizecode.com/)): UI組件
 
 
-## MIT
+## License
 ### The MIT License
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
 `[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)`
