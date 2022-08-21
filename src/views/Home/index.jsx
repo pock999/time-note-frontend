@@ -35,6 +35,8 @@ const Wrapper = styled('div')`
 export default function Home() {
   const user = useSelector((state) => state.auth.user);
 
+  // TODO: get API Version
+
   return (
     <Wrapper>
       <SlideFadeTitle>
