@@ -8,7 +8,8 @@
     "start": "webpack-dev-server",
     "test": "jest",
     "test:watch": "yarn test -- --watch",
-    "predeploy": "yarn build",
+    "build:gh": "webpack --config ./webpack.production.config.js",
+    "predeploy": "yarn build:gh",
     "deploy": "gh-pages -d dist"
   },
   "author": "",
