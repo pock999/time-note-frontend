@@ -3,6 +3,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
+import axios from 'axios';
+import _ from 'lodash';
+
 // atomize
 import {
   Container, Row, Col, Div, Text, Button, Icon, Input, Switch, Label,
@@ -35,7 +38,20 @@ const Wrapper = styled('div')`
 export default function Home() {
   const user = useSelector((state) => state.auth.user);
 
-  // TODO: get API Version
+  const [info, setInfo] = React.useState({
+    api_ver: null,
+  });
+
+  React.useEffect(() => {
+    (async () => {
+      const { data } = await axios.get('/info');
+
+      setInfo((pre) => ({
+        ...pre,
+        api_ver: _.get(data, 'data.version'),
+      }));
+    })();
+  }, []);
 
   return (
     <Wrapper>
@@ -96,6 +112,10 @@ export default function Home() {
                 前往體驗
               </Button>
             </Link>
+          </Div>
+
+          <Div m="1rem" d="flex" flexDir="row" justify="flex-end">
+            <Text textColor="gray700">{info.api_ver ? `V${info.api_ver}` : 'api未連線' }</Text>
           </Div>
         </Card>
       </FadeIn>
