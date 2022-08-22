@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktime_note_frontend=self.webpackChunktime_note_frontend||[]).push([[716],{5716:(e,n,t)=>{t.r(n),t.d(n,{default:()=>u});var r=t(7294);function u(){return r.createElement(r.Fragment,null,"Page404")}}}]);
