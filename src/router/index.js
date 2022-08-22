@@ -97,7 +97,6 @@ function ProtectedRoutes(props) {
   // get localStorage
   const roles = getRoles();
 
-  // TODO: token-login
   React.useEffect(() => {
     window.scrollTo({
       top: 0,

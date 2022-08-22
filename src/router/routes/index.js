@@ -7,14 +7,14 @@ import React from 'react';
 // import Page404 from '../../views/Page404';
 
 export default [
-  // {
-  //   path: '/',
-  //   name: 'Home',
-  //   component: React.lazy(() => import('../../views/Home')),
-  //   // component: Home,
-  //   roles: [],
-  //   exact: true,
-  // },
+  {
+    path: '/',
+    name: 'Home',
+    component: React.lazy(() => import('../../views/Home')),
+    // component: Home,
+    roles: null,
+    exact: true,
+  },
   {
     path: '/login',
     name: 'Login',
