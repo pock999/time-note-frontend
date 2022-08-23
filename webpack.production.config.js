@@ -6,7 +6,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
 const publicUrl = {
-  https: 'https://pock999.github.io/time-note-frontend/',
+  https: 'https://time-note.onrender.com/',
 };
 
 module.exports = {
