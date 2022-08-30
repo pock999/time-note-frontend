@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import ApiServiceClass from '../../../services/ApiService';
@@ -50,34 +51,42 @@ export const {
 export const registerAction = createAsyncThunk(
   'auth/login',
   async (payload, thunkApi) => {
-    const { data } = await ApiService.post({
-      url: '/auth/register',
-      data: payload,
-    });
+    try {
+      const { data } = await ApiService.post({
+        url: '/auth/register',
+        data: payload,
+      });
 
-    return data;
+      return data;
+    } catch (e) {
+      return thunkApi.rejectWithValue(e);
+    }
   }
 );
 
 export const loginAction = createAsyncThunk(
   'auth/login',
   async (payload, thunkApi) => {
-    const { data } = await ApiService.post({
-      url: '/auth/login',
-      data: payload,
-    });
+    try {
+      const { data } = await ApiService.post({
+        url: '/auth/login',
+        data: payload,
+      });
 
-    thunkApi.dispatch(setUser(data.data.user));
-    thunkApi.dispatch(setAuthorization(data.data.token));
-    thunkApi.dispatch(setRoles(['IsUser']));
-    thunkApi.dispatch(setCurrentRole('IsUser'));
-    localStorage.setItem('token', data.data.token);
-    localStorage.setItem('roles', JsonHelper.JsonSerialize(['IsUser']));
-    localStorage.setItem('currentRole', 'IsUser');
-    localStorage.setItem('user', JsonHelper.JsonSerialize(data.data.user));
-    ApiService.setToken(data.data.token);
+      thunkApi.dispatch(setUser(data.data.user));
+      thunkApi.dispatch(setAuthorization(data.data.token));
+      thunkApi.dispatch(setRoles(['IsUser']));
+      thunkApi.dispatch(setCurrentRole('IsUser'));
+      localStorage.setItem('token', data.data.token);
+      localStorage.setItem('roles', JsonHelper.JsonSerialize(['IsUser']));
+      localStorage.setItem('currentRole', 'IsUser');
+      localStorage.setItem('user', JsonHelper.JsonSerialize(data.data.user));
+      ApiService.setToken(data.data.token);
 
-    return data;
+      return data;
+    } catch (e) {
+      return thunkApi.rejectWithValue(e);
+    }
   }
 );
 
@@ -140,13 +149,17 @@ export const getProfileAction = createAsyncThunk(
 export const updateProfileAction = createAsyncThunk(
   'auth/update-profile',
   async (payload, thunkApi) => {
-    const { data } = await ApiService.put({
-      url: '/auth/profile',
-      data: payload,
-    });
-    thunkApi.dispatch(setUser(data.data));
+    try {
+      const { data } = await ApiService.put({
+        url: '/auth/profile',
+        data: payload,
+      });
+      thunkApi.dispatch(setUser(data.data));
 
-    return data.data;
+      return data.data;
+    } catch (e) {
+      return thunkApi.rejectWithValue(e);
+    }
   }
 );
 

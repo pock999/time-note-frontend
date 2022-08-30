@@ -74,7 +74,7 @@ export default function Profile() {
       setIsResetPwd(false);
       SwalHelper.success('更新成功');
     } catch (e) {
-      SwalHelper.fail(e.message);
+      SwalHelper.fail(_.get(e, 'message') || _.get(e, 'payload.error'));
     }
   };
   return (

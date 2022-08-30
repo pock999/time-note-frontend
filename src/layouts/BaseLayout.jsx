@@ -107,7 +107,7 @@ export default function BaseLayout(props) {
 
       closeForm();
     } catch (e) {
-      SwalHelper.fail(e.message);
+      SwalHelper.fail(_.get(e, 'message') || _.get(e, 'payload.error'));
     }
   };
 
@@ -123,7 +123,7 @@ export default function BaseLayout(props) {
         SwalHelper.success('刪除成功');
       }
     } catch (e) {
-      SwalHelper.fail(e.message);
+      SwalHelper.fail(_.get(e, 'message') || _.get(e, 'payload.error'));
     }
   };
 

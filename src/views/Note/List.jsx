@@ -163,7 +163,7 @@ export default function NoteList() {
       closeForm();
     } catch (e) {
       console.log('================================ e, ', e);
-      SwalHelper.fail(e.message);
+      SwalHelper.fail(_.get(e, 'message') || _.get(e, 'payload.error'));
     }
   };
 
@@ -199,7 +199,7 @@ export default function NoteList() {
         setIsLast(true);
       }
     } catch (e) {
-      SwalHelper.error('錯誤', e.message);
+      SwalHelper.error('錯誤', _.get(e, 'message') || _.get(e, 'payload.error'));
     }
   };
 
