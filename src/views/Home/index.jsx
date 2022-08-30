@@ -19,6 +19,9 @@ import SlideFadeTitle from './SlideFadeTitle';
 import FadeIn from './FadeIn';
 import { Card } from '../../components';
 
+// package.json info
+const { version } = require('../../../package.json');
+
 // styled-component
 const Wrapper = styled('div')`
   width: 100vw;
@@ -97,6 +100,13 @@ export default function Home() {
             想要讓紀錄與行事曆在同一個系統就能同時具備
           </Text>
 
+          <hr
+            style={{
+              marginTop: '20px',
+              marginBottom: '20px',
+            }}
+          />
+
           <Div m="1rem" d="flex" flexDir="row" justify="center">
             <Link to={user ? '/notes' : '/login'}>
               <Button
@@ -115,7 +125,16 @@ export default function Home() {
           </Div>
 
           <Div m="1rem" d="flex" flexDir="row" justify="flex-end">
-            <Text textColor="gray700">{info.api_ver ? `V${info.api_ver}` : 'api未連線' }</Text>
+            <Text textColor="gray700">
+              前端:
+              {` V${version}`}
+            </Text>
+            <Text textColor="gray700">
+              {'  '}
+              ／
+              {'  '}
+            </Text>
+            <Text textColor="gray700">{info.api_ver ? `API: V${info.api_ver}` : 'API未連線' }</Text>
           </Div>
         </Card>
       </FadeIn>

@@ -26,6 +26,9 @@ import SwalHelper from '../../utils/SwalHelper';
 // store
 import { loginAction, registerAction } from '../../store/reducers/auth';
 
+// yup schema
+import { loginSchema, reigsterSchema } from './formSchema';
+
 // styled-component
 const Wrapper = styled('div')`
   width: 100vw;
@@ -70,13 +73,13 @@ export default function Login() {
 
   const loginSubmit = async (evt) => {
     evt.preventDefault();
-    // TODO: yup
-    const resultAction = await dispatch(loginAction({ ..._.pick(state, ['email', 'password']) }));
+    const value = await loginSchema.validate({ ..._.pick(state, ['email', 'password']) });
     try {
+      const resultAction = await dispatch(loginAction(value));
       unwrapResult(resultAction);
       history.push('/notes');
     } catch (e) {
-      SwalHelper.fail(e.message);
+      SwalHelper.fail(_.get(e, 'payload.error') || _.get(e, 'message'));
     }
   };
 
@@ -91,8 +94,9 @@ export default function Login() {
         throw new Error('密碼長度需大於8個字元');
       }
 
-      // TODO: yup
-      const resultAction = await dispatch(registerAction({ ..._.pick(state, ['email', 'password', 'name']) }));
+      const value = await reigsterSchema.validate({ ..._.pick(state, ['email', 'password', 'name']) });
+
+      const resultAction = await dispatch(registerAction(value));
       unwrapResult(resultAction);
 
       SwalHelper.success('註冊成功');
@@ -102,7 +106,7 @@ export default function Login() {
         return 0;
       });
     } catch (e) {
-      SwalHelper.fail(e.message);
+      SwalHelper.fail(_.get(e, 'message') || _.get(e, 'payload.error'));
     }
   };
 
