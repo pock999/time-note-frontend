@@ -64,6 +64,22 @@ export const registerAction = createAsyncThunk(
   }
 );
 
+export const activateAction = createAsyncThunk(
+  'auth/activate',
+  async (payload, thunkApi) => {
+    try {
+      const { data } = await ApiService.post({
+        url: '/auth/activate',
+        data: payload,
+      });
+
+      return data;
+    } catch (e) {
+      return thunkApi.rejectWithValue(e);
+    }
+  }
+);
+
 export const loginAction = createAsyncThunk(
   'auth/login',
   async (payload, thunkApi) => {

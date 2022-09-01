@@ -32,6 +32,14 @@ export default [
     exact: true,
   },
   {
+    path: '/activate',
+    name: 'Activate',
+    component: React.lazy(() => import('../../views/Activate')),
+    // component: Profile,
+    roles: [],
+    exact: true,
+  },
+  {
     path: '/notes',
     name: 'NoteList',
     component: React.lazy(() => import('../../views/Note/List')),

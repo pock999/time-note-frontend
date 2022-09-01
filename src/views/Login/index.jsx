@@ -25,6 +25,7 @@ import SwalHelper from '../../utils/SwalHelper';
 
 // store
 import { loginAction, registerAction } from '../../store/reducers/auth';
+import { showLoading, hideLoading } from '../../store/reducers/loading';
 
 // yup schema
 import { loginSchema, reigsterSchema } from './formSchema';
@@ -85,6 +86,7 @@ export default function Login() {
 
   const registerSubmit = async (evt) => {
     evt.preventDefault();
+    dispatch(showLoading());
     try {
       if (state.password !== state.repeatPassword) {
         throw new Error('密碼需與密碼確認一致');
@@ -97,15 +99,22 @@ export default function Login() {
       const value = await reigsterSchema.validate({ ..._.pick(state, ['email', 'password', 'name']) });
 
       const resultAction = await dispatch(registerAction(value));
-      unwrapResult(resultAction);
+      const result = unwrapResult(resultAction);
 
-      SwalHelper.success('註冊成功');
+      let message = '註冊成功';
+      if (_.get(result, 'data.isNeedActivate')) {
+        message += '，請至信箱收信開通帳號';
+      }
+
+      dispatch(hideLoading());
+      SwalHelper.success(message);
 
       setFocusTab((pre) => {
         setState(initFormState);
         return 0;
       });
     } catch (e) {
+      dispatch(hideLoading());
       SwalHelper.fail(_.get(e, 'message') || _.get(e, 'payload.error'));
     }
   };
