@@ -36,6 +36,7 @@ const Wrapper = styled('div')`
   background-repeat: no-repeat;
   background-size: cover;
 
+  opacity: 0.8;
 `;
 
 export default function Home() {

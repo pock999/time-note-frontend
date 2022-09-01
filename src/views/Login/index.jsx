@@ -43,7 +43,7 @@ const Wrapper = styled('div')`
   background-repeat: no-repeat;
   background-size: cover;
 
-  opacity: 0.6;
+  opacity: 0.7;
 `;
 
 const initFormState = {
@@ -112,12 +112,15 @@ export default function Login() {
 
   return (
     <Wrapper>
-      <Card minW={{ xs: '100%', md: '500px' }}>
+      <Card minW={{ xs: '90%', md: '500px' }} rounded="md">
         <Row>
-          <Col size="5">
+          <Col size="12" d="flex" flexDir="row" justify="space-between" align="center">
             <Text tag="h1" textSize="heading" m="1rem">
               { focusTab === 0 ? '登入' : '註冊' }
             </Text>
+            <Link to="/">
+              <Icon name="HomeSolid" size="20px" m={{ r: '1rem' }} />
+            </Link>
           </Col>
         </Row>
         {
