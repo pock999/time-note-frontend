@@ -13,16 +13,16 @@ import {
 } from 'atomize';
 
 // custom utils
-import SwalHelper from '../utils/SwalHelper';
+import SwalHelper from '../../utils/SwalHelper';
 
 // custom layout
-import { BaseLayout } from '../layouts';
+import { BaseLayout } from '../../layouts';
 
 // custom components
-import { Card, PasswordInput } from '../components';
+import { Card, PasswordInput } from '../../components';
 
 // store
-import { getProfileAction, updateProfileAction } from '../store/reducers/auth';
+import { getProfileAction, updateProfileAction } from '../../store/reducers/auth';
 
 export default function Profile() {
   const history = useHistory();
